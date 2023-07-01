@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "cd ./frontend && yarn start",
     "dev": "sst dev",
     "build": "sst build",
     "deploy": "sst deploy",
