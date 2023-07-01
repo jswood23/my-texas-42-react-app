@@ -1,8 +1,7 @@
-import * as uuid from "uuid";
-import AWS from "aws-sdk";
 import { Table } from "sst/node/table";
-
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+import * as uuid from "uuid";
+import handler from "@my-texas-42-react-app/core/handler";
+import dynamoDB from "@my-texas-42-react-app/core/dynamodb";
 
 export async function main(event: { body: string }) {
     // Request body is passed in as a JSON encoded string in 'event.body'
@@ -20,17 +19,8 @@ export async function main(event: { body: string }) {
         },
     };
 
-    try {
-        await dynamoDb.put(params).promise();
-        return {
-            statusCode: 200,
-            body: JSON.stringify(params.Item),
-        };
-    } catch (e: any) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: e.message }),
-        };
-    }
+    await dynamoDB.put(params);
+
+    return params.Item;
 }
         
