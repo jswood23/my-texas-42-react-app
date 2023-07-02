@@ -2,6 +2,7 @@ import { Auth } from 'aws-amplify';
 import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { requireLoginPages } from './constants';
 import * as React from 'react';
+import Navbar from './shared/navbar';
 import SnackbarAlert from './shared/snackbar-alert';
 
 const propTypes = {};
@@ -53,7 +54,7 @@ const RouterElements = () => {
 
     return (
         <div>
-            {/* Navbar here */}
+            <Navbar />
             <Routes>
                 <Route
                     path="/"
