@@ -1,6 +1,6 @@
 import { Amplify } from 'aws-amplify';
 import { BrowserRouter } from 'react-router-dom';
-import config from './config';
+import config from './constants/config';
 import RouterElements from './router';
 
 Amplify.configure({
