@@ -1,27 +1,21 @@
-import { THEME } from '../../constants/theme';
-import * as React from 'react';
-import Container from '@mui/material/Container';
-import * as PropTypes from 'prop-types';
+import type { OpenAlert, UserData } from '../../types'
+import { THEME } from '../../constants/theme'
+import * as React from 'react'
+import Container from '@mui/material/Container'
 
-const propTypes = {
-  children: PropTypes.any,
-  openAlert: PropTypes.func,
-  title: PropTypes.string,
-  userData: PropTypes.object
-};
+interface Props {
+  children: any
+  openAlert: OpenAlert
+  title: string
+  userData: UserData
+}
 
-const defaultProps = {
-  openAlert: () => {},
-  title: '',
-  userData: null
-};
-
-const PageContainer = ({ children, openAlert, title, userData }: any) => {
-  const [pageHeight, setPageHeight] = React.useState(0);
+const PageContainer = ({ children, openAlert, title, userData }: Props) => {
+  const [pageHeight, setPageHeight] = React.useState(0)
 
   React.useEffect(() => {
-    setPageHeight(window.innerHeight - 140);
-  }, []);
+    setPageHeight(window.innerHeight - 140)
+  }, [])
 
   const classes = {
     backdrop: {
@@ -36,18 +30,15 @@ const PageContainer = ({ children, openAlert, title, userData }: any) => {
       borderRadius: '5px',
       boxShadow: '0 2px 5px 3px #E0E0E0'
     }
-  };
+  }
 
   return (
     <Container fixed style={classes.backdrop}>
-        <h1>{title}</h1>
-        <hr />
-        {children}
+      <h1>{title}</h1>
+      <hr />
+      {children}
     </Container>
-  );
-};
+  )
+}
 
-PageContainer.propTypes = propTypes;
-PageContainer.defaultProps = defaultProps;
-
-export default PageContainer;
+export default PageContainer

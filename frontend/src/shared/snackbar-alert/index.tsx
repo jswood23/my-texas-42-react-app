@@ -1,29 +1,22 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import Snackbar from '@mui/material/Snackbar';
+import * as React from 'react'
+import MuiAlert, { type AlertProps } from '@mui/material/Alert'
+import Snackbar from '@mui/material/Snackbar'
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
   props,
   ref
 ) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
-const propTypes = {
-  handleClose: PropTypes.func.isRequired,
-  message: PropTypes.string.isRequired,
-  open: PropTypes.bool.isRequired,
-  severity: PropTypes.string.isRequired
-};
+interface Props {
+  handleClose: (event: unknown, reason: string) => void
+  message: string
+  open: boolean
+  severity: string
+}
 
-const defaultProps = {
-  message: '',
-  open: false,
-  severity: 'info'
-};
-
-const SnackbarAlert = ({ handleClose, message, open, severity }: any) => {
+const SnackbarAlert = ({ handleClose, message, open, severity }: Props) => {
   return open
     ? (
     <Snackbar
@@ -32,8 +25,8 @@ const SnackbarAlert = ({ handleClose, message, open, severity }: any) => {
         onClose={handleClose}
     >
         <Alert
-            onClose={handleClose}
-            severity={severity}
+            onClose={(handleClose as any)}
+            severity={(severity as any)}
             sx={{ width: '100%' }}
         >
             {message}
@@ -42,10 +35,7 @@ const SnackbarAlert = ({ handleClose, message, open, severity }: any) => {
       )
     : (
     <div></div>
-      );
-};
+      )
+}
 
-SnackbarAlert.propTypes = propTypes;
-SnackbarAlert.defaultProps = defaultProps;
-
-export default SnackbarAlert;
+export default SnackbarAlert

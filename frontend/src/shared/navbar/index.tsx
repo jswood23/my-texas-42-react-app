@@ -1,32 +1,27 @@
-import { AppBar, Toolbar, CssBaseline } from '@material-ui/core';
-import { Auth } from 'aws-amplify';
-import { makeStyles } from '@material-ui/core/styles';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { THEME } from '../../constants/theme';
-import * as React from 'react';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import Button from '@mui/material/Button';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import Logo42 from '../../images/42logo.png';
-import * as PropTypes from 'prop-types';
+import { AppBar, Toolbar, CssBaseline } from '@material-ui/core'
+import { Auth } from 'aws-amplify'
+import { makeStyles } from '@material-ui/core/styles'
+import { NavLink, useNavigate } from 'react-router-dom'
+import type { OpenAlert, UserData } from '../../types'
+import { THEME } from '../../constants/theme'
+import * as React from 'react'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import Button from '@mui/material/Button'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import LoginIcon from '@mui/icons-material/Login'
+import LogoutIcon from '@mui/icons-material/Logout'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import Logo42 from '../../images/42logo.png'
 
-const propTypes = {
-  openAlert: PropTypes.func,
-  userData: PropTypes.object
-};
-
-const defaultProps = {
-  openAlert: () => {},
-  userData: null
-};
+interface Props {
+  openAlert: OpenAlert
+  userData: UserData
+}
 
 const useStyles = makeStyles(() => ({
   appBar: {
@@ -68,7 +63,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'right',
     marginLeft: 'auto'
   }
-}));
+}))
 
 const buttonStyle = {
   color: THEME.palette.primary.main,
@@ -81,51 +76,51 @@ const buttonStyle = {
 
   fontSize: THEME.spacing(1.5),
   fontWeight: 'bold'
-};
+}
 
-const Navbar = ({ openAlert, userData }: any) => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const isDropdownOpen = Boolean(anchorEl);
-  const navigate = useNavigate();
-  const classes = useStyles();
+const Navbar = ({ openAlert, userData }: Props) => {
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const isDropdownOpen = Boolean(anchorEl)
+  const navigate = useNavigate()
+  const classes = useStyles()
 
   const handleCloseDropdown = React.useCallback(() => {
-    setAnchorEl(null);
-  }, [setAnchorEl]);
+    setAnchorEl(null)
+  }, [setAnchorEl])
 
   const handleClickLogin = React.useCallback(() => {
-    handleCloseDropdown();
-    navigate('/login');
-  }, [handleCloseDropdown, navigate]);
+    handleCloseDropdown()
+    navigate('/login')
+  }, [handleCloseDropdown, navigate])
 
   const handleClickSignUp = React.useCallback(() => {
-    handleCloseDropdown();
-    navigate('/signup');
-  }, [handleCloseDropdown, navigate]);
+    handleCloseDropdown()
+    navigate('/signup')
+  }, [handleCloseDropdown, navigate])
 
   const handleClickProfile = React.useCallback(() => {
-    handleCloseDropdown();
-    navigate(`/profile?username=${userData?.username}`);
-  }, [handleCloseDropdown, navigate, userData?.username]);
+    handleCloseDropdown()
+    navigate(`/profile?username=${userData?.username}`)
+  }, [handleCloseDropdown, navigate, userData?.username])
 
   const handleOpenDropdown = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const handleClickSignOut = React.useCallback(async () => {
-    handleCloseDropdown();
+    handleCloseDropdown()
     try {
-      await Auth.signOut();
-      openAlert('Signed out successfully!', 'success');
-      navigate('/');
+      await Auth.signOut()
+      openAlert('Signed out successfully!', 'success')
+      navigate('/')
     } catch (error: any) {
-      let errorMessage = 'An error occurred while signing out.';
+      let errorMessage = 'An error occurred while signing out.'
       if (error) {
-        errorMessage = error.message;
+        errorMessage = error.message
       }
-      openAlert(errorMessage, 'error');
+      openAlert(errorMessage, 'error')
     }
-  }, [handleCloseDropdown, openAlert, navigate]);
+  }, [handleCloseDropdown, openAlert, navigate])
 
   const navRightSide = () => {
     if (userData) {
@@ -169,7 +164,7 @@ const Navbar = ({ openAlert, userData }: any) => {
             </MenuItem>
           </Menu>
         </Toolbar>
-      );
+      )
     }
     return (
       <Toolbar className={classes.rightSide}>
@@ -205,8 +200,8 @@ const Navbar = ({ openAlert, userData }: any) => {
           </MenuItem>
         </Menu>
       </Toolbar>
-    );
-  };
+    )
+  }
 
   return (
     <AppBar position="static" className={classes.appBar}>
@@ -223,10 +218,7 @@ const Navbar = ({ openAlert, userData }: any) => {
 
       {navRightSide()}
     </AppBar>
-  );
-};
+  )
+}
 
-Navbar.propTypes = propTypes;
-Navbar.defaultProps = defaultProps;
-
-export default Navbar;
+export default Navbar

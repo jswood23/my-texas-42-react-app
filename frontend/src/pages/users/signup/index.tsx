@@ -1,35 +1,30 @@
-import { Alert, Box, Collapse, FormControl } from '@mui/material';
-import { Auth } from 'aws-amplify';
-import { THEME } from '../../../constants/theme';
-import { useNavigate } from 'react-router-dom';
-import { validateField } from '../../../utils/user-utils';
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import ConfirmUserForm from '../confirm-user-form';
-import PageContainer from '../../../shared/page-container';
-import * as PropTypes from 'prop-types';
-import TextField from '@mui/material/TextField';
+import { Alert, Box, Collapse, FormControl } from '@mui/material'
+import { Auth } from 'aws-amplify'
+import type { OpenAlert, UserData } from '../../../types'
+import { THEME } from '../../../constants/theme'
+import { useNavigate } from 'react-router-dom'
+import { validateField } from '../../../utils/user-utils'
+import * as React from 'react'
+import Button from '@mui/material/Button'
+import ConfirmUserForm from '../confirm-user-form'
+import PageContainer from '../../../shared/page-container'
+import TextField from '@mui/material/TextField'
 
 const classes = {
   formContainer: THEME.form.container,
   formWindow: THEME.form.window,
   textInput: THEME.form.input
-};
+}
 
-const propTypes = {
-  openAlert: PropTypes.func,
-  userData: PropTypes.object
-};
+interface Props {
+  openAlert: OpenAlert
+  userData: UserData
+}
 
-const defaultProps = {
-  openAlert: () => {},
-  userData: null
-};
-
-const SignupPage = ({ openAlert, userData }: any) => {
-  const goTo = useNavigate();
+const SignupPage = ({ openAlert, userData }: Props) => {
+  const goTo = useNavigate()
   if (userData) {
-    goTo('/');
+    goTo('/')
   }
 
   const initialValues = {
@@ -37,20 +32,20 @@ const SignupPage = ({ openAlert, userData }: any) => {
     username: '',
     password: '',
     confirmPassword: ''
-  };
+  }
 
-  const [confirmingUser, setConfirmingUser] = React.useState(false);
-  const [email, setEmail] = React.useState(initialValues.email);
-  const [username, setUsername] = React.useState(initialValues.username);
-  const [password, setPassword] = React.useState(initialValues.password);
-  const [selectedPassword, setSelectedPassword] = React.useState(false);
+  const [confirmingUser, setConfirmingUser] = React.useState(false)
+  const [email, setEmail] = React.useState(initialValues.email)
+  const [username, setUsername] = React.useState(initialValues.username)
+  const [password, setPassword] = React.useState(initialValues.password)
+  const [selectedPassword, setSelectedPassword] = React.useState(false)
   const [confirmPassword, setConfirmPassword] = React.useState(
     initialValues.confirmPassword
-  );
-  const [errors, setErrors] = React.useState({ hasErrors: false, email: null, username: null, password: null, confirmPassword: null });
+  )
+  const [errors, setErrors] = React.useState({ hasErrors: false, email: null, username: null, password: null, confirmPassword: null })
 
-  const defaultUsername = username;
-  const defaultPassword = password;
+  const defaultUsername = username
+  const defaultPassword = password
 
   const runValidationTasks = React.useCallback(
     (fieldName: string, currentValue: string) => {
@@ -74,63 +69,63 @@ const SignupPage = ({ openAlert, userData }: any) => {
             validationMessage: 'The passwords must match.'
           }
         ]
-      };
+      }
       const validationResponse = validateField(
         currentValue,
         (validations as any)[fieldName]
-      );
-      setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
-      return validationResponse;
+      )
+      setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }))
+      return validationResponse
     },
     [password]
-  );
+  )
 
-  const onChangeEmail = (e: { target: { value: string }}) => {
-    const value = e.target.value;
+  const onChangeEmail = (e: { target: { value: string } }) => {
+    const value = e.target.value
     if ((errors.email as any)?.hasError) {
-      runValidationTasks('email', value);
+      runValidationTasks('email', value)
     }
-    setEmail(value);
-  };
+    setEmail(value)
+  }
 
-  const onChangeUsername = (e: { target: { value: string }}) => {
-    const value = e.target.value;
+  const onChangeUsername = (e: { target: { value: string } }) => {
+    const value = e.target.value
     if ((errors.username as any)?.hasError) {
-      runValidationTasks('username', value);
+      runValidationTasks('username', value)
     }
-    setUsername(value);
-  };
+    setUsername(value)
+  }
 
-  const onChangePassword = (e: { target: { value: string }}) => {
-    const value = e.target.value;
+  const onChangePassword = (e: { target: { value: string } }) => {
+    const value = e.target.value
     if ((errors.password as any)?.hasError) {
-      runValidationTasks('password', value);
+      runValidationTasks('password', value)
     }
-    setPassword(value);
-  };
+    setPassword(value)
+  }
 
-  const onChangeConfirmPassword = (e: { target: { value: string }}) => {
-    const value = e.target.value;
+  const onChangeConfirmPassword = (e: { target: { value: string } }) => {
+    const value = e.target.value
     if ((errors.confirmPassword as any)?.hasError) {
-      runValidationTasks('confirmPassword', value);
+      runValidationTasks('confirmPassword', value)
     }
-    setConfirmPassword(value);
-  };
+    setConfirmPassword(value)
+  }
 
   const onSubmit = React.useCallback(async () => {
-    if (confirmingUser) return;
+    if (confirmingUser) return
 
     // Check validations before submitting
-    runValidationTasks('email', email);
-    runValidationTasks('username', username);
-    runValidationTasks('password', password);
-    runValidationTasks('confirmPassword', confirmPassword);
+    runValidationTasks('email', email)
+    runValidationTasks('username', username)
+    runValidationTasks('password', password)
+    runValidationTasks('confirmPassword', confirmPassword)
 
     if (
       Object.values(errors).some((e: any) => e?.hasError) ||
       !(email && username && password && confirmPassword)
     ) {
-      return;
+      return
     }
 
     // Submit form
@@ -142,21 +137,21 @@ const SignupPage = ({ openAlert, userData }: any) => {
       attributes: {
         email
       }
-    };
+    }
 
     try {
       // const { user } = await Auth.signUp(modelFields);
-      await Auth.signUp(modelFields);
-      setConfirmingUser(true);
+      await Auth.signUp(modelFields)
+      setConfirmingUser(true)
     } catch (error: any) {
-      let errorMessage = 'An error occurred while creating an account.';
+      let errorMessage = 'An error occurred while creating an account.'
       if (error) {
-        errorMessage = error.message;
+        errorMessage = error.message
         if (error.message === 'User is not confirmed.') {
-          setConfirmingUser(true);
+          setConfirmingUser(true)
         }
       }
-      openAlert(errorMessage, 'error');
+      openAlert(errorMessage, 'error')
     }
   }, [
     confirmPassword,
@@ -167,26 +162,26 @@ const SignupPage = ({ openAlert, userData }: any) => {
     password,
     runValidationTasks,
     username
-  ]);
+  ])
 
   React.useEffect(() => {
-    const listener = (event: { code: string, preventDefault: Function }) => {
+    const listener = (event: { code: string, preventDefault: () => void }) => {
       if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-        event.preventDefault();
-        onSubmit();
+        event.preventDefault()
+        onSubmit()
       }
-    };
-    document.addEventListener('keydown', listener);
+    }
+    document.addEventListener('keydown', listener)
     return () => {
-      document.removeEventListener('keydown', listener);
-    };
-  }, [onSubmit]);
+      document.removeEventListener('keydown', listener)
+    }
+  }, [onSubmit])
 
   return (
     <PageContainer openAlert={openAlert} title="Create an account" userData={userData}>
-      {/* @ts-ignore */}
+      {/* @ts-expect-error TODO: add styled components */}
       <Box style={classes.formWindow}>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error TODO: add styled components */}
         <Box style={classes.formContainer}>
           <FormControl>
             <TextField
@@ -225,10 +220,10 @@ const SignupPage = ({ openAlert, userData }: any) => {
               style={classes.textInput}
               value={password}
               onChange={onChangePassword}
-              onFocus={() => setSelectedPassword(true)}
+              onFocus={() => { setSelectedPassword(true) }}
               onBlur={() => {
-                setSelectedPassword(false);
-                runValidationTasks('password', password);
+                setSelectedPassword(false)
+                runValidationTasks('password', password)
               }}
               helperText={(errors.password as any)?.errorMessage}
               error={(errors.password as any)?.hasError}
@@ -269,7 +264,7 @@ const SignupPage = ({ openAlert, userData }: any) => {
             </Button>
           </FormControl>
         </Box>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error TODO: add styled components */}
         <Collapse style={classes.formContainer} in={confirmingUser}>
           <ConfirmUserForm
             defaultUsername={defaultUsername}
@@ -280,10 +275,7 @@ const SignupPage = ({ openAlert, userData }: any) => {
         </Collapse>
       </Box>
     </PageContainer>
-  );
-};
+  )
+}
 
-SignupPage.propTypes = propTypes;
-SignupPage.defaultProps = defaultProps;
-
-export default SignupPage;
+export default SignupPage

@@ -1,95 +1,90 @@
-import { Alert, FormControl } from '@mui/material';
-import { Auth } from 'aws-amplify';
-import { useNavigate } from 'react-router-dom';
-import { THEME } from '../../../constants/theme';
-import { validateField } from '../../../utils/user-utils';
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import * as PropTypes from 'prop-types';
-import TextField from '@mui/material/TextField';
+import { Alert, FormControl } from '@mui/material'
+import { Auth } from 'aws-amplify'
+import { useNavigate } from 'react-router-dom'
+import { THEME } from '../../../constants/theme'
+import type { OpenAlert, UserData } from '../../../types'
+import { validateField } from '../../../utils/user-utils'
+import * as React from 'react'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 
 const classes = {
   formContainer: THEME.form.container,
   textInput: THEME.form.input
-};
+}
 
-const propTypes = {
-  defaultUsername: PropTypes.string.isRequired,
-  defaultPassword: PropTypes.string.isRequired,
-  openAlert: PropTypes.func,
-  userData: PropTypes.object
-};
-
-const defaultProps = {
-  openAlert: () => {},
-  userData: null
-};
+interface Props {
+  defaultUsername: string
+  defaultPassword: string
+  openAlert: OpenAlert
+  userData: UserData
+}
 
 const ConfirmUserForm = ({
   defaultUsername,
   defaultPassword,
   openAlert,
   userData
-}: any) => {
+}: Props) => {
   const initialValues = {
     verificationCode: ''
-  };
+  }
 
   const [verificationCode, setVerificationCode] = React.useState(
     initialValues.verificationCode
-  );
-  const [errors, setErrors] = React.useState({ hasErrors: false, verificationCode: null });
-  const [isFieldSelected, setIsFieldSelected] = React.useState(false);
+  )
+  const [errors, setErrors] = React.useState({ hasErrors: false, verificationCode: null })
+  const [isFieldSelected, setIsFieldSelected] = React.useState(false)
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const goToHome = React.useCallback(() => {
-    navigate('/');
-  }, [navigate]);
+    navigate('/')
+  }, [navigate])
 
   const runValidationTasks = React.useCallback(
     (fieldName: string, currentValue: string) => {
       const validations = {
         verificationCode: [{ type: 'Required' }]
-      };
+      }
       const validationResponse = validateField(
         currentValue,
         (validations as any)[fieldName]
-      );
-      setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
-      return validationResponse;
+      )
+      setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }))
+      return validationResponse
     },
     []
-  );
+  )
 
-  const onChangeVerificationCode = (e: { target: { value: string }}) => {
-    const value = e.target.value;
+  const onChangeVerificationCode = (e: { target: { value: string } }) => {
+    const value = e.target.value
     if ((errors.verificationCode as any)?.hasError) {
-      runValidationTasks('verificationCode', value);
+      runValidationTasks('verificationCode', value)
     }
-    setVerificationCode(value);
-  };
+    setVerificationCode(value)
+  }
 
   const onSubmit = React.useCallback(async () => {
-    if (!isFieldSelected) return;
+    if (!isFieldSelected) return
 
-    runValidationTasks('verificationCode', verificationCode);
+    runValidationTasks('verificationCode', verificationCode)
 
     if (Object.values(errors).some((e: any) => e?.hasError) || !verificationCode) {
-      return;
+      return
     }
 
     try {
-      await Auth.confirmSignUp(defaultUsername, verificationCode);
-      await Auth.signIn(defaultUsername, defaultPassword);
-      openAlert('Signed in successfully!', 'success');
-      goToHome();
+      await Auth.confirmSignUp(defaultUsername, verificationCode)
+      await Auth.signIn(defaultUsername, defaultPassword)
+      openAlert('Signed in successfully!', 'success')
+      goToHome()
     } catch (error: any) {
-      let errorMessage = 'An error occurred while confirming the account.';
+      let errorMessage = 'An error occurred while confirming the account.'
       if (error) {
-        errorMessage = error.message;
+        errorMessage = error.message
       }
-      openAlert(errorMessage, 'error');
+      openAlert(errorMessage, 'error')
     }
   }, [
     defaultPassword,
@@ -100,36 +95,36 @@ const ConfirmUserForm = ({
     openAlert,
     runValidationTasks,
     verificationCode
-  ]);
+  ])
 
   const onResend = React.useCallback(async () => {
     try {
-      await Auth.resendSignUp(defaultUsername);
+      await Auth.resendSignUp(defaultUsername)
       openAlert(
         'The verification code has been resent. Remember to check your spam folder.',
         'info'
-      );
+      )
     } catch (error: any) {
-      let errorMessage = 'An error occurred while resending the verification code.';
+      let errorMessage = 'An error occurred while resending the verification code.'
       if (error) {
-        errorMessage = error.message;
+        errorMessage = error.message
       }
-      openAlert(errorMessage, 'error');
+      openAlert(errorMessage, 'error')
     }
-  }, [defaultUsername, openAlert]);
+  }, [defaultUsername, openAlert])
 
   React.useEffect(() => {
-    const listener = (event: { code: string, preventDefault: Function}) => {
+    const listener = (event: { code: string, preventDefault: () => void }) => {
       if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-        event.preventDefault();
-        onSubmit();
+        event.preventDefault()
+        onSubmit()
       }
-    };
-    document.addEventListener('keydown', listener);
+    }
+    document.addEventListener('keydown', listener)
     return () => {
-      document.removeEventListener('keydown', listener);
-    };
-  }, [onSubmit]);
+      document.removeEventListener('keydown', listener)
+    }
+  }, [onSubmit])
 
   return (
     <FormControl>
@@ -145,7 +140,7 @@ const ConfirmUserForm = ({
         size="small"
         style={classes.textInput}
         value={verificationCode}
-        onFocus={() => setIsFieldSelected(true)}
+        onFocus={() => { setIsFieldSelected(true) }}
         onChange={onChangeVerificationCode}
         helperText={(errors.verificationCode as any)?.errorMessage}
         error={(errors.verificationCode as any)?.hasError}
@@ -164,10 +159,7 @@ const ConfirmUserForm = ({
         Resend Verification Code
       </Button>
     </FormControl>
-  );
-};
+  )
+}
 
-ConfirmUserForm.propTypes = propTypes;
-ConfirmUserForm.defaultProps = defaultProps;
-
-export default ConfirmUserForm;
+export default ConfirmUserForm
