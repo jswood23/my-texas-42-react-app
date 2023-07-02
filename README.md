@@ -2,6 +2,16 @@
  
 ## SST Commands:
 
+Install packages:
+```
+yarn update
+```
+
+Start the web application:
+```
+yarn start
+```
+
 Start the dev console:
 ```
 yarn sst dev

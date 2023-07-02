@@ -1,18 +1,21 @@
+# aws
+cdk.context.json
+
 # dependencies
 node_modules
 
-# sst
-.sst
-.build
-
-# opennext
-.open-next
+# local env files
+.env*.local
 
 # misc
 .DS_Store
 
-# local env files
-.env*.local
+# opennext
+.open-next
+
+# sst
+.sst
+.build
 
 # yarn
 yarn-error.log
