@@ -1,5 +1,7 @@
 import { Amplify } from 'aws-amplify';
+import { BrowserRouter } from 'react-router-dom';
 import config from './config';
+import RouterElements from './router';
 
 Amplify.configure({
   Auth: {
@@ -26,9 +28,9 @@ Amplify.configure({
 
 function App() {
   return (
-    <div>
-      Howdy there!    
-    </div>
+    <BrowserRouter>
+      <RouterElements />
+    </BrowserRouter>
   );
 }
 
