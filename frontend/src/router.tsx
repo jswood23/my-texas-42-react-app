@@ -60,6 +60,7 @@ const RouterElements = () => {
                     path="/"
                     element={(<div>Homepage</div>)}
                 />
+                <Route path="/home" element={<Navigate to="/" />} />
                 <Route
                     path="/rules"
                     element={(<div>Rulespage</div>)}
