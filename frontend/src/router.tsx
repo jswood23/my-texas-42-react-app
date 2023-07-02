@@ -2,6 +2,7 @@ import { Auth } from 'aws-amplify';
 import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { requireLoginPages } from './constants';
 import * as React from 'react';
+import SnackbarAlert from './shared/snackbar-alert';
 
 const propTypes = {};
 
@@ -63,6 +64,12 @@ const RouterElements = () => {
                     element={(<div>Rulespage</div>)}
                 />
             </Routes>
+            <SnackbarAlert
+                handleClose={handleClose}
+                message={snackbarData.message}
+                open={snackbarData.open}
+                severity={snackbarData.severity}
+            />
         </div>
     );
 };
