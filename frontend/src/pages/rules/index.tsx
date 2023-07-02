@@ -1,23 +1,15 @@
-import PageContainer from '../../shared/page-container';
-import * as PropTypes from 'prop-types';
+import PageContainer from '../../shared/page-container'
+import type { OpenAlert, UserData } from '../../types'
 
-const propTypes = {
-  openAlert: PropTypes.func,
-  userData: PropTypes.object
-};
+interface Props {
+  openAlert: OpenAlert
+  userData: UserData
+}
 
-const defaultProps = {
-  openAlert: () => {},
-  userData: null
-};
-
-const Rulespage = ({ openAlert, userData }: any) => (
+const Rulespage = ({ openAlert, userData }: Props) => (
   <PageContainer openAlert={openAlert} title="Rules" userData={userData}>
     <p>Rules page stuff</p>
   </PageContainer>
-);
+)
 
-Rulespage.propTypes = propTypes;
-Rulespage.defaultProps = defaultProps;
-
-export default Rulespage;
+export default Rulespage

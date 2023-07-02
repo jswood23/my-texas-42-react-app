@@ -6,6 +6,7 @@
   "scripts": {
     "start": "cd ./frontend && yarn start",
     "update": "yarn install && cd ./frontend && yarn install",
+    "lint": "cd ./frontend && yarn run eslint src/**/*.ts",
     "dev": "sst dev",
     "build": "sst build",
     "deploy": "sst deploy",

@@ -1,9 +1,9 @@
-import { isMobile } from 'react-device-detect';
+import { isMobile } from 'react-device-detect'
 
 const spacing = (n: number) => {
-  const baseSize = isMobile ? 6 : 10;
-  return `${n * baseSize}px`;
-};
+  const baseSize = isMobile ? 6 : 10
+  return `${n * baseSize}px`
+}
 
 export const THEME = {
   form: {
@@ -44,4 +44,4 @@ export const THEME = {
     }
   },
   spacing: (n: number) => spacing(n)
-};
+}

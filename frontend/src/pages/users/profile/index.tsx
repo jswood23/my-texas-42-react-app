@@ -1,21 +1,16 @@
-import { useLocation } from 'react-router-dom';
-import PageContainer from '../../../shared/page-container';
-import * as PropTypes from 'prop-types';
-import queryString from 'query-string';
+import type { OpenAlert, UserData } from '../../../types'
+import { useLocation } from 'react-router-dom'
+import PageContainer from '../../../shared/page-container'
+import queryString from 'query-string'
 
-const propTypes = {
-  openAlert: PropTypes.func,
-  userData: PropTypes.object
-};
+interface Props {
+  openAlert: OpenAlert
+  userData: UserData
+}
 
-const defaultProps = {
-  openAlert: () => {},
-  userData: null
-};
-
-const ProfilePage = ({ openAlert, userData }: any) => {
-  const location = useLocation();
-  const queryParams = queryString.parse(location.search);
+const ProfilePage = ({ openAlert, userData }: Props) => {
+  const location = useLocation()
+  const queryParams = queryString.parse(location.search)
 
   return (
     <PageContainer openAlert={openAlert} title="My Profile" userData={userData}>
@@ -23,10 +18,7 @@ const ProfilePage = ({ openAlert, userData }: any) => {
         Username: {queryParams.username}
       </p>
     </PageContainer>
-  );
-};
+  )
+}
 
-ProfilePage.propTypes = propTypes;
-ProfilePage.defaultProps = defaultProps;
-
-export default ProfilePage;
+export default ProfilePage

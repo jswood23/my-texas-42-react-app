@@ -1,120 +1,115 @@
-import { Box, Collapse, FormControl } from '@mui/material';
-import { Auth } from 'aws-amplify';
-import { useNavigate } from 'react-router-dom';
-import { THEME } from '../../../constants/theme';
-import { validateField } from '../../../utils/user-utils';
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import ConfirmUserForm from '../confirm-user-form';
-import PageContainer from '../../../shared/page-container';
-import * as PropTypes from 'prop-types';
-import TextField from '@mui/material/TextField';
+import { Box, Collapse, FormControl } from '@mui/material'
+import { Auth } from 'aws-amplify'
+import type { OpenAlert, UserData } from '../../../types'
+import { useNavigate } from 'react-router-dom'
+import { THEME } from '../../../constants/theme'
+import { validateField } from '../../../utils/user-utils'
+import * as React from 'react'
+import Button from '@mui/material/Button'
+import ConfirmUserForm from '../confirm-user-form'
+import PageContainer from '../../../shared/page-container'
+import TextField from '@mui/material/TextField'
 
 const classes = {
   formContainer: THEME.form.container,
   formWindow: THEME.form.window,
   textInput: THEME.form.input
-};
+}
 
-const propTypes = {
-  openAlert: PropTypes.func,
-  userData: PropTypes.object
-};
+interface Props {
+  openAlert: OpenAlert
+  userData: UserData
+}
 
-const defaultProps = {
-  openAlert: () => {},
-  userData: null
-};
-
-const LoginPage = ({ openAlert, userData }: any) => {
-  const goTo = useNavigate();
+const LoginPage = ({ openAlert, userData }: Props) => {
+  const goTo = useNavigate()
   if (userData) {
-    goTo('/');
+    goTo('/')
   }
 
   const initialValues = {
     username: '',
     password: ''
-  };
+  }
 
-  const [confirmingUser, setConfirmingUser] = React.useState(false);
-  const [username, setUsername] = React.useState(initialValues.username);
-  const [password, setPassword] = React.useState(initialValues.password);
-  const [errors, setErrors] = React.useState({ hasError: false, username: null, password: null });
+  const [confirmingUser, setConfirmingUser] = React.useState(false)
+  const [username, setUsername] = React.useState(initialValues.username)
+  const [password, setPassword] = React.useState(initialValues.password)
+  const [errors, setErrors] = React.useState({ hasError: false, username: null, password: null })
 
-  const navigate = useNavigate();
-  const defaultUsername = username;
-  const defaultPassword = password;
+  const navigate = useNavigate()
+  const defaultUsername = username
+  const defaultPassword = password
 
   const goToSignUp = React.useCallback(() => {
-    navigate('/signup');
-  }, [navigate]);
+    navigate('/signup')
+  }, [navigate])
 
   const goToHome = React.useCallback(() => {
-    navigate('/');
-  }, [navigate]);
+    navigate('/')
+  }, [navigate])
 
   const runValidationTasks = React.useCallback(
     (fieldName: string, currentValue: string) => {
       const validations = {
         username: [{ type: 'Required' }],
         password: [{ type: 'Required' }]
-      };
+      }
       const validationResponse = validateField(
         currentValue,
         (validations as any)[fieldName]
-      );
-      setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
-      return validationResponse;
+      )
+      setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }))
+      return validationResponse
     },
     []
-  );
+  )
 
-  const onChangeUsername = (e: { target: { value: string }}) => {
-    const value = e.target.value;
+  const onChangeUsername = (e: { target: { value: string } }) => {
+    const value = e.target.value
     if ((errors.username as any)?.hasError) {
-      runValidationTasks('username', value);
+      runValidationTasks('username', value)
     }
-    setUsername(value);
-  };
+    setUsername(value)
+  }
 
-  const onChangePassword = (e: { target: { value: string }}) => {
-    const value = e.target.value;
+  const onChangePassword = (e: { target: { value: string } }) => {
+    const value = e.target.value
     if ((errors.password as any)?.hasError) {
-      runValidationTasks('password', value);
+      runValidationTasks('password', value)
     }
-    setPassword(value);
-  };
+    setPassword(value)
+  }
 
   const onSubmit = React.useCallback(async () => {
-    if (confirmingUser) return;
+    if (confirmingUser) return
 
     // Check validations before submitting
-    runValidationTasks('username', username);
-    runValidationTasks('password', password);
+    runValidationTasks('username', username)
+    runValidationTasks('password', password)
 
     if (
       Object.values(errors).some((e: any) => e?.hasError) ||
       !(username && password)
     ) {
-      return;
+      return
     }
 
     // Submit form
     try {
       // const { user } = await Auth.signUp(modelFields);
-      await Auth.signIn(username, password);
-      openAlert('Signed in successfully!', 'success');
-      goToHome();
+      await Auth.signIn(username, password)
+      openAlert('Signed in successfully!', 'success')
+      goToHome()
     } catch (error: any) {
-      let errorMessage = 'An error occurred while signing in.';
+      let errorMessage = 'An error occurred while signing in.'
       if (error) {
-        errorMessage = error.message;
+        errorMessage = error.message
         if (error.message === 'User is not confirmed.') {
-          setConfirmingUser(true);
+          setConfirmingUser(true)
         }
       }
-      openAlert(errorMessage, 'error');
+      openAlert(errorMessage, 'error')
     }
   }, [
     confirmingUser,
@@ -124,26 +119,26 @@ const LoginPage = ({ openAlert, userData }: any) => {
     password,
     runValidationTasks,
     username
-  ]);
+  ])
 
   React.useEffect(() => {
-    const listener = (event: { code: string, preventDefault: Function}) => {
+    const listener = (event: { code: string, preventDefault: () => void }) => {
       if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-        event.preventDefault();
-        onSubmit();
+        event.preventDefault()
+        onSubmit()
       }
-    };
-    document.addEventListener('keydown', listener);
+    }
+    document.addEventListener('keydown', listener)
     return () => {
-      document.removeEventListener('keydown', listener);
-    };
-  }, [onSubmit]);
+      document.removeEventListener('keydown', listener)
+    }
+  }, [onSubmit])
 
   return (
     <PageContainer openAlert={openAlert} title="Login" userData={userData}>
-      {/* @ts-ignore */}
+      {/* @ts-expect-error TODO: add styled components */}
       <Box style={classes.formWindow}>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error TODO: add styled components */}
         <Box style={classes.formContainer}>
           <FormControl>
             <TextField
@@ -188,7 +183,7 @@ const LoginPage = ({ openAlert, userData }: any) => {
             <Button onClick={goToSignUp}>Create An Account</Button>
           </FormControl>
         </Box>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error TODO: add styled components */}
         <Collapse style={classes.formContainer} in={confirmingUser}>
           <ConfirmUserForm
             defaultUsername={defaultUsername}
@@ -199,10 +194,7 @@ const LoginPage = ({ openAlert, userData }: any) => {
         </Collapse>
       </Box>
     </PageContainer>
-  );
-};
+  )
+}
 
-LoginPage.propTypes = propTypes;
-LoginPage.defaultProps = defaultProps;
-
-export default LoginPage;
+export default LoginPage
