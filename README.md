@@ -28,11 +28,12 @@ If you follow these instructions, you should be running `my-texas-42` in no time
    1. Pick a directory where the clone will live and click on "Clone.""
    1. Watch as the cloned project is downloaded to your machine.
 
-1. Create a new file in the `src` directory called `aws-exports.js`. Message an admin to get the contents of this file.
+1. Install the AWS CLI: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+1. Message Josh and ask for AWS credentials. Run `aws configure` and enter in the credentials you get when prompted. Just press enter on everything else, this will set those values to the defaults.
 1. Open the repository in your terminal and run the following commands:
    - `yarn update`
    - `yarn start`
-   1. On Windows: If `yarn install` brings up an error about the execution policy, then open Powershell as an administrator and run the command `Set-ExecutionPolicy AllSigned` and restart your computer to allow yarn to run the installation scripts.
+   1. On Windows: If `yarn update` brings up an error about the execution policy, then open Powershell as an administrator and run the command `Set-ExecutionPolicy AllSigned` and restart your computer to allow yarn to run the installation scripts.
 1. Congrats! `my-texas-42-react-app` should now be running locally on your machine!
 
 ## Helpful Links
