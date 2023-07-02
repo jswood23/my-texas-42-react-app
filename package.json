@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "start": "cd ./frontend && yarn start",
+    "update": "yarn install && cd ./frontend && yarn install",
     "dev": "sst dev",
     "build": "sst build",
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "typecheck": "tsc --noEmit",
-    "update": "cd ./frontend && yarn install"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@tsconfig/node16": "^16.1.0",
