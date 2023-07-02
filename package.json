@@ -10,7 +10,8 @@
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "update": "cd ./frontend && yarn install"
   },
   "devDependencies": {
     "@tsconfig/node16": "^16.1.0",
