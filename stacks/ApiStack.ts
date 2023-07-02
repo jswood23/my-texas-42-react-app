@@ -6,6 +6,8 @@ export function ApiStack({ stack, app }: StackContext) {
 
     // Create the API
     const api = new Api(stack, "Api", {
+        customDomain:
+            app.stage === "prod" ? "api.mytexas42.com" : undefined,
         defaults: {
             authorizer: "iam",
             function: {
@@ -23,7 +25,7 @@ export function ApiStack({ stack, app }: StackContext) {
 
     // Show the API endpoint in the output
     stack.addOutputs({
-        ApiEndpoint: api.url,
+        ApiEndpoint: api.customDomainUrl || api.url,
     });
 
     // Return the API resource
