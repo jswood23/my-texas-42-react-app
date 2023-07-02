@@ -2,7 +2,9 @@ import { Auth } from 'aws-amplify';
 import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { requireLoginPages } from './constants';
 import * as React from 'react';
+import Homepage from './pages/home';
 import Navbar from './shared/navbar';
+import Rulespage from './pages/rules';
 import SnackbarAlert from './shared/snackbar-alert';
 
 const propTypes = {};
@@ -58,12 +60,12 @@ const RouterElements = () => {
             <Routes>
                 <Route
                     path="/"
-                    element={(<div>Homepage</div>)}
+                    element={<Homepage openAlert={openAlert} userData={userData} />}
                 />
                 <Route path="/home" element={<Navigate to="/" />} />
                 <Route
                     path="/rules"
-                    element={(<div>Rulespage</div>)}
+                    element={<Rulespage openAlert={openAlert} userData={userData} />}
                 />
             </Routes>
             <SnackbarAlert
