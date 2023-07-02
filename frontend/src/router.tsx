@@ -5,6 +5,7 @@ import * as React from 'react';
 import Homepage from './pages/home';
 import Navbar from './shared/navbar';
 import Rulespage from './pages/rules';
+import SignupPage from './pages/users/signup';
 import SnackbarAlert from './shared/snackbar-alert';
 
 const propTypes = {};
@@ -67,6 +68,12 @@ const RouterElements = () => {
                     path="/rules"
                     element={<Rulespage openAlert={openAlert} userData={userData} />}
                 />
+                {!userData &&
+                  <Route
+                    path='/signup'
+                    element={<SignupPage openAlert={openAlert} userData={userData} />}
+                  />
+                }
             </Routes>
             <SnackbarAlert
                 handleClose={handleClose}
