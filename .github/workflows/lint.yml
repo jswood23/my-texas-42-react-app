@@ -17,5 +17,8 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v2
 
+      - name: Install Dependencies
+        run: yarn update
+
       - name: Code Linting
         run: yarn lint
