@@ -3,11 +3,12 @@ import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-
 import { requireLoginPages } from './constants';
 import * as React from 'react';
 import Homepage from './pages/home';
+import LoginPage from './pages/users/login';
 import Navbar from './shared/navbar';
+import ProfilePage from './pages/users/profile';
 import Rulespage from './pages/rules';
 import SignupPage from './pages/users/signup';
 import SnackbarAlert from './shared/snackbar-alert';
-import LoginPage from './pages/users/login';
 
 const propTypes = {};
 
@@ -57,7 +58,7 @@ const RouterElements = () => {
     }, [location, navigate]);
 
     return (
-        <div>
+        <>
             <Navbar openAlert={openAlert} userData={userData} />
             <Routes>
                 <Route
@@ -79,6 +80,12 @@ const RouterElements = () => {
                     element={<SignupPage openAlert={openAlert} userData={userData} />}
                   />
                 </>}
+                {userData && <>
+                  <Route
+                    path='/profile'
+                    element={<ProfilePage openAlert={openAlert} userData={userData} />}
+                  />
+                </>}
             </Routes>
             <SnackbarAlert
                 handleClose={handleClose}
@@ -86,7 +93,7 @@ const RouterElements = () => {
                 open={snackbarData.open}
                 severity={snackbarData.severity}
             />
-        </div>
+        </>
     );
 };
 
