@@ -7,6 +7,7 @@ import Navbar from './shared/navbar';
 import Rulespage from './pages/rules';
 import SignupPage from './pages/users/signup';
 import SnackbarAlert from './shared/snackbar-alert';
+import LoginPage from './pages/users/login';
 
 const propTypes = {};
 
@@ -57,7 +58,7 @@ const RouterElements = () => {
 
     return (
         <div>
-            <Navbar />
+            <Navbar openAlert={openAlert} userData={userData} />
             <Routes>
                 <Route
                     path="/"
@@ -68,12 +69,16 @@ const RouterElements = () => {
                     path="/rules"
                     element={<Rulespage openAlert={openAlert} userData={userData} />}
                 />
-                {!userData &&
+                {!userData && <>
+                  <Route
+                    path='/login'
+                    element={<LoginPage openAlert={openAlert} userData={userData} />}
+                  />
                   <Route
                     path='/signup'
                     element={<SignupPage openAlert={openAlert} userData={userData} />}
                   />
-                }
+                </>}
             </Routes>
             <SnackbarAlert
                 handleClose={handleClose}
