@@ -2,6 +2,8 @@
 
 Production url: https://www.mytexas42.com/
 
+[![Seed Status](https://api.seed.run/jswood23/my-texas-42-react-app/stages/prod/build_badge)](https://console.seed.run/jswood23/my-texas-42-react-app)
+
 ## Installation
 
 If you follow these instructions, you should be running `my-texas-42` in no time at all! If you have any trouble, please refer to the [installation discord channel](https://discord.com/channels/1117123045895716944/1117123046571003946).
