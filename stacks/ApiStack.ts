@@ -2,7 +2,7 @@ import { Api, StackContext, use } from "sst/constructs";
 import { StorageStack } from "./StorageStack";
 
 export function ApiStack({ stack, app }: StackContext) {
-    const { matchHistoryTable, notesTable, userInfoTable } = use(StorageStack);
+    const { matchHistoryTable, notesTable, rulesetTable, userInfoTable } = use(StorageStack);
 
     // Create the API
     const api = new Api(stack, 'Api', {
@@ -10,7 +10,12 @@ export function ApiStack({ stack, app }: StackContext) {
       defaults: {
         authorizer: 'iam',
         function: {
-          bind: [matchHistoryTable, notesTable, userInfoTable],
+          bind: [
+            matchHistoryTable,
+            notesTable,
+            rulesetTable,
+            userInfoTable
+          ],
         },
       },
       routes: {
@@ -18,8 +23,7 @@ export function ApiStack({ stack, app }: StackContext) {
         'GET /notes/{id}': 'packages/functions/src/notes-tutorial/get.main', // get one note
         'POST /notes': 'packages/functions/src/notes-tutorial/create.main', // create new note
         'PUT /notes/{id}': 'packages/functions/src/notes-tutorial/update.main', // create new note
-        'DELETE /notes/{id}':
-          'packages/functions/src/notes-tutorial/delete.main', // delete note
+        'DELETE /notes/{id}': 'packages/functions/src/notes-tutorial/delete.main', // delete note
       },
     });
 
