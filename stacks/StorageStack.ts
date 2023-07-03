@@ -31,6 +31,7 @@ export function StorageStack({ stack, app }: StackContext) {
       fields: {
         user_id: 'string',
         username: 'string',
+        email: 'string',
         is_admin: 'binary',
         friends: 'string', // list
         incoming_friend_requests: 'string', // list
