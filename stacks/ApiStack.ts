@@ -2,7 +2,7 @@ import { Api, StackContext, use } from "sst/constructs";
 import { StorageStack } from "./StorageStack";
 
 export function ApiStack({ stack, app }: StackContext) {
-    const { notesTable, userInfoTable } = use(StorageStack);
+    const { matchHistoryTable, notesTable, userInfoTable } = use(StorageStack);
 
     // Create the API
     const api = new Api(stack, 'Api', {
@@ -10,7 +10,7 @@ export function ApiStack({ stack, app }: StackContext) {
       defaults: {
         authorizer: 'iam',
         function: {
-          bind: [notesTable, userInfoTable],
+          bind: [matchHistoryTable, notesTable, userInfoTable],
         },
       },
       routes: {

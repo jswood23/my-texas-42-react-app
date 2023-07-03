@@ -55,8 +55,32 @@ export function StorageStack({ stack, app }: StackContext) {
       },
     });
 
+    const matchHistoryTable = new Table(stack, 'MatchHistory', {
+      fields: {
+        match_id: 'string',
+        ruleset: 'string',
+        players: 'string', // list
+        team_1: 'string', // list
+        team_2: 'string', // list
+        winners: 'number',
+        total_score: 'string',
+        total_rounds: 'number',
+        round_type: 'string', // list
+        round_bidder: 'string', // list
+        round_winner: 'string', // list
+        round_score: 'string', // list
+      },
+      primaryIndex: { partitionKey: 'match_id' },
+      cdk: {
+        table: {
+          pointInTimeRecovery: false,
+        },
+      },
+    });
+
     return {
       bucket,
+      matchHistoryTable,
       notesTable,
       userInfoTable,
     };
