@@ -1,4 +1,5 @@
 export interface UserData {
+  exists: boolean
   readonly username: string
 }
 

@@ -41,7 +41,7 @@ const RouterElements = () => {
     const getAuthData = async () => {
       try {
         const authData = await Auth.currentAuthenticatedUser()
-        setUserData(authData)
+        setUserData({ ...authData, exists: true })
       } catch {
         setUserData(defaultUserData)
         if (requireLoginPages.includes(location.pathname)) {
@@ -66,7 +66,7 @@ const RouterElements = () => {
             path="/rules"
             element={<Rulespage openAlert={openAlert} userData={userData} />}
           />
-          {!userData && <>
+          {!userData.exists && <>
             <Route
               path='/login'
               element={<LoginPage openAlert={openAlert} userData={userData} />}
@@ -76,7 +76,7 @@ const RouterElements = () => {
               element={<SignupPage openAlert={openAlert} userData={userData} />}
             />
           </>}
-          {userData && <>
+          {userData.exists && <>
             <Route
               path='/profile'
               element={<ProfilePage openAlert={openAlert} userData={userData} />}

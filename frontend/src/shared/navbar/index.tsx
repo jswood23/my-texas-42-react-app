@@ -118,7 +118,7 @@ const Navbar = ({ openAlert, userData }: Props) => {
   }, [handleCloseDropdown, openAlert, navigate])
 
   const navRightSide = () => {
-    if (userData) {
+    if (userData.exists) {
       return (
         <Toolbar className={classes.rightSide}>
           <Button
