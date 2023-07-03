@@ -2,7 +2,6 @@ import { Alert, Box, Collapse, FormControl } from '@mui/material'
 import { Auth } from 'aws-amplify'
 import type { OpenAlert, UserData } from '../../../types'
 import { THEME } from '../../../constants/theme'
-import { useNavigate } from 'react-router-dom'
 import { validateField } from '../../../utils/user-utils'
 import * as React from 'react'
 import Button from '@mui/material/Button'
@@ -22,11 +21,6 @@ interface Props {
 }
 
 const SignupPage = ({ openAlert, userData }: Props) => {
-  const goTo = useNavigate()
-  if (userData) {
-    goTo('/')
-  }
-
   const initialValues = {
     email: '',
     username: '',

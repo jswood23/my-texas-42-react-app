@@ -22,11 +22,6 @@ interface Props {
 }
 
 const LoginPage = ({ openAlert, userData }: Props) => {
-  const goTo = useNavigate()
-  if (userData) {
-    goTo('/')
-  }
-
   const initialValues = {
     username: '',
     password: ''
