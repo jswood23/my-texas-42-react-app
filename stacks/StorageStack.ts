@@ -14,7 +14,7 @@ export function StorageStack({ stack, app }: StackContext) {
     });
 
     // Create the DynamoDB table
-    const table = new Table(stack, "Notes", {
+    const notesTable = new Table(stack, "Notes", {
         fields: {
             userId: "string",
             noteId: "string",
@@ -23,7 +23,7 @@ export function StorageStack({ stack, app }: StackContext) {
     });
 
     return {
-        bucket,
-        table,
+      bucket,
+      notesTable,
     };
 }
