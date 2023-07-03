@@ -1,3 +1,4 @@
+import { AccountCircle, Login, Logout, PersonAdd, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
 import { AppBar, Toolbar, CssBaseline } from '@material-ui/core'
 import { Auth } from 'aws-amplify'
 import { makeStyles } from '@material-ui/core/styles'
@@ -5,17 +6,11 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import type { OpenAlert, UserData } from '../../types'
 import { THEME } from '../../constants/theme'
 import * as React from 'react'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import Button from '@mui/material/Button'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import LoginIcon from '@mui/icons-material/Login'
-import LogoutIcon from '@mui/icons-material/Logout'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import Logo42 from '../../images/42logo.png'
 
 interface Props {
@@ -123,7 +118,7 @@ const Navbar = ({ openAlert, userData }: Props) => {
   }, [handleCloseDropdown, openAlert, navigate])
 
   const navRightSide = () => {
-    if (userData) {
+    if (userData.exists) {
       return (
         <Toolbar className={classes.rightSide}>
           <Button
@@ -134,10 +129,10 @@ const Navbar = ({ openAlert, userData }: Props) => {
             endIcon={
               isDropdownOpen
                 ? (
-                <KeyboardArrowUpIcon />
+                <KeyboardArrowUp />
                   )
                 : (
-                <KeyboardArrowDownIcon />
+                <KeyboardArrowDown />
                   )
             }
           >
@@ -152,13 +147,13 @@ const Navbar = ({ openAlert, userData }: Props) => {
           >
             <MenuItem onClick={handleClickProfile} disableRipple>
               <ListItemIcon>
-                <AccountCircleIcon fontSize="small" />
+                <AccountCircle fontSize="small" />
               </ListItemIcon>
               <ListItemText>My Profile</ListItemText>
             </MenuItem>
             <MenuItem onClick={handleClickSignOut} disableRipple>
               <ListItemIcon>
-                <LogoutIcon fontSize="small" />
+                <Logout fontSize="small" />
               </ListItemIcon>
               <ListItemText>Sign out</ListItemText>
             </MenuItem>
@@ -174,7 +169,7 @@ const Navbar = ({ openAlert, userData }: Props) => {
           sx={buttonStyle}
           onClick={handleOpenDropdown}
           endIcon={
-            isDropdownOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />
+            isDropdownOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />
           }
         >
           Sign in
@@ -188,13 +183,13 @@ const Navbar = ({ openAlert, userData }: Props) => {
         >
           <MenuItem onClick={handleClickLogin} disableRipple>
             <ListItemIcon>
-              <LoginIcon fontSize="small" />
+              <Login fontSize="small" />
             </ListItemIcon>
             <ListItemText>Log in with email</ListItemText>
           </MenuItem>
           <MenuItem onClick={handleClickSignUp} disableRipple>
             <ListItemIcon>
-              <PersonAddIcon fontSize="small" />
+              <PersonAdd fontSize="small" />
             </ListItemIcon>
             <ListItemText>Create an account</ListItemText>
           </MenuItem>
