@@ -9,6 +9,7 @@ export default {
     return {
       name: "my-texas-42-react-app",
       region: "us-east-1",
+      profile: _input.stage
     };
   },
 
