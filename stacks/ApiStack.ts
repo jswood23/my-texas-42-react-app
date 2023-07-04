@@ -20,6 +20,8 @@ export function ApiStack({ stack, app }: StackContext) {
         },
       },
       routes: {
+        // users api
+        'POST /userInfo': 'packages/functions/src/users/create-user-info.main',
         // notes api from tutorial
         'GET /notes': 'packages/functions/src/notes-tutorial/list.main', // list all notes
         'GET /notes/{id}': 'packages/functions/src/notes-tutorial/get.main', // get one note
