@@ -1,13 +1,11 @@
-import { Alert, Box, Collapse, FormControl } from '@mui/material'
+import { Alert, Box, Button, CircularProgress, Collapse, FormControl, TextField } from '@mui/material'
 import { Auth } from 'aws-amplify'
 import type { OpenAlert, UserData } from '../../../types'
 import { THEME } from '../../../constants/theme'
 import { validateField } from '../../../utils/user-utils'
 import * as React from 'react'
-import Button from '@mui/material/Button'
 import ConfirmUserForm from '../confirm-user-form'
 import PageContainer from '../../../shared/page-container'
-import TextField from '@mui/material/TextField'
 
 const classes = {
   formContainer: THEME.form.container,
@@ -37,9 +35,11 @@ const SignupPage = ({ openAlert, userData }: Props) => {
     initialValues.confirmPassword
   )
   const [errors, setErrors] = React.useState({ hasErrors: false, email: null, username: null, password: null, confirmPassword: null })
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const defaultUsername = username
   const defaultPassword = password
+  const disableSubmitButton = confirmingUser || isLoading || Object.values(errors).some((e: any) => e?.hasError)
 
   const runValidationTasks = React.useCallback(
     (fieldName: string, currentValue: string) => {
@@ -117,7 +117,8 @@ const SignupPage = ({ openAlert, userData }: Props) => {
 
     if (
       Object.values(errors).some((e: any) => e?.hasError) ||
-      !(email && username && password && confirmPassword)
+      !(email && username && password && confirmPassword) ||
+      password !== confirmPassword
     ) {
       return
     }
@@ -134,6 +135,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
     }
 
     try {
+      setIsLoading(true)
       // const { user } = await Auth.signUp(modelFields);
       await Auth.signUp(modelFields)
       setConfirmingUser(true)
@@ -143,10 +145,15 @@ const SignupPage = ({ openAlert, userData }: Props) => {
         errorMessage = error.message
         if (error.message === 'User is not confirmed.') {
           setConfirmingUser(true)
+        } else if (error.message.includes('existing_email') || error.message.includes('email already exists')) {
+          errorMessage = 'An account already exists with this email.'
+        } else if (error.message.includes('User already exists')) {
+          errorMessage = 'This username is already taken.'
         }
       }
       openAlert(errorMessage, 'error')
     }
+    setIsLoading(false)
   }, [
     confirmPassword,
     confirmingUser,
@@ -250,11 +257,9 @@ const SignupPage = ({ openAlert, userData }: Props) => {
               type="submit"
               onClick={onSubmit}
               style={classes.textInput}
-              disabled={
-                confirmingUser || Object.values(errors).some((e: any) => e?.hasError)
-              }
+              disabled={disableSubmitButton}
             >
-              Sign Up
+              {isLoading ? <CircularProgress size={20} /> : <>Sign Up</>}
             </Button>
           </FormControl>
         </Box>

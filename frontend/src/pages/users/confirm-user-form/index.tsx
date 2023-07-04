@@ -1,12 +1,10 @@
-import { Alert, FormControl } from '@mui/material'
+import { Alert, Button, CircularProgress, FormControl, TextField } from '@mui/material'
 import { API, Auth } from 'aws-amplify'
 import { useNavigate } from 'react-router-dom'
 import { THEME } from '../../../constants/theme'
 import type { OpenAlert, UserData } from '../../../types'
 import { validateField } from '../../../utils/user-utils'
 import * as React from 'react'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 
 const classes = {
   formContainer: THEME.form.container,
@@ -35,6 +33,9 @@ const ConfirmUserForm = ({
   )
   const [errors, setErrors] = React.useState({ hasErrors: false, verificationCode: null })
   const [isFieldSelected, setIsFieldSelected] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
+
+  const disableSubmitButton = isLoading || Object.values(errors).some((e: any) => e?.hasError)
 
   const navigate = useNavigate()
 
@@ -75,6 +76,7 @@ const ConfirmUserForm = ({
     }
 
     try {
+      setIsLoading(true)
       await Auth.confirmSignUp(defaultUsername, verificationCode)
       const newUserData = await Auth.signIn(defaultUsername, defaultPassword)
 
@@ -98,6 +100,7 @@ const ConfirmUserForm = ({
       }
       openAlert(errorMessage, 'error')
     }
+    setIsLoading(false)
   }, [
     defaultPassword,
     defaultUsername,
@@ -160,11 +163,11 @@ const ConfirmUserForm = ({
 
       <Button
         type="submit"
-        disabled={Object.values(errors).some((e: any) => e?.hasError)}
+        disabled={disableSubmitButton}
         onClick={onSubmit}
         style={classes.textInput}
       >
-        Verify Account
+        {isLoading ? <CircularProgress size={20} /> : <>Verify Account</>}
       </Button>
 
       <Button onClick={onResend} style={classes.textInput}>
