@@ -23,7 +23,7 @@ export const main = (event: any, context: any) => {
 
         if (emailResult.Items) {
             if (emailResult.Items.length > 0) {
-                return reject(Error('"email already exists"'));
+                return reject(Error('existing_email'));
             }
         }
 
