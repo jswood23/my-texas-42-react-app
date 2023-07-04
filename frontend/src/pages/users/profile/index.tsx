@@ -15,19 +15,21 @@ interface Props {
 const ProfilePage = ({ openAlert, userData }: Props) => {
   const location = useLocation()
   const queryParams = queryString.parse(location.search)
+  const queryUsername = (queryParams.username as string) ?? ''
 
   const [isError, setIsError] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
   const [profileData, setProfileData] = React.useState(defaultProfileData)
-  const [username, setUsername] = React.useState((queryParams.username as string) ?? '')
+  const [username, setUsername] = React.useState(queryUsername)
 
   const pageHeader = username.length ? `${username}'s Profile` : 'User not found'
 
   React.useEffect(() => {
     const getProfileData = async () => {
+      setUsername(queryUsername)
       setIsError(false)
       setIsLoading(true)
-      await API.get(apiContext, `/users/${username}`, {})
+      await API.get(apiContext, `/users/${queryUsername}`, {})
         .then((response) => {
           setProfileData(response)
         }).catch((error) => {
