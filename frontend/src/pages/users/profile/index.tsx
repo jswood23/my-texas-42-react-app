@@ -42,7 +42,8 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
         })
       setIsLoading(false)
     }
-    getProfileData()
+    if (queryUsername) getProfileData()
+    else setIsError(true)
   }, [location])
 
   return isError
