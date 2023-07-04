@@ -4,11 +4,6 @@ import dynamoDB from "@my-texas-42-react-app/core/dynamodb";
 
 export const main = (event: any, context: any) => {
     return new Promise(async function (resolve, reject) {
-        // console.log("Event:");
-        // console.log(event);
-        // console.log("Context:");
-        // console.log(context);
-        // const data = JSON.parse(event.body);
         const { userName } = event;
         const { email, sub } = event.request.userAttributes;
 
