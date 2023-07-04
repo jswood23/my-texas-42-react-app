@@ -1,5 +1,7 @@
 import type { ProfileData, UserData } from '../types'
 
+export const apiContext = 'mytexas42api'
+
 export const requireLoginPages = ['/profile']
 
 export const defaultProfileData: ProfileData = {
