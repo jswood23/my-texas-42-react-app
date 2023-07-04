@@ -1,14 +1,12 @@
-import { Box, Collapse, FormControl } from '@mui/material'
+import { Box, Button, CircularProgress, Collapse, FormControl, TextField } from '@mui/material'
 import { Auth } from 'aws-amplify'
 import type { OpenAlert, UserData } from '../../../types'
 import { useNavigate } from 'react-router-dom'
 import { THEME } from '../../../constants/theme'
 import { validateField } from '../../../utils/user-utils'
 import * as React from 'react'
-import Button from '@mui/material/Button'
 import ConfirmUserForm from '../confirm-user-form'
 import PageContainer from '../../../shared/page-container'
-import TextField from '@mui/material/TextField'
 
 const classes = {
   formContainer: THEME.form.container,
@@ -31,10 +29,12 @@ const LoginPage = ({ openAlert, userData }: Props) => {
   const [username, setUsername] = React.useState(initialValues.username)
   const [password, setPassword] = React.useState(initialValues.password)
   const [errors, setErrors] = React.useState({ hasError: false, username: null, password: null })
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const navigate = useNavigate()
   const defaultUsername = username
   const defaultPassword = password
+  const disableSubmitButton = confirmingUser || isLoading || Object.values(errors).some((e: any) => e?.hasError)
 
   const goToSignUp = React.useCallback(() => {
     navigate('/signup')
@@ -92,6 +92,7 @@ const LoginPage = ({ openAlert, userData }: Props) => {
 
     // Submit form
     try {
+      setIsLoading(true)
       // const { user } = await Auth.signUp(modelFields);
       await Auth.signIn(username, password)
       openAlert('Signed in successfully!', 'success')
@@ -106,6 +107,7 @@ const LoginPage = ({ openAlert, userData }: Props) => {
       }
       openAlert(errorMessage, 'error')
     }
+    setIsLoading(false)
   }, [
     confirmingUser,
     errors,
@@ -168,11 +170,9 @@ const LoginPage = ({ openAlert, userData }: Props) => {
               type="submit"
               onClick={onSubmit}
               style={classes.textInput}
-              disabled={
-                confirmingUser || Object.values(errors).some((e: any) => e?.hasError)
-              }
+              disabled={disableSubmitButton}
             >
-              Login
+              {isLoading ? <CircularProgress size={20} /> : <>Login</>}
             </Button>
 
             <Button onClick={goToSignUp}>Create An Account</Button>

@@ -255,7 +255,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
               style={classes.textInput}
               disabled={disableSubmitButton}
             >
-              {disableSubmitButton ? <CircularProgress size={20} /> : <>Sign Up</>}
+              {isLoading ? <CircularProgress size={20} /> : <>Sign Up</>}
             </Button>
           </FormControl>
         </Box>
