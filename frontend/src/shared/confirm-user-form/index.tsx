@@ -1,5 +1,5 @@
 import { Alert, Button, CircularProgress, FormControl, TextField } from '@mui/material'
-import { API, Auth } from 'aws-amplify'
+import { Auth } from 'aws-amplify'
 import { useNavigate } from 'react-router-dom'
 import { THEME } from '../../constants/theme'
 import type { OpenAlert, UserData } from '../../types'
