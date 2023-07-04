@@ -10,7 +10,8 @@ export function AuthStack({ stack, app }: StackContext) {
     const auth = new Cognito(stack, "Auth", {
         login: ["email", "username"],
         triggers: {
-            preSignUp: "packages/functions/src/users/check-existing-email.main"
+            preSignUp: "packages/functions/src/users/check-existing-email.main",
+            postConfirmation: "packages/functions/src/users/create-user-info.main"
         }
     });
 
