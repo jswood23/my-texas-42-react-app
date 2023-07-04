@@ -1,9 +1,9 @@
 import { Alert, Button, CircularProgress, FormControl, TextField } from '@mui/material'
-import { API, Auth } from 'aws-amplify'
+import { Auth } from 'aws-amplify'
 import { useNavigate } from 'react-router-dom'
-import { THEME } from '../../../constants/theme'
-import type { OpenAlert, UserData } from '../../../types'
-import { validateField } from '../../../utils/user-utils'
+import { THEME } from '../../constants/theme'
+import type { OpenAlert, UserData } from '../../types'
+import { validateField } from '../../utils/user-utils'
 import * as React from 'react'
 
 const classes = {
@@ -77,21 +77,13 @@ const ConfirmUserForm = ({
 
     try {
       setIsLoading(true)
+
       await Auth.confirmSignUp(defaultUsername, verificationCode)
-      const newUserData = await Auth.signIn(defaultUsername, defaultPassword)
 
-      const { username } = newUserData
-      const { email } = newUserData.attributes
-
-      // Send http post to create a new UserInfo entry
-      await API.post('mytexas42api', '/userInfo', {
-        body: {
-          username,
-          email
-        }
-      })
+      await Auth.signIn(defaultUsername, defaultPassword)
 
       openAlert('Signed in successfully!', 'success')
+
       goToHome()
     } catch (error: any) {
       let errorMessage = 'An error occurred while confirming the account.'

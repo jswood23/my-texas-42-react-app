@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { THEME } from '../../../constants/theme'
 import { validateField } from '../../../utils/user-utils'
 import * as React from 'react'
-import ConfirmUserForm from '../confirm-user-form'
+import ConfirmUserForm from '../../../shared/confirm-user-form'
 import PageContainer from '../../../shared/page-container'
 
 const classes = {

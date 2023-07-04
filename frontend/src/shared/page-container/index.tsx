@@ -1,16 +1,17 @@
+import { CircularProgress, Container } from '@mui/material'
 import type { OpenAlert, UserData } from '../../types'
 import { THEME } from '../../constants/theme'
 import * as React from 'react'
-import Container from '@mui/material/Container'
 
 interface Props {
-  children: any
+  children?: any
+  isLoading?: boolean
   openAlert: OpenAlert
   title: string
   userData: UserData
 }
 
-const PageContainer = ({ children, openAlert, title, userData }: Props) => {
+const PageContainer = ({ children, isLoading = false, openAlert, title, userData }: Props) => {
   const [pageHeight, setPageHeight] = React.useState(0)
 
   React.useEffect(() => {
@@ -36,7 +37,7 @@ const PageContainer = ({ children, openAlert, title, userData }: Props) => {
     <Container fixed style={classes.backdrop}>
       <h1>{title}</h1>
       <hr />
-      {children}
+      {isLoading ? <CircularProgress /> : children}
     </Container>
   )
 }

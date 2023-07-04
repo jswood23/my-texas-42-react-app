@@ -1,4 +1,5 @@
 import { Amplify } from 'aws-amplify'
+import { apiContext } from './constants'
 import { BrowserRouter } from 'react-router-dom'
 import config from './constants/config'
 import RouterElements from './router'
@@ -18,7 +19,7 @@ Amplify.configure({
   API: {
     endpoints: [
       {
-        name: 'mytexas42api',
+        name: apiContext,
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION
       }
