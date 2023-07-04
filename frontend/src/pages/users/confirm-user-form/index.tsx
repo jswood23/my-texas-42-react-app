@@ -79,12 +79,11 @@ const ConfirmUserForm = ({
       const newUserData = await Auth.signIn(defaultUsername, defaultPassword)
 
       const { username } = newUserData
-      const { email, sub } = newUserData.attributes
+      const { email } = newUserData.attributes
 
       // Send http post to create a new UserInfo entry
       await API.post('mytexas42api', '/userInfo', {
         body: {
-          user_id: sub,
           username,
           email
         }
