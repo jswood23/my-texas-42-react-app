@@ -6,14 +6,13 @@ export const main = (event: any, context: any) => {
         const email = event.request.userAttributes.email;
         // check for missing or invalid values
         if (!email) {
-            return reject(Error('"missing or invalid email"'));
+            return reject(Error('missing_email'));
         }
 
         // check for existing userInfo
         const getEmailParams = {
             TableName: Table.UserInfo.tableName,
             FilterExpression: 'email = :email',
-            // KeyConditionExpression: "email = :email",
             ExpressionAttributeValues: {
                 ":email": email,
             },

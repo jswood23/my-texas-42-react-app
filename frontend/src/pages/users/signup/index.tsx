@@ -145,7 +145,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
         errorMessage = error.message
         if (error.message === 'User is not confirmed.') {
           setConfirmingUser(true)
-        } else if (error.message.includes('existing_email')) {
+        } else if (error.message.includes('existing_email') || error.message.includes('email already exists')) {
           errorMessage = 'An account already exists with this email.'
         } else if (error.message.includes('User already exists')) {
           errorMessage = 'This username is already taken.'
