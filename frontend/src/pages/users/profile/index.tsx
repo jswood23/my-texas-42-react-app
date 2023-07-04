@@ -11,12 +11,11 @@ interface Props {
 const ProfilePage = ({ openAlert, userData }: Props) => {
   const location = useLocation()
   const queryParams = queryString.parse(location.search)
+  const username: string = (queryParams.username as string) ?? ''
+  const pageHeader = username.length ? `${username}'s Profile` : 'User not found'
 
   return (
-    <PageContainer openAlert={openAlert} title="My Profile" userData={userData}>
-      <p>
-        Username: {queryParams.username}
-      </p>
+    <PageContainer openAlert={openAlert} title={pageHeader} userData={userData}>
     </PageContainer>
   )
 }
