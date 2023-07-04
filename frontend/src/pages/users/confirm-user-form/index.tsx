@@ -1,5 +1,5 @@
 import { Alert, FormControl } from '@mui/material'
-import { Auth } from 'aws-amplify'
+import { API, Auth } from 'aws-amplify'
 import { useNavigate } from 'react-router-dom'
 import { THEME } from '../../../constants/theme'
 import type { OpenAlert, UserData } from '../../../types'
@@ -76,13 +76,26 @@ const ConfirmUserForm = ({
 
     try {
       await Auth.confirmSignUp(defaultUsername, verificationCode)
-      await Auth.signIn(defaultUsername, defaultPassword)
+      const newUserData = await Auth.signIn(defaultUsername, defaultPassword)
+
+      const { username } = newUserData
+      const { email, sub } = newUserData.attributes
+
+      // Send http post to create a new UserInfo entry
+      await API.post('mytexas42api', '/userInfo', {
+        body: {
+          user_id: sub,
+          username,
+          email
+        }
+      })
+
       openAlert('Signed in successfully!', 'success')
       goToHome()
     } catch (error: any) {
       let errorMessage = 'An error occurred while confirming the account.'
       if (error) {
-        errorMessage = error.message
+        errorMessage = error.message || error
       }
       openAlert(errorMessage, 'error')
     }
