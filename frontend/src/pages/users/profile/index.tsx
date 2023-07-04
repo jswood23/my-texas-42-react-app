@@ -6,6 +6,7 @@ import PageContainer from '../../../shared/page-container'
 import ProfileStats from '../../../shared/profile-stats'
 import queryString from 'query-string'
 import * as React from 'react'
+import ProfileFriends from '../../../shared/profile-friends'
 
 interface Props {
   openAlert: OpenAlert
@@ -23,6 +24,7 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
   const [username, setUsername] = React.useState(queryUsername)
 
   const pageHeader = username.length ? `${username}'s Profile` : 'User not found'
+  const isOwnProfile = username === userData.username
 
   React.useEffect(() => {
     const getProfileData = async () => {
@@ -53,6 +55,9 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
     : (
         <PageContainer isLoading={isLoading} title={pageHeader} openAlert={openAlert} userData={userData}>
           <ProfileStats profileData={profileData} />
+          {isOwnProfile &&
+            <ProfileFriends profileData={profileData} />
+          }
         </PageContainer>
       )
 }
