@@ -3,6 +3,7 @@ import { apiContext, defaultProfileData } from '../../../constants'
 import type { OpenAlert, UserData } from '../../../types'
 import { useLocation } from 'react-router-dom'
 import PageContainer from '../../../shared/page-container'
+import ProfileStats from '../../../shared/profile-stats'
 import queryString from 'query-string'
 import * as React from 'react'
 
@@ -48,7 +49,7 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
       )
     : (
         <PageContainer isLoading={isLoading} title={pageHeader} openAlert={openAlert} userData={userData}>
-          {profileData.games_played}
+          <ProfileStats profileData={profileData} />
         </PageContainer>
       )
 }
