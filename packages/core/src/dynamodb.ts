@@ -8,4 +8,5 @@ export default {
     query: (params: any) => client.query(params).promise(),
     update: (params: any) => client.update(params).promise(),
     delete: (params: any) => client.delete(params).promise(),
+    scan: (params: any) => client.scan(params).promise(),
 };
