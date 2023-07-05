@@ -1,17 +1,29 @@
-import { Alert, Box, Button, CircularProgress, Collapse, FormControl, TextField } from '@mui/material'
+import { Alert, Button, CircularProgress, Collapse, FormControl, TextField } from '@mui/material'
 import { Auth } from 'aws-amplify'
 import type { OpenAlert, UserData } from '../../../types'
-import { THEME } from '../../../constants/theme'
 import { validateField } from '../../../utils/user-utils'
 import * as React from 'react'
 import ConfirmUserForm from '../../../shared/confirm-user-form'
 import PageContainer from '../../../shared/page-container'
+import styled from 'styled-components'
 
-const classes = {
-  formContainer: THEME.form.container,
-  formWindow: THEME.form.window,
-  textInput: THEME.form.input
-}
+const StyledRoot = styled.div(({ theme }) => ({
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+  '.form-container': {
+    width: theme.spacing(35),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
+  },
+  '.form-text-input': {
+    width: '100%',
+    marginTop: theme.spacing(3)
+  }
+}))
 
 interface Props {
   openAlert: OpenAlert
@@ -179,18 +191,20 @@ const SignupPage = ({ openAlert, userData }: Props) => {
   }, [onSubmit])
 
   return (
-    <PageContainer openAlert={openAlert} title="Create an account" userData={userData}>
-      {/* @ts-expect-error TODO: add styled components */}
-      <Box style={classes.formWindow}>
-        {/* @ts-expect-error TODO: add styled components */}
-        <Box style={classes.formContainer}>
+    <PageContainer
+      openAlert={openAlert}
+      title="Create an account"
+      userData={userData}
+    >
+      <StyledRoot>
+        <div className="form-container">
           <FormControl>
             <TextField
               label="Email"
               id="email"
               autoComplete="on"
               size="small"
-              style={classes.textInput}
+              className="form-text-input"
               value={email}
               onChange={onChangeEmail}
               onBlur={() => runValidationTasks('email', email)}
@@ -204,7 +218,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
               autoComplete="on"
               id="username"
               size="small"
-              style={classes.textInput}
+              className="form-text-input"
               value={username}
               onChange={onChangeUsername}
               onBlur={() => runValidationTasks('username', username)}
@@ -217,10 +231,12 @@ const SignupPage = ({ openAlert, userData }: Props) => {
               label="Password"
               type="password"
               size="small"
-              style={classes.textInput}
+              className="form-text-input"
               value={password}
               onChange={onChangePassword}
-              onFocus={() => { setSelectedPassword(true) }}
+              onFocus={() => {
+                setSelectedPassword(true)
+              }}
               onBlur={() => {
                 setSelectedPassword(false)
                 runValidationTasks('password', password)
@@ -231,7 +247,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
             />
 
             <Collapse in={selectedPassword}>
-              <Alert severity="info" style={classes.textInput}>
+              <Alert severity="info" className="form-text-input">
                 Your password must have at least 8 characters with at least one
                 number.
               </Alert>
@@ -241,7 +257,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
               label="Confirm Password"
               type="password"
               size="small"
-              style={classes.textInput}
+              className="form-text-input"
               value={confirmPassword}
               onChange={onChangeConfirmPassword}
               onBlur={() =>
@@ -255,15 +271,14 @@ const SignupPage = ({ openAlert, userData }: Props) => {
             <Button
               type="submit"
               onClick={onSubmit}
-              style={classes.textInput}
+              className="form-text-input"
               disabled={disableSubmitButton}
             >
               {isLoading ? <CircularProgress size={20} /> : <>Sign Up</>}
             </Button>
           </FormControl>
-        </Box>
-        {/* @ts-expect-error TODO: add styled components */}
-        <Collapse style={classes.formContainer} in={confirmingUser}>
+        </div>
+        <Collapse className="form-container" in={confirmingUser}>
           <ConfirmUserForm
             defaultUsername={defaultUsername}
             defaultPassword={defaultPassword}
@@ -271,7 +286,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
             userData={userData}
           />
         </Collapse>
-      </Box>
+      </StyledRoot>
     </PageContainer>
   )
 }
