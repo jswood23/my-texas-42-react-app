@@ -1,15 +1,17 @@
 import { Alert, Button, CircularProgress, FormControl, TextField } from '@mui/material'
 import { Auth } from 'aws-amplify'
 import { useNavigate } from 'react-router-dom'
-import { THEME } from '../../constants/theme'
 import type { OpenAlert, UserData } from '../../types'
 import { validateField } from '../../utils/user-utils'
 import * as React from 'react'
+import styled from 'styled-components'
 
-const classes = {
-  formContainer: THEME.form.container,
-  textInput: THEME.form.input
-}
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+  '.form-text-input': {
+    width: '100%',
+    marginTop: theme.spacing(3)
+  }
+}))
 
 interface Props {
   defaultUsername: string
@@ -134,7 +136,7 @@ const ConfirmUserForm = ({
   }, [onSubmit])
 
   return (
-    <FormControl>
+    <StyledFormControl>
       <Alert severity="info">
         An email was sent to your inbox with a verification code. Please enter
         it below.
@@ -145,9 +147,11 @@ const ConfirmUserForm = ({
         id="verification-code"
         autoComplete="on"
         size="small"
-        style={classes.textInput}
+        className="form-text-input"
         value={verificationCode}
-        onFocus={() => { setIsFieldSelected(true) }}
+        onFocus={() => {
+          setIsFieldSelected(true)
+        }}
         onChange={onChangeVerificationCode}
         helperText={(errors.verificationCode as any)?.errorMessage}
         error={(errors.verificationCode as any)?.hasError}
@@ -157,15 +161,15 @@ const ConfirmUserForm = ({
         type="submit"
         disabled={disableSubmitButton}
         onClick={onSubmit}
-        style={classes.textInput}
+        className="form-text-input"
       >
         {isLoading ? <CircularProgress size={20} /> : <>Verify Account</>}
       </Button>
 
-      <Button onClick={onResend} style={classes.textInput}>
+      <Button onClick={onResend} className="form-text-input">
         Resend Verification Code
       </Button>
-    </FormControl>
+    </StyledFormControl>
   )
 }
 
