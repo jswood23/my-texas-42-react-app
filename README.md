@@ -4,7 +4,7 @@ Production url: https://www.mytexas42.com/
 
 <!-- [![Seed Status](https://api.seed.run/jswood23/my-texas-42-react-app/stages/prod/build_badge)](https://console.seed.run/jswood23/my-texas-42-react-app) -->
 
-Staging url: https://dhy6bxabo3f1c.cloudfront.net
+Staging url: https://d1sqivkhnloiuo.cloudfront.net
 
 ## Installation
 
