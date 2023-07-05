@@ -1,5 +1,5 @@
 // import { TableContainer } from '@mui/material'
-import { Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
+import { Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
 import type { ProfileData } from '../../types'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -18,6 +18,24 @@ const StyledRoot = styled.div({
   },
   '.friend-requests': {
     borderLeft: '0.5px solid #B0B0B0'
+  },
+  '.item-align-left': {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexBasis: '50%'
+  },
+  '.item-align-right': {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexBasis: '50%'
+  },
+  '.table-cell-multiple-items': {
+    display: 'flex',
+    width: '100%'
+  },
+  '.text-vertically-centered': {
+    alignSelf: 'center'
   }
 })
 
@@ -29,6 +47,7 @@ const ProfileFriends = ({ profileData }: Props) => {
   const { friends } = profileData
   const numFriends = friends?.length
   const [friendsFilter, setFriendsFilter] = React.useState('')
+  const filterMessage = friendsFilter ? `Filtered by '${friendsFilter}'` : 'Showing all friends'
 
   const requests = profileData.incoming_friend_requests
   const numRequests = requests?.length
@@ -84,16 +103,25 @@ const ProfileFriends = ({ profileData }: Props) => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Friends ({numFriends})</TableCell>
+              <TableCell>
+                <Typography>Friends ({numFriends})</Typography>
+              </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>
-                <TextField
-                  label="Filter friends"
-                  id="filter-friends-text-field"
-                  size="small"
-                  onChange={onChangeFriendsFilter}
-                />
+              <TableCell className="table-cell-multiple-items">
+                <div className="item-align-left">
+                  <Typography className='text-vertically-centered'>
+                    {filterMessage}
+                  </Typography>
+                </div>
+                <div className="item-align-right">
+                  <TextField
+                    label="Filter friends"
+                    id="filter-friends-text-field"
+                    size="small"
+                    onChange={onChangeFriendsFilter}
+                  />
+                </div>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -105,7 +133,11 @@ const ProfileFriends = ({ profileData }: Props) => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Friend Requests ({numRequests})</TableCell>
+              <TableCell>
+                <Typography>
+                  Incoming Friend Requests ({numRequests})
+                </Typography>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{listRequests()}</TableBody>
