@@ -1,5 +1,6 @@
 // import { TableContainer } from '@mui/material'
-import { Button, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import { Button, CircularProgress, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import { isMobile } from 'react-device-detect'
 import { limitString } from '../../utils/string-utils'
 import type { OpenAlert, ProfileData, UserData } from '../../types'
 import * as React from 'react'
@@ -10,6 +11,7 @@ const StyledRoot = styled.div(({ theme }) => ({
   border: '0.5px solid #B0B0B0',
   borderRadius: '3px',
   boxShadow: '0 2px 5px 2px #E0E0E0',
+  flexDirection: isMobile ? 'column' : 'row',
   '.user-container': {
     height: '400px'
   },
@@ -17,7 +19,8 @@ const StyledRoot = styled.div(({ theme }) => ({
     textDecoration: 'none'
   },
   '.friend-requests': {
-    borderLeft: '0.5px solid #B0B0B0'
+    borderLeft: isMobile ? '0' : '0.5px solid #B0B0B0',
+    borderTop: isMobile ? '0.5px solid #B0B0B0' : 0
   },
   '.item-align-left': {
     display: 'flex',
@@ -37,14 +40,20 @@ const StyledRoot = styled.div(({ theme }) => ({
   '.text-vertically-centered': {
     alignSelf: 'center'
   },
+  '.friend-text-field': {
+    fontSize: theme.spacing(1.5)
+  },
   '.add-friend-button': {
     border: '0.5px solid',
     borderColor: theme.palette.primary.main,
     color: theme.palette.primary.main,
     backgroundColor: '#FFFFFF',
+    fontSize: theme.spacing(1.5),
     '&:hover': {
       backgroundColor: theme.palette.secondary.main
-    }
+    },
+    minHeight: isMobile ? theme.spacing(6) : theme.spacing(4),
+    minWidth: theme.spacing(13)
   }
 }))
 
@@ -63,6 +72,7 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
   const requests = profileData.incoming_friend_requests
   const numRequests = requests?.length
   const [addFriendUsername, setAddFriendUsername] = React.useState('')
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const onChangeFriendsFilter = (e: { target: { value: string } }) => { setFriendsFilter(e.target.value) }
 
@@ -74,8 +84,12 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
       return
     }
 
+    setIsLoading(true)
+    // TODO: add api endpoint call here
+
     openAlert(`Sent friend request to ${addFriendUsername}.`, 'success')
     setAddFriendUsername('')
+    // setIsLoading(false)
   }
 
   const getUserRow = (username: string, isFriend: boolean) => {
@@ -134,12 +148,13 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
             <TableRow>
               <TableCell className="table-cell-multiple-items">
                 <div className="item-align-left">
-                  <Typography className='text-vertically-centered'>
+                  <Typography className="text-vertically-centered">
                     {filterMessage}
                   </Typography>
                 </div>
                 <div className="item-align-right">
                   <TextField
+                    className="friend-text-field"
                     label="Filter friends"
                     id="filter-friends-text-field"
                     size="small"
@@ -167,6 +182,7 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
               <TableCell className="table-cell-multiple-items">
                 <div className="item-align-left">
                   <TextField
+                    className="friend-text-field"
                     label="Add a friend"
                     id="add-friend-text-field"
                     size="small"
@@ -178,9 +194,16 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
                   <Button
                     className="add-friend-button"
                     variant="contained"
+                    disabled={isLoading}
                     onClick={onClickAddFriend}
                   >
-                    Add friend
+                    {isLoading
+                      ? (
+                      <CircularProgress size={20} />
+                        )
+                      : (
+                      <>Add friend</>
+                        )}
                   </Button>
                 </div>
               </TableCell>
