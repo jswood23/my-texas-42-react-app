@@ -142,7 +142,6 @@ const LoginPage = ({ openAlert, userData }: Props) => {
               label="Username"
               id="username"
               autoComplete="on"
-              autoFocus
               size="small"
               style={classes.textInput}
               value={username}

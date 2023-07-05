@@ -189,7 +189,6 @@ const SignupPage = ({ openAlert, userData }: Props) => {
               label="Email"
               id="email"
               autoComplete="on"
-              autoFocus
               size="small"
               style={classes.textInput}
               value={email}
