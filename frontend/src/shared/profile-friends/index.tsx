@@ -4,14 +4,13 @@ import type { OpenAlert, ProfileData, UserData } from '../../types'
 import * as React from 'react'
 import styled from 'styled-components'
 
-const StyledRoot = styled.div({
+const StyledRoot = styled.div(({ theme }) => ({
   display: 'flex',
   border: '0.5px solid #B0B0B0',
   borderRadius: '3px',
   boxShadow: '0 2px 5px 2px #E0E0E0',
   '.user-container': {
-    maxHeight: '300px',
-    minHeight: '150px'
+    height: '400px'
   },
   '.user-link': {
     textDecoration: 'none'
@@ -36,8 +35,14 @@ const StyledRoot = styled.div({
   },
   '.text-vertically-centered': {
     alignSelf: 'center'
+  },
+  '.add-friend-button': {
+    color: theme.palette.primary.main,
+    backgroundColor: theme.palette.secondary.main,
+    border: '0.5px solid',
+    borderColor: theme.palette.primary.main
   }
-})
+}))
 
 interface Props {
   openAlert: OpenAlert
@@ -167,8 +172,8 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
                 </div>
                 <div className="item-align-right">
                   <Button
+                    className="add-friend-button"
                     variant="contained"
-                    color="primary"
                     onClick={onClickAddFriend}
                   >
                     Add friend
