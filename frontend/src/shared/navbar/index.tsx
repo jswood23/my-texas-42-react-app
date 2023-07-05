@@ -56,23 +56,22 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   '.right-side': {
     justifyContent: 'right',
     marginLeft: 'auto'
+  },
+  '.nav-button': {
+    color: theme.palette.primary.main,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#000000',
+
+    '&:hover': {
+      backgroundColor: THEME.palette.secondary.main
+    },
+
+    fontSize: THEME.spacing(1.5),
+    fontWeight: 'bold'
   }
 }))
 
 const useStyles = makeStyles({}) // not sure why but all of the navbar styles break when I remove this
-
-const buttonStyle = {
-  color: THEME.palette.primary.main,
-  backgroundColor: '#FFFFFF',
-  borderColor: '#000000',
-
-  '&:hover': {
-    backgroundColor: THEME.palette.secondary.main
-  },
-
-  fontSize: THEME.spacing(1.5),
-  fontWeight: 'bold'
-}
 
 const Navbar = ({ openAlert, userData }: Props) => {
   useStyles()
@@ -123,9 +122,9 @@ const Navbar = ({ openAlert, userData }: Props) => {
       return (
         <Toolbar className={'right-side'}>
           <Button
+            className="nav-button"
             id="profile-dropdown-button"
             variant="contained"
-            sx={buttonStyle}
             onClick={handleOpenDropdown}
             endIcon={
               isDropdownOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />
@@ -159,9 +158,9 @@ const Navbar = ({ openAlert, userData }: Props) => {
     return (
       <Toolbar className={'right-side'}>
         <Button
+          className='nav-button'
           id="sign-in-dropdown-button"
           variant="contained"
-          sx={buttonStyle}
           onClick={handleOpenDropdown}
           endIcon={isDropdownOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         >
