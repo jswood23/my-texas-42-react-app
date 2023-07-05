@@ -1,6 +1,6 @@
 // import { TableContainer } from '@mui/material'
-import { Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
-import type { ProfileData } from '../../types'
+import { Button, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import type { OpenAlert, ProfileData, UserData } from '../../types'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -40,10 +40,12 @@ const StyledRoot = styled.div({
 })
 
 interface Props {
+  openAlert: OpenAlert
   profileData: ProfileData
+  userData: UserData
 }
 
-const ProfileFriends = ({ profileData }: Props) => {
+const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
   const { friends } = profileData
   const numFriends = friends?.length
   const [friendsFilter, setFriendsFilter] = React.useState('')
@@ -51,8 +53,16 @@ const ProfileFriends = ({ profileData }: Props) => {
 
   const requests = profileData.incoming_friend_requests
   const numRequests = requests?.length
+  const [addFriendUsername, setAddFriendUsername] = React.useState('')
 
   const onChangeFriendsFilter = (e: { target: { value: string } }) => { setFriendsFilter(e.target.value) }
+
+  const onChangeAddFriend = (e: { target: { value: string } }) => { setAddFriendUsername(e.target.value) }
+
+  const onClickAddFriend = () => {
+    openAlert(`Sent friend request to ${addFriendUsername}`, 'success')
+    setAddFriendUsername('')
+  }
 
   const getUserRow = (username: string, isFriend: boolean) => {
     return (
@@ -137,6 +147,28 @@ const ProfileFriends = ({ profileData }: Props) => {
                 <Typography>
                   Incoming Friend Requests ({numRequests})
                 </Typography>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="table-cell-multiple-items">
+                <div className="item-align-left">
+                  <TextField
+                    label="Add a friend"
+                    id="add-friend-text-field"
+                    size="small"
+                    value={addFriendUsername}
+                    onChange={onChangeAddFriend}
+                  />
+                </div>
+                <div className="item-align-right">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={onClickAddFriend}
+                  >
+                    Add friend
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           </TableHead>

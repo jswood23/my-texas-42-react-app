@@ -56,7 +56,7 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
         <PageContainer isLoading={isLoading} title={pageHeader} openAlert={openAlert} userData={userData}>
           <ProfileStats profileData={profileData} />
           {isOwnProfile &&
-            <ProfileFriends profileData={profileData} />
+            <ProfileFriends openAlert={openAlert} profileData={profileData} userData={userData} />
           }
         </PageContainer>
       )
