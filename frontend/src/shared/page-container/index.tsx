@@ -1,7 +1,6 @@
 import { CircularProgress, Container } from '@mui/material'
 import { isMobile } from 'react-device-detect'
 import type { OpenAlert, UserData } from '../../types'
-import * as React from 'react'
 import styled from 'styled-components'
 
 interface Props {
@@ -13,7 +12,6 @@ interface Props {
 }
 
 const StyledContainer = styled(Container)(({ theme }) => ({
-  // backgroundColor: THEME.palette.secondary.main,
   backgroundColor: 'white',
   minHeight: isMobile ? '560px' : '800px',
   width: '100%',
