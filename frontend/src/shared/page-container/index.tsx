@@ -22,7 +22,14 @@ const StyledContainer = styled(Container)(({ theme }) => ({
 
   border: '1px solid #A0A0A0',
   borderRadius: '5px',
-  boxShadow: '0 2px 5px 3px #E0E0E0'
+  boxShadow: '0 2px 5px 3px #E0E0E0',
+  '.circular-progress-container': {
+    width: '100%',
+    height: isMobile ? '400px' : '600px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 }))
 
 const PageContainer = ({ children, isLoading = false, openAlert, title, userData }: Props) => {
@@ -30,7 +37,15 @@ const PageContainer = ({ children, isLoading = false, openAlert, title, userData
     <StyledContainer fixed>
       <h1>{title}</h1>
       <hr />
-      {isLoading ? <CircularProgress /> : children}
+      {isLoading
+        ? (
+        <div className="circular-progress-container">
+          <CircularProgress />
+        </div>
+          )
+        : (
+            children
+          )}
     </StyledContainer>
   )
 }
