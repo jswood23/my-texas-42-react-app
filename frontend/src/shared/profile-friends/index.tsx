@@ -1,5 +1,6 @@
 // import { TableContainer } from '@mui/material'
-import { Button, CircularProgress, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import { Button, CircularProgress, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import { Cancel, CheckCircle } from '@mui/icons-material'
 import { isMobile } from 'react-device-detect'
 import { limitString } from '../../utils/string-utils'
 import type { OpenAlert, ProfileData, UserData } from '../../types'
@@ -94,14 +95,35 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
 
   const getUserRow = (username: string, isFriend: boolean) => {
     return (
-      <TableRow
-        hover
-        key={`user-${username}`}
-      >
-        <TableCell>
-          <Link className='user-link' href={`/profile?username=${username}`}>
-            {username}
-          </Link>
+      <TableRow hover key={`user-${username}`}>
+        <TableCell className="table-cell-multiple-items">
+          <div className="item-align-left">
+            <Typography className="text-vertically-centered">
+              <Link
+                className="user-link"
+                href={`/profile?username=${username}`}
+              >
+                {username}
+              </Link>
+            </Typography>
+          </div>
+          <div className="item-align-right">
+            {isFriend && (
+              <IconButton>
+                <Cancel />
+              </IconButton>
+            )}
+            {!isFriend && (
+              <>
+                <IconButton>
+                  <CheckCircle />
+                </IconButton>
+                <IconButton>
+                  <Cancel />
+                </IconButton>
+              </>
+            )}
+          </div>
         </TableCell>
       </TableRow>
     )
