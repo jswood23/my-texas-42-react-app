@@ -60,7 +60,12 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
   const onChangeAddFriend = (e: { target: { value: string } }) => { setAddFriendUsername(e.target.value) }
 
   const onClickAddFriend = () => {
-    openAlert(`Sent friend request to ${addFriendUsername}`, 'success')
+    if (!addFriendUsername) {
+      openAlert('Please specify a username.', 'error')
+      return
+    }
+
+    openAlert(`Sent friend request to ${addFriendUsername}.`, 'success')
     setAddFriendUsername('')
   }
 
