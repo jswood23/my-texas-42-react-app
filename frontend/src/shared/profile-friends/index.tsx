@@ -1,5 +1,6 @@
 // import { TableContainer } from '@mui/material'
 import { Button, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import { limitString } from '../../utils/string-utils'
 import type { OpenAlert, ProfileData, UserData } from '../../types'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -57,7 +58,7 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
   const { friends } = profileData
   const numFriends = friends?.length
   const [friendsFilter, setFriendsFilter] = React.useState('')
-  const filterMessage = friendsFilter ? `Filtered by '${friendsFilter}'` : 'Showing all friends'
+  const filterMessage = friendsFilter ? `Filtered by '${limitString(friendsFilter, 18)}'` : 'Showing all friends'
 
   const requests = profileData.incoming_friend_requests
   const numRequests = requests?.length
