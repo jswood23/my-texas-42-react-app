@@ -27,6 +27,8 @@ interface Props {
 const ProfileFriends = ({ profileData }: Props) => {
   const { friends } = profileData
   const requests = profileData.incoming_friend_requests
+  const numFriends = friends?.length
+  const numRequests = requests?.length
 
   const getUserRow = (username: string, isFriend: boolean) => {
     return (
@@ -75,7 +77,7 @@ const ProfileFriends = ({ profileData }: Props) => {
         <Table size='small'>
           <TableHead>
             <TableRow>
-              <TableCell>Friends</TableCell>
+              <TableCell>Friends ({numFriends})</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -88,7 +90,7 @@ const ProfileFriends = ({ profileData }: Props) => {
         <Table size='small'>
           <TableHead>
             <TableRow>
-              <TableCell>Friend Requests</TableCell>
+              <TableCell>Friend Requests ({numRequests})</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
