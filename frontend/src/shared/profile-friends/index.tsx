@@ -1,6 +1,7 @@
 // import { TableContainer } from '@mui/material'
-import { Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import type { ProfileData } from '../../types'
+import * as React from 'react'
 import styled from 'styled-components'
 
 const StyledRoot = styled.div({
@@ -26,9 +27,13 @@ interface Props {
 
 const ProfileFriends = ({ profileData }: Props) => {
   const { friends } = profileData
-  const requests = profileData.incoming_friend_requests
   const numFriends = friends?.length
+  const [friendsFilter, setFriendsFilter] = React.useState('')
+
+  const requests = profileData.incoming_friend_requests
   const numRequests = requests?.length
+
+  const onChangeFriendsFilter = (e: { target: { value: string } }) => { setFriendsFilter(e.target.value) }
 
   const getUserRow = (username: string, isFriend: boolean) => {
     return (
@@ -45,7 +50,7 @@ const ProfileFriends = ({ profileData }: Props) => {
     )
   }
 
-  const listFriends = () => {
+  const listFriends = React.useCallback(() => {
     if (!friends?.length) {
       return (
         <TableRow>
@@ -55,8 +60,10 @@ const ProfileFriends = ({ profileData }: Props) => {
         </TableRow>
       )
     }
-    return friends?.map((friendUsername) => getUserRow(friendUsername, true))
-  }
+    return friends?.map((friendUsername) => {
+      if (friendUsername.toLowerCase().includes(friendsFilter)) { return getUserRow(friendUsername, true) } else return (<></>)
+    })
+  }, [friends, friendsFilter])
 
   const listRequests = () => {
     if (!requests?.length) {
@@ -73,29 +80,35 @@ const ProfileFriends = ({ profileData }: Props) => {
 
   return (
     <StyledRoot>
-      <TableContainer className='user-container'>
-        <Table size='small'>
+      <TableContainer className="user-container">
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>Friends ({numFriends})</TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell>
+                <TextField
+                  label="Filter friends"
+                  id="filter-friends-text-field"
+                  size="small"
+                  onChange={onChangeFriendsFilter}
+                />
+              </TableCell>
+            </TableRow>
           </TableHead>
-          <TableBody>
-            {listFriends()}
-          </TableBody>
+          <TableBody>{listFriends()}</TableBody>
         </Table>
       </TableContainer>
 
-      <TableContainer className='friend-requests user-container'>
-        <Table size='small'>
+      <TableContainer className="friend-requests user-container">
+        <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>Friend Requests ({numRequests})</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {listRequests()}
-          </TableBody>
+          <TableBody>{listRequests()}</TableBody>
         </Table>
       </TableContainer>
     </StyledRoot>
