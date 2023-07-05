@@ -37,10 +37,13 @@ const StyledRoot = styled.div(({ theme }) => ({
     alignSelf: 'center'
   },
   '.add-friend-button': {
-    color: theme.palette.primary.main,
-    backgroundColor: theme.palette.secondary.main,
     border: '0.5px solid',
-    borderColor: theme.palette.primary.main
+    borderColor: theme.palette.primary.main,
+    color: theme.palette.primary.main,
+    backgroundColor: '#FFFFFF',
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.main
+    }
   }
 }))
 
