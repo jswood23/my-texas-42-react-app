@@ -14,6 +14,7 @@ const StyledRoot = styled.div(({ theme }) => ({
   borderRadius: '3px',
   boxShadow: '0 2px 5px 2px #E0E0E0',
   flexDirection: isMobile ? 'column' : 'row',
+  width: '100%',
   '.user-container': {
     height: '400px'
   },

@@ -17,6 +17,13 @@ interface Props {
   userData: UserData
 }
 
+const StyledPageElements = styled.div(({ theme }) => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  width: '100%'
+}))
+
 const StyledRoot = styled(Button)(({ theme }) => ({
   '.profile-friend-actions-button': {
     color: theme.palette.secondary.main,
@@ -163,15 +170,31 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
 
   return isError
     ? (
-        <PageContainer title={pageHeader} openAlert={openAlert} userData={userData} />
+    <PageContainer
+      title={pageHeader}
+      openAlert={openAlert}
+      userData={userData}
+    />
       )
     : (
-        <PageContainer action={getProfileFriendAction()} isLoading={isLoading} title={pageHeader} openAlert={openAlert} userData={userData}>
-          <ProfileStats profileData={profileData} />
-          {isOwnProfile &&
-            <ProfileFriends openAlert={openAlert} profileData={profileData} userData={userData} />
-          }
-        </PageContainer>
+    <PageContainer
+      action={getProfileFriendAction()}
+      isLoading={isLoading}
+      title={pageHeader}
+      openAlert={openAlert}
+      userData={userData}
+    >
+      <StyledPageElements>
+        <ProfileStats profileData={profileData} />
+        {isOwnProfile && (
+          <ProfileFriends
+            openAlert={openAlert}
+            profileData={profileData}
+            userData={userData}
+          />
+        )}
+      </StyledPageElements>
+    </PageContainer>
       )
 }
 
