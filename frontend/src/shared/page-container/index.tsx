@@ -1,9 +1,10 @@
-import { CircularProgress, Container } from '@mui/material'
+import { CircularProgress, Container, Typography } from '@mui/material'
 import { isMobile } from 'react-device-detect'
 import type { OpenAlert, UserData } from '../../types'
 import styled from 'styled-components'
 
 interface Props {
+  action?: any
   children?: any
   isLoading?: boolean
   openAlert: OpenAlert
@@ -27,13 +28,41 @@ const StyledContainer = styled(Container)(({ theme }) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  '.page-header': {
+    fontSize: theme.spacing(4),
+    fontWeight: 'bold'
+  },
+  '.row-multiple-items': {
+    display: 'flex',
+    width: '100%'
+  },
+  '.item-align-left': {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexBasis: '50%'
+  },
+  '.item-align-right': {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexBasis: '50%'
   }
 }))
 
-const PageContainer = ({ children, isLoading = false, openAlert, title, userData }: Props) => {
+const PageContainer = ({ action, children, isLoading = false, openAlert, title, userData }: Props) => {
   return (
     <StyledContainer fixed>
-      <h1>{title}</h1>
+      <div className="row-multiple-items">
+        <div className="item-align-left">
+          <Typography className='page-header'>
+            {title}
+          </Typography>
+        </div>
+        <div className="item-align-right">
+          {action}
+        </div>
+      </div>
       <hr />
       {isLoading
         ? (
