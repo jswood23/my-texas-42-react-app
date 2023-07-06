@@ -1,5 +1,8 @@
+import { GAME_STAGES } from '../../constants'
 import type { OpenAlert, UserData } from '../../types'
+import InGame from './in-game'
 import Lobbies from './lobbies'
+import NewGame from './new-game'
 import PageContainer from '../../shared/page-container'
 import * as React from 'react'
 
@@ -9,12 +12,16 @@ interface Props {
 }
 
 const PlayPage = ({ openAlert, userData }: Props) => {
-  const [stage, setStage] = React.useState('lobbies')
-  const pageTitle = stage === 'lobbies'
+  const [stage, setStage] = React.useState('in-game')
+  const isInLobby = stage.includes(GAME_STAGES.LOBBY_STAGE)
+  const isNewGame = stage.includes(GAME_STAGES.NEW_GAME_STAGE)
+  const isInGame = stage.includes(GAME_STAGES.IN_GAME_STAGE)
+  const isLoading = stage.includes(GAME_STAGES.LOADING_STATE)
+  const pageTitle = isInLobby
     ? 'Game Lobbies'
-    : stage === 'new-lobby'
-      ? 'New Lobby'
-      : stage === 'in-game'
+    : isNewGame
+      ? 'New Game'
+      : isInGame
         ? 'Texas 42'
         : 'Undefined Stage'
 
@@ -23,8 +30,33 @@ const PlayPage = ({ openAlert, userData }: Props) => {
   }
 
   return (
-    <PageContainer title={pageTitle} openAlert={openAlert} userData={userData}>
-      <Lobbies onChangeStage={onChangeStage} openAlert={openAlert} userData={userData} />
+    <PageContainer
+      isLoading={isLoading}
+      title={pageTitle}
+      openAlert={openAlert}
+      userData={userData}
+    >
+      {isInLobby && (
+        <Lobbies
+          onChangeStage={onChangeStage}
+          openAlert={openAlert}
+          userData={userData}
+        />
+      )}
+      {isNewGame && (
+        <NewGame
+          onChangeStage={onChangeStage}
+          openAlert={openAlert}
+          userData={userData}
+        />
+      )}
+      {isInGame && (
+        <InGame
+          onChangeStage={onChangeStage}
+          openAlert={openAlert}
+          userData={userData}
+        />
+      )}
     </PageContainer>
   )
 }
