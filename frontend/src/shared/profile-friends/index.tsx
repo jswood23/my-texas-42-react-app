@@ -72,19 +72,47 @@ interface Props {
 }
 
 const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
-  const { friends } = profileData
+  const [friends, setFriends] = React.useState(profileData.friends)
   const numFriends = friends?.length
   const [friendsFilter, setFriendsFilter] = React.useState('')
   const filterMessage = friendsFilter ? `Filtered by '${limitString(friendsFilter, 18)}'` : 'Showing all friends'
 
-  const requests = profileData.incoming_friend_requests
+  const [requests, setRequests] = React.useState(profileData.incoming_friend_requests)
   const numRequests = requests?.length
   const [addFriendUsername, setAddFriendUsername] = React.useState('')
   const [isLoading, setIsLoading] = React.useState(false)
 
+  React.useEffect(() => {
+    setFriends(profileData.friends)
+    setRequests(profileData.incoming_friend_requests)
+  }, [profileData])
+
   const onChangeFriendsFilter = (e: { target: { value: string } }) => { setFriendsFilter(e.target.value) }
 
   const onChangeAddFriend = (e: { target: { value: string } }) => { setAddFriendUsername(e.target.value) }
+
+  const onClickAcceptRequest = async (friendUsername: string) => {
+    await API.get(apiContext, `/friends/accept_request/${friendUsername}`, {})
+      .then(() => {
+        openAlert(`Now friends with ${friendUsername}.`, 'success')
+        friends?.push(friendUsername)
+        requests?.splice(requests?.indexOf(friendUsername), 1)
+      }).catch((error) => {
+        console.log(error)
+        openAlert('There was an error accepting the friend request.', 'error')
+      })
+  }
+
+  const onClickRejectRequest = async (friendUsername: string) => {
+    await API.get(apiContext, `/friends/reject_request/${friendUsername}`, {})
+      .then(() => {
+        openAlert(`Rejected friend request from ${friendUsername}.`, 'success')
+        requests?.splice(requests?.indexOf(friendUsername), 1)
+      }).catch((error) => {
+        console.log(error)
+        openAlert('There was an error rejecting the friend request.', 'error')
+      })
+  }
 
   const onClickAddFriend = async () => {
     if (!addFriendUsername) {
@@ -130,12 +158,12 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
             {!isFriend && (
               <>
                 <Tooltip title="Accept friend request" placement="left">
-                  <IconButton>
+                  <IconButton onClick={() => { onClickAcceptRequest(username) }}>
                     <CheckCircle className="green-button" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Reject friend request" placement="left">
-                  <IconButton>
+                  <IconButton onClick={() => { onClickRejectRequest(username) }}>
                     <Cancel className="red-button" />
                   </IconButton>
                 </Tooltip>
