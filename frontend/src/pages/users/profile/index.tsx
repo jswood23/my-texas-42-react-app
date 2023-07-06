@@ -6,16 +6,23 @@ import { limitString } from '../../../utils/string-utils'
 import type { OpenAlert, UserData } from '../../../types'
 import { useLocation } from 'react-router-dom'
 import PageContainer from '../../../shared/page-container'
-import ProfileStats from '../../../shared/profile-stats'
+import ProfileStats from './profile-stats'
 import queryString from 'query-string'
 import * as React from 'react'
-import ProfileFriends from '../../../shared/profile-friends'
+import ProfileFriends from './profile-friends'
 import styled from 'styled-components'
 
 interface Props {
   openAlert: OpenAlert
   userData: UserData
 }
+
+const StyledPageElements = styled.div(({ theme }) => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  width: '100%'
+}))
 
 const StyledRoot = styled(Button)(({ theme }) => ({
   '.profile-friend-actions-button': {
@@ -163,15 +170,31 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
 
   return isError
     ? (
-        <PageContainer title={pageHeader} openAlert={openAlert} userData={userData} />
+    <PageContainer
+      title={pageHeader}
+      openAlert={openAlert}
+      userData={userData}
+    />
       )
     : (
-        <PageContainer action={getProfileFriendAction()} isLoading={isLoading} title={pageHeader} openAlert={openAlert} userData={userData}>
-          <ProfileStats profileData={profileData} />
-          {isOwnProfile &&
-            <ProfileFriends openAlert={openAlert} profileData={profileData} userData={userData} />
-          }
-        </PageContainer>
+    <PageContainer
+      action={getProfileFriendAction()}
+      isLoading={isLoading}
+      title={pageHeader}
+      openAlert={openAlert}
+      userData={userData}
+    >
+      <StyledPageElements>
+        <ProfileStats profileData={profileData} />
+        {isOwnProfile && (
+          <ProfileFriends
+            openAlert={openAlert}
+            profileData={profileData}
+            userData={userData}
+          />
+        )}
+      </StyledPageElements>
+    </PageContainer>
       )
 }
 

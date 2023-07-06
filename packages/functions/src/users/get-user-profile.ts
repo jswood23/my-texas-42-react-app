@@ -13,7 +13,6 @@ export const main = handler(async (event: any) => {
     const {
         friends,
         incoming_friend_requests,
-        is_admin,
         game_history,
         games_played,
         games_won,
@@ -30,7 +29,6 @@ export const main = handler(async (event: any) => {
     const response = {
         friends,
         incoming_friend_requests,
-        is_admin,
         game_history,
         games_played,
         games_won,

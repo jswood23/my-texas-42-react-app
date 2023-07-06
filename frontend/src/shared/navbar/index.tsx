@@ -1,10 +1,10 @@
 import { AccountCircle, Login, Logout, PersonAdd, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
 import { AppBar, Toolbar, CssBaseline } from '@material-ui/core'
 import { Auth } from 'aws-amplify'
+import { isMobile } from 'react-device-detect'
 import { makeStyles } from '@material-ui/core/styles'
 import { NavLink, useNavigate } from 'react-router-dom'
 import type { OpenAlert, UserData } from '../../types'
-import { THEME } from '../../constants/theme'
 import * as React from 'react'
 import Button from '@mui/material/Button'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -26,28 +26,26 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   flexDirection: 'row',
   width: '100%',
   '.logo': {
-    color: THEME.palette.secondary.main,
-    height: THEME.spacing(5),
-    width: THEME.spacing(5),
-    marginLeft: THEME.spacing(0),
-    marginRight: THEME.spacing(2)
+    color: theme.palette.secondary.main,
+    height: theme.spacing(5),
+    width: theme.spacing(5)
   },
   '.nav-bar-link': {
-    backgroundColor: THEME.palette.primary.main,
+    backgroundColor: theme.palette.primary.main,
     color: 'white',
 
-    fontSize: THEME.spacing(3),
+    fontSize: theme.spacing(3),
     textDecoration: 'none',
     userSelect: 'none',
 
     margin: 'none',
-    paddingLeft: THEME.spacing(2),
-    paddingRight: THEME.spacing(2),
-    paddingTop: THEME.spacing(1.5),
-    paddingBottom: THEME.spacing(1.5),
+    paddingLeft: theme.spacing(isMobile ? 1 : 2),
+    paddingRight: theme.spacing(isMobile ? 1 : 2),
+    paddingTop: theme.spacing(1.5),
+    paddingBottom: theme.spacing(1.5),
     '&:hover': {
-      color: THEME.palette.secondary.main,
-      backgroundColor: THEME.palette.primary.alt
+      color: theme.palette.secondary.main,
+      backgroundColor: theme.palette.primary.alt
     }
   },
   '.left-side': {
@@ -63,10 +61,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     borderColor: '#000000',
 
     '&:hover': {
-      backgroundColor: THEME.palette.secondary.main
+      backgroundColor: theme.palette.secondary.main
     },
 
-    fontSize: THEME.spacing(1.5),
+    fontSize: theme.spacing(1.5),
     fontWeight: 'bold'
   }
 }))
@@ -201,6 +199,11 @@ const Navbar = ({ openAlert, userData }: Props) => {
         <NavLink to="/rules" className={'nav-bar-link'}>
           Rules
         </NavLink>
+        {userData.exists &&
+          <NavLink to="/play" className={'nav-bar-link'}>
+            Play
+          </NavLink>
+        }
       </Toolbar>
 
       {navRightSide()}
