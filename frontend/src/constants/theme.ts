@@ -6,25 +6,6 @@ const spacing = (n: number) => {
 }
 
 export const THEME = {
-  form: {
-    container: {
-      width: spacing(35),
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center'
-    },
-    input: {
-      width: '100%',
-      marginTop: spacing(3)
-    },
-    window: {
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'column'
-    }
-  },
   palette: {
     primary: {
       main: '#500000',
