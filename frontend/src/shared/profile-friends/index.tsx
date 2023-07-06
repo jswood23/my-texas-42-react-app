@@ -1,4 +1,5 @@
-// import { TableContainer } from '@mui/material'
+import { API } from 'aws-amplify'
+import { apiContext } from '../../constants'
 import { Button, CircularProgress, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material'
 import { Cancel, CheckCircle } from '@mui/icons-material'
 import { isMobile } from 'react-device-detect'
@@ -85,18 +86,23 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
 
   const onChangeAddFriend = (e: { target: { value: string } }) => { setAddFriendUsername(e.target.value) }
 
-  const onClickAddFriend = () => {
+  const onClickAddFriend = async () => {
     if (!addFriendUsername) {
       openAlert('Please specify a username.', 'error')
       return
     }
 
     setIsLoading(true)
-    // TODO: add api endpoint call here
+    await API.get(apiContext, `/friends/send_request/${addFriendUsername}`, {})
+      .then(() => {
+        openAlert(`Sent friend request to ${addFriendUsername}.`, 'success')
+        setAddFriendUsername('')
+      }).catch((error) => {
+        console.log(error)
+        openAlert('There was an error sending the friend request.', 'error')
+      })
 
-    openAlert(`Sent friend request to ${addFriendUsername}.`, 'success')
-    setAddFriendUsername('')
-    // setIsLoading(false)
+    setIsLoading(false)
   }
 
   const getUserRow = (username: string, isFriend: boolean) => {
