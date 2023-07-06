@@ -12,28 +12,27 @@ import ListItemText from '@mui/material/ListItemText'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Logo42 from '../../images/42logo.png'
+import styled from 'styled-components'
 
 interface Props {
   openAlert: OpenAlert
   userData: UserData
 }
 
-const useStyles = makeStyles(() => ({
-  appBar: {
-    padding: 'none',
-    backgroundColor: THEME.palette.primary.main,
-    display: 'flex',
-    flexDirection: 'row',
-    width: '100%'
-  },
-  logo: {
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  padding: 'none',
+  backgroundColor: theme.palette.primary.main,
+  display: 'flex',
+  flexDirection: 'row',
+  width: '100%',
+  '.logo': {
     color: THEME.palette.secondary.main,
     height: THEME.spacing(5),
     width: THEME.spacing(5),
     marginLeft: THEME.spacing(0),
     marginRight: THEME.spacing(2)
   },
-  link: {
+  '.nav-bar-link': {
     backgroundColor: THEME.palette.primary.main,
     color: 'white',
 
@@ -51,33 +50,34 @@ const useStyles = makeStyles(() => ({
       backgroundColor: THEME.palette.primary.alt
     }
   },
-  leftSide: {
+  '.left-side': {
     justifyContent: 'left'
   },
-  rightSide: {
+  '.right-side': {
     justifyContent: 'right',
     marginLeft: 'auto'
+  },
+  '.nav-button': {
+    color: theme.palette.primary.main,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#000000',
+
+    '&:hover': {
+      backgroundColor: THEME.palette.secondary.main
+    },
+
+    fontSize: THEME.spacing(1.5),
+    fontWeight: 'bold'
   }
 }))
 
-const buttonStyle = {
-  color: THEME.palette.primary.main,
-  backgroundColor: '#FFFFFF',
-  borderColor: '#000000',
-
-  '&:hover': {
-    backgroundColor: THEME.palette.secondary.main
-  },
-
-  fontSize: THEME.spacing(1.5),
-  fontWeight: 'bold'
-}
+const useStyles = makeStyles({}) // not sure why but all of the navbar styles break when I remove this
 
 const Navbar = ({ openAlert, userData }: Props) => {
+  useStyles()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const isDropdownOpen = Boolean(anchorEl)
   const navigate = useNavigate()
-  const classes = useStyles()
 
   const handleCloseDropdown = React.useCallback(() => {
     setAnchorEl(null)
@@ -120,20 +120,14 @@ const Navbar = ({ openAlert, userData }: Props) => {
   const navRightSide = () => {
     if (userData.exists) {
       return (
-        <Toolbar className={classes.rightSide}>
+        <Toolbar className={'right-side'}>
           <Button
+            className="nav-button"
             id="profile-dropdown-button"
             variant="contained"
-            sx={buttonStyle}
             onClick={handleOpenDropdown}
             endIcon={
-              isDropdownOpen
-                ? (
-                <KeyboardArrowUp />
-                  )
-                : (
-                <KeyboardArrowDown />
-                  )
+              isDropdownOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />
             }
           >
             {userData.username}
@@ -162,15 +156,13 @@ const Navbar = ({ openAlert, userData }: Props) => {
       )
     }
     return (
-      <Toolbar className={classes.rightSide}>
+      <Toolbar className={'right-side'}>
         <Button
+          className='nav-button'
           id="sign-in-dropdown-button"
           variant="contained"
-          sx={buttonStyle}
           onClick={handleOpenDropdown}
-          endIcon={
-            isDropdownOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />
-          }
+          endIcon={isDropdownOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         >
           Sign in
         </Button>
@@ -199,20 +191,20 @@ const Navbar = ({ openAlert, userData }: Props) => {
   }
 
   return (
-    <AppBar position="static" className={classes.appBar}>
+    <StyledAppBar position="static">
       <CssBaseline />
-      <Toolbar className={classes.leftSide}>
-        <img src={Logo42} alt="logo" className={classes.logo} />
-        <NavLink to="/" className={classes.link}>
+      <Toolbar className={'left-side'}>
+        <img src={Logo42} alt="logo" className={'logo'} />
+        <NavLink to="/" className={'nav-bar-link'}>
           Home
         </NavLink>
-        <NavLink to="/rules" className={classes.link}>
+        <NavLink to="/rules" className={'nav-bar-link'}>
           Rules
         </NavLink>
       </Toolbar>
 
       {navRightSide()}
-    </AppBar>
+    </StyledAppBar>
   )
 }
 
