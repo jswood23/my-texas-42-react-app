@@ -1,6 +1,5 @@
-import { Table } from "sst/node/table";
+import { getUserByUsername } from "src/utils/user-utils";
 import handler from "@my-texas-42-react-app/core/handler";
-import dynamoDB from "@my-texas-42-react-app/core/dynamodb";
 
 export const main = handler(async (event: any) => {
     const username = event.pathParameters?.username;
@@ -9,19 +8,7 @@ export const main = handler(async (event: any) => {
         throw new Error("Please specify a username.");
     }
 
-    const params = {
-        TableName: Table.UserInfo.tableName,
-        FilterExpression: 'username = :username',
-        ExpressionAttributeValues: {
-            ":username": username,
-        },
-    }
-
-    const result = await dynamoDB.scan(params);
-
-    if (result.Items?.length === 0 || !result.Items) {
-        throw new Error("User does not exist.");
-    }
+    const thisUser = await getUserByUsername(username);
 
     const {
         friends,
@@ -38,7 +25,7 @@ export const main = handler(async (event: any) => {
         total_rounds_as_support,
         total_points_as_counter,
         total_rounds_as_counter,
-    } = result.Items[0];
+    } = thisUser;
 
     const response = {
         friends,
