@@ -1,4 +1,5 @@
-import { Typography } from '@mui/material'
+import { isMobile } from 'react-device-detect'
+import { Tooltip, Typography } from '@mui/material'
 import type { ProfileData } from '../../../types'
 import styled from 'styled-components'
 
@@ -7,8 +8,14 @@ const StyledRoot = styled.div(({ theme }) => ({
   borderRadius: '5px',
   boxShadow: '0 2px 5px 3px #E0E0E0',
   marginBottom: theme.spacing(2),
+  marginTop: theme.spacing(1),
   padding: theme.spacing(1),
-  width: '75%',
+  width: isMobile ? '100%' : '75%',
+  '.stats-entries': {
+    display: 'flex',
+    flexWrap: 'wrap',
+    paddingBottom: theme.spacing(1)
+  },
   '.stats-title': {
     borderBottom: '1px solid #A0A0A0',
     fontSize: theme.spacing(2.5),
@@ -17,6 +24,16 @@ const StyledRoot = styled.div(({ theme }) => ({
     textAlign: 'center',
     width: '100%'
   }
+}))
+
+const StatsEntry = styled(Typography)(({ theme }) => ({
+  color: '#A0A0A0',
+  flexBasis: isMobile ? '50%' : '25%',
+  fontSize: theme.spacing(1),
+  paddingLeft: theme.spacing(1),
+  paddingRight: theme.spacing(1),
+  paddingTop: theme.spacing(2),
+  textAlign: 'center'
 }))
 
 interface Props {
@@ -46,11 +63,27 @@ const ProfileStats = ({ profileData }: Props) => {
   return (
     <StyledRoot>
       <Typography className="stats-title">Game Stats</Typography>
-      <p>Game win rate: {gameWinRate}</p>
-      <p>Round win rate: {roundWinRate}</p>
-      <p>Bidder PPR: {bidderPPR}</p>
-      <p>Support PPR: {supportPPR}</p>
-      <p>Counter PPR: {counterPPR}</p>
+      <div className="stats-entries">
+        <Tooltip
+          title={`${profileData.games_won} games won, ${profileData.games_played} games played`}
+        >
+          <StatsEntry>Game win rate: {gameWinRate}</StatsEntry>
+        </Tooltip>
+        <Tooltip
+          title={`${profileData.rounds_won} rounds won, ${profileData.rounds_played} rounds played`}
+        >
+          <StatsEntry>Round win rate: {roundWinRate}</StatsEntry>
+        </Tooltip>
+        <Tooltip title="Average points per round as bidding player.">
+          <StatsEntry>Bidder PPR: {bidderPPR}</StatsEntry>
+        </Tooltip>
+        <Tooltip title="Average points per round as support player.">
+          <StatsEntry>Support PPR: {supportPPR}</StatsEntry>
+        </Tooltip>
+        <Tooltip title="Average points per round as counter player (playing against bidder).">
+          <StatsEntry>Counter PPR: {counterPPR}</StatsEntry>
+        </Tooltip>
+      </div>
     </StyledRoot>
   )
 }
