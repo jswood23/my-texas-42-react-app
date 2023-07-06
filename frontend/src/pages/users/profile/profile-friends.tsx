@@ -1,10 +1,10 @@
 import { API } from 'aws-amplify'
-import { apiContext } from '../../constants'
+import { apiContext } from '../../../constants'
 import { Button, CircularProgress, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material'
 import { Cancel, CheckCircle } from '@mui/icons-material'
 import { isMobile } from 'react-device-detect'
-import { limitString } from '../../utils/string-utils'
-import type { OpenAlert, ProfileData, UserData } from '../../types'
+import { limitString } from '../../../utils/string-utils'
+import type { OpenAlert, ProfileData, UserData } from '../../../types'
 import * as React from 'react'
 import styled from 'styled-components'
 

@@ -6,10 +6,10 @@ import { limitString } from '../../../utils/string-utils'
 import type { OpenAlert, UserData } from '../../../types'
 import { useLocation } from 'react-router-dom'
 import PageContainer from '../../../shared/page-container'
-import ProfileStats from '../../../shared/profile-stats'
+import ProfileStats from './profile-stats'
 import queryString from 'query-string'
 import * as React from 'react'
-import ProfileFriends from '../../../shared/profile-friends'
+import ProfileFriends from './profile-friends'
 import styled from 'styled-components'
 
 interface Props {

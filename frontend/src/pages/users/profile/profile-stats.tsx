@@ -1,4 +1,4 @@
-import type { ProfileData } from '../../types'
+import type { ProfileData } from '../../../types'
 
 interface Props {
   profileData: ProfileData
