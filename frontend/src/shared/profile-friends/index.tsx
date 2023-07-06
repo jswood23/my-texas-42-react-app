@@ -1,5 +1,5 @@
 // import { TableContainer } from '@mui/material'
-import { Button, CircularProgress, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import { Button, CircularProgress, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material'
 import { Cancel, CheckCircle } from '@mui/icons-material'
 import { isMobile } from 'react-device-detect'
 import { limitString } from '../../utils/string-utils'
@@ -55,6 +55,12 @@ const StyledRoot = styled.div(({ theme }) => ({
     },
     minHeight: isMobile ? theme.spacing(6) : theme.spacing(4),
     minWidth: theme.spacing(13)
+  },
+  '.green-button': {
+    color: '#2EEE2E'
+  },
+  '.red-button': {
+    color: '#FF2E2E'
   }
 }))
 
@@ -109,18 +115,24 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
           </div>
           <div className="item-align-right">
             {isFriend && (
-              <IconButton>
-                <Cancel />
-              </IconButton>
+              <Tooltip title="Remove friend" placement="left">
+                <IconButton>
+                  <Cancel className="red-button" />
+                </IconButton>
+              </Tooltip>
             )}
             {!isFriend && (
               <>
-                <IconButton>
-                  <CheckCircle />
-                </IconButton>
-                <IconButton>
-                  <Cancel />
-                </IconButton>
+                <Tooltip title="Accept friend request" placement="left">
+                  <IconButton>
+                    <CheckCircle className="green-button" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Reject friend request" placement="left">
+                  <IconButton>
+                    <Cancel className="red-button" />
+                  </IconButton>
+                </Tooltip>
               </>
             )}
           </div>
