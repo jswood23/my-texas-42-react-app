@@ -133,6 +133,17 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
     setIsLoading(false)
   }
 
+  const onClickRemoveFriend = async (friendUsername: string) => {
+    await API.get(apiContext, `/friends/remove_friend/${friendUsername}`, {})
+      .then(() => {
+        openAlert(`Removed ${friendUsername} from friend list.`, 'success')
+        friends?.splice(friends?.indexOf(friendUsername), 1)
+      }).catch((error) => {
+        console.log(error)
+        openAlert('There was an error removing this friend.', 'error')
+      })
+  }
+
   const getUserRow = (username: string, isFriend: boolean) => {
     return (
       <TableRow hover key={`user-${username}`}>
@@ -150,7 +161,7 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
           <div className="item-align-right">
             {isFriend && (
               <Tooltip title="Remove friend" placement="left">
-                <IconButton>
+                <IconButton onClick={() => { onClickRemoveFriend(username) }}>
                   <Cancel className="red-button" />
                 </IconButton>
               </Tooltip>
