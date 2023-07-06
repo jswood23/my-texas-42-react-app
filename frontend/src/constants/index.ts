@@ -2,8 +2,6 @@ import type { ProfileData, UserData } from '../types'
 
 export const apiContext = 'mytexas42api'
 
-export const requireLoginPages = ['/profile']
-
 export const defaultProfileData: ProfileData = {
   game_history: [],
   games_played: 0,
@@ -22,3 +20,12 @@ export const defaultUserData: UserData = {
   exists: false,
   username: ''
 }
+
+export const GAME_STAGES = {
+  IN_GAME_STAGE: 'in-game',
+  LOADING_STATE: 'loading',
+  LOBBY_STAGE: 'lobbies',
+  NEW_GAME_STAGE: 'new-game'
+}
+
+export const requireLoginPages = ['/profile']
