@@ -1,5 +1,6 @@
 import { API } from 'aws-amplify'
 import { apiContext, defaultProfileData } from '../../../constants'
+import { limitString } from '../../../utils/string-utils'
 import type { OpenAlert, UserData } from '../../../types'
 import { useLocation } from 'react-router-dom'
 import PageContainer from '../../../shared/page-container'
@@ -23,7 +24,7 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
   const [profileData, setProfileData] = React.useState(defaultProfileData)
   const [username, setUsername] = React.useState(queryUsername)
 
-  const pageHeader = username.length ? `${username}'s Profile` : 'User not found'
+  const pageHeader = username.length ? `${limitString(username, 25)}'s Profile` : 'User not found'
   const isOwnProfile = username === userData.username
 
   React.useEffect(() => {
