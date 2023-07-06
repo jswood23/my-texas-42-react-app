@@ -5,6 +5,7 @@ import * as React from 'react'
 import Homepage from './pages/home'
 import LoginPage from './pages/users/login'
 import Navbar from './shared/navbar'
+import PlayPage from './pages/play'
 import ProfilePage from './pages/users/profile'
 import Rulespage from './pages/rules'
 import SignupPage from './pages/users/signup'
@@ -80,6 +81,10 @@ const RouterElements = () => {
             <Route
               path='/profile'
               element={<ProfilePage openAlert={openAlert} userData={userData} />}
+            />
+            <Route
+              path='/play'
+              element={<PlayPage openAlert={openAlert} userData={userData} />}
             />
           </>}
       </Routes>
