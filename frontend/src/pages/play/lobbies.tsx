@@ -1,5 +1,5 @@
 import { AddCircle } from '@mui/icons-material'
-import { Button } from '@mui/material'
+import { Button, Divider, Typography } from '@mui/material'
 import { GAME_STAGES } from '../../constants'
 import type { OpenAlert, UserData } from '../../types'
 import styled from 'styled-components'
@@ -23,14 +23,23 @@ const StyledRoot = styled.div(({ theme }) => ({
       backgroundColor: theme.palette.primary.main
     }
   },
-  '.new-game-button-container': {
+  '.centered-item-container': {
     display: 'flex',
     width: '100%',
     justifyContent: 'center'
   },
   '.new-game-icon': {
     marginRight: theme.spacing(1)
-
+  },
+  '.or-divider': {
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
+    width: '50%',
+    '.or-text': {
+      color: theme.palette.light.main,
+      fontSize: theme.spacing(2),
+      fontStyle: 'italic'
+    }
   }
 }))
 
@@ -39,15 +48,20 @@ const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
 
   return (
     <StyledRoot>
-      <div className='new-game-button-container'>
+      <div className="centered-item-container">
         <Button
-          className='new-game-button'
-          variant='contained'
+          className="new-game-button"
+          variant="contained"
           onClick={onClickStartNewGame}
         >
-          <AddCircle className='new-game-icon' />
+          <AddCircle className="new-game-icon" />
           Start new game
         </Button>
+      </div>
+      <div className="centered-item-container">
+        <Divider className="or-divider">
+          <Typography className="or-text">or</Typography>
+        </Divider>
       </div>
     </StyledRoot>
   )

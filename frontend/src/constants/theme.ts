@@ -15,6 +15,9 @@ export const THEME = {
       main: '#FFFEF5',
       alt: '#FFFCEB'
     },
+    light: {
+      main: '#A0A0A0'
+    },
     domino: {
       color1: '#E31837', // red
       color2: '#006491', // blue
