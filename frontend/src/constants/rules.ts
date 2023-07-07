@@ -49,5 +49,11 @@ export const RULES: Rule[] = [
       'A player may bid 2 marks and choose Sevens as an option.',
     excludes: [],
     requires: []
+  },
+  {
+    rule_name: 'Delve',
+    rule_description: 'A player may bid delve if they have not yet looked at their hand. Upon bidding delve, the bid is raised to seven marks.',
+    excludes: [],
+    requires: []
   }
 ]
