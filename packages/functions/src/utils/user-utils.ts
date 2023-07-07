@@ -20,6 +20,23 @@ export const getCurrentUser = async (event: any) => {
   return result.Item as any;
 }
 
+export const getUserById = async (id: string) => {
+  const params = {
+    TableName: Table.UserInfo.tableName,
+    Key: {
+      user_id: id
+    }
+  };
+
+  const result = await dynamoDB.get(params);
+
+  if (!result.Item) {
+    throw new Error('User does not exist.');
+  }
+
+  return (result.Item as any);
+}
+
 export const getUserByUsername = async (username: string) => {
   const params = {
     TableName: Table.UserInfo.tableName,
