@@ -1,4 +1,3 @@
-import { isMobile } from 'react-device-detect'
 import { Tooltip, Typography } from '@mui/material'
 import type { ProfileData } from '../../../types'
 import styled from 'styled-components'
@@ -10,7 +9,7 @@ const StyledRoot = styled.div(({ theme }) => ({
   marginBottom: theme.spacing(2),
   marginTop: theme.spacing(1),
   padding: theme.spacing(1),
-  width: isMobile ? '100%' : '75%',
+  width: theme.isMobile ? '100%' : '75%',
   '.stats-entries': {
     display: 'flex',
     flexWrap: 'wrap',
@@ -28,7 +27,7 @@ const StyledRoot = styled.div(({ theme }) => ({
 
 const StatsEntry = styled(Typography)(({ theme }) => ({
   color: theme.palette.light.main,
-  flexBasis: isMobile ? '50%' : '25%',
+  flexBasis: theme.isMobile ? '50%' : '25%',
   fontSize: theme.spacing(1),
   paddingLeft: theme.spacing(1),
   paddingRight: theme.spacing(1),

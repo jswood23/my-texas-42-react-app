@@ -34,7 +34,7 @@ const StyledRoot = styled.div(({ theme }) => ({
   '.or-divider': {
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
-    width: '50%',
+    width: theme.isMobile ? '75%' : '50%',
     '.or-text': {
       color: theme.palette.light.main,
       fontSize: theme.spacing(2),

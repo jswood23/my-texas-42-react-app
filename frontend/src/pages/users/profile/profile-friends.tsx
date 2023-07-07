@@ -2,7 +2,6 @@ import { API } from 'aws-amplify'
 import { apiContext } from '../../../constants'
 import { Button, CircularProgress, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material'
 import { Cancel, CheckCircle } from '@mui/icons-material'
-import { isMobile } from 'react-device-detect'
 import { limitString } from '../../../utils/string-utils'
 import type { OpenAlert, ProfileData, UserData } from '../../../types'
 import * as React from 'react'
@@ -13,7 +12,7 @@ const StyledRoot = styled.div(({ theme }) => ({
   border: '0.5px solid #B0B0B0',
   borderRadius: '3px',
   boxShadow: '0 2px 5px 2px #E0E0E0',
-  flexDirection: isMobile ? 'column' : 'row',
+  flexDirection: theme.isMobile ? 'column' : 'row',
   width: '100%',
   '.user-container': {
     height: '400px'
@@ -22,8 +21,8 @@ const StyledRoot = styled.div(({ theme }) => ({
     textDecoration: 'none'
   },
   '.friend-requests': {
-    borderLeft: isMobile ? '0' : '0.5px solid #B0B0B0',
-    borderTop: isMobile ? '0.5px solid #B0B0B0' : 0
+    borderLeft: theme.isMobile ? '0' : '0.5px solid #B0B0B0',
+    borderTop: theme.isMobile ? '0.5px solid #B0B0B0' : 0
   },
   '.item-align-left': {
     display: 'flex',
@@ -55,7 +54,7 @@ const StyledRoot = styled.div(({ theme }) => ({
     '&:hover': {
       backgroundColor: theme.palette.secondary.main
     },
-    minHeight: isMobile ? theme.spacing(6) : theme.spacing(4),
+    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
     minWidth: theme.spacing(13)
   },
   '.green-button': {

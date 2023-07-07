@@ -1,5 +1,4 @@
 import { CircularProgress, Container, Typography } from '@mui/material'
-import { isMobile } from 'react-device-detect'
 import type { OpenAlert, UserData } from '../../types'
 import styled from 'styled-components'
 
@@ -14,7 +13,7 @@ interface Props {
 
 const StyledContainer = styled(Container)(({ theme }) => ({
   backgroundColor: 'white',
-  minHeight: isMobile ? '560px' : '800px',
+  minHeight: theme.isMobile ? '560px' : '800px',
   width: '100%',
   marginTop: theme.spacing(2),
   padding: theme.spacing(2),
@@ -24,7 +23,7 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   boxShadow: '0 2px 5px 3px #E0E0E0',
   '.circular-progress-container': {
     width: '100%',
-    height: isMobile ? '400px' : '600px',
+    height: theme.isMobile ? '400px' : '600px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
