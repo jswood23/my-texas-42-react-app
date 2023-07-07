@@ -1,6 +1,7 @@
 import { AddCircle } from '@mui/icons-material'
 import { Button, Divider, TextField, Typography } from '@mui/material'
 import { GAME_STAGES, INVITE_CODE_LENGTH } from '../../constants'
+import { isMobile } from 'react-device-detect'
 import type { OpenAlert, UserData } from '../../types'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -99,6 +100,24 @@ const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
 
   const onClickStartNewGame = () => { onChangeStage(GAME_STAGES.NEW_GAME_STAGE) }
 
+  const privateLobbyList = (
+    <div className="lobby-list">
+      <Divider className="lobby-header-divider">
+        <Typography className="divider-text">Join a private lobby</Typography>
+      </Divider>
+      <Typography>Some text</Typography>
+    </div>
+  )
+
+  const publicLobbyList = (
+    <div className="lobby-list">
+      <Divider className="lobby-header-divider">
+        <Typography className="divider-text">Join a public lobby</Typography>
+      </Divider>
+      <Typography>Some text</Typography>
+    </div>
+  )
+
   return (
     <StyledRoot>
       <div className="vertical-centered-item-container">
@@ -134,22 +153,19 @@ const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
           <Typography className="divider-text">or</Typography>
         </Divider>
         <div className="lobby-lists-container">
-          <div className="lobby-list">
-            <Divider className="lobby-header-divider">
-              <Typography className="divider-text">
-                Join a public lobby
-              </Typography>
-            </Divider>
-            <Typography>Some text</Typography>
-          </div>
-          <div className="lobby-list">
-            <Divider className="lobby-header-divider">
-              <Typography className="divider-text">
-                Join a friend&apos;s lobby
-              </Typography>
-            </Divider>
-            <Typography>Some text</Typography>
-          </div>
+          {isMobile
+            ? (
+            <>
+              {privateLobbyList}
+              {publicLobbyList}
+            </>
+              )
+            : (
+            <>
+              {publicLobbyList}
+              {privateLobbyList}
+            </>
+              )}
         </div>
       </div>
     </StyledRoot>
