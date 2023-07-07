@@ -12,7 +12,7 @@ interface Props {
 }
 
 const PlayPage = ({ openAlert, userData }: Props) => {
-  const [stage, setStage] = React.useState('in-game')
+  const [stage, setStage] = React.useState(GAME_STAGES.LOBBY_STAGE)
   const isInLobby = stage.includes(GAME_STAGES.LOBBY_STAGE)
   const isNewGame = stage.includes(GAME_STAGES.NEW_GAME_STAGE)
   const isInGame = stage.includes(GAME_STAGES.IN_GAME_STAGE)
