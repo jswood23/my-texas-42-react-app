@@ -2,7 +2,8 @@ import { AddCircle } from '@mui/icons-material'
 import { Button, Divider, TextField, Typography } from '@mui/material'
 import { GAME_STAGES, INVITE_CODE_LENGTH } from '../../constants'
 import { isMobile } from 'react-device-detect'
-import type { OpenAlert, UserData } from '../../types'
+import type { LobbyInfo, OpenAlert, UserData } from '../../types'
+import LobbyCard from './lobby-card'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -83,6 +84,16 @@ const StyledRoot = styled.div(({ theme }) => ({
   }
 }))
 
+const exampleLobby: LobbyInfo = {
+  match_id: 'lobby_id_1',
+  match_name: 'Example Lobby',
+  match_privacy: 0,
+  allowed_players: [],
+  rules: ['Forced 31 bid', '2-mark Nil', '2-mark Splash', '2-mark Plunge'],
+  team_1: [],
+  team_2: []
+}
+
 const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
   const [inviteCode, setInviteCode] = React.useState('')
 
@@ -114,7 +125,7 @@ const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
       <Divider className="lobby-header-divider">
         <Typography className="divider-text">Join a public lobby</Typography>
       </Divider>
-      <Typography>Some text</Typography>
+      <LobbyCard lobbyInfo={exampleLobby} openAlert={openAlert} userData={userData} />
     </div>
   )
 
