@@ -1,6 +1,6 @@
 import { AddCircle } from '@mui/icons-material'
 import { Button, Divider, TextField, Typography } from '@mui/material'
-import { GAME_STAGES } from '../../constants'
+import { GAME_STAGES, INVITE_CODE_LENGTH } from '../../constants'
 import type { OpenAlert, UserData } from '../../types'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -73,8 +73,8 @@ const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
   }
 
   const onClickJoinByInvite = () => {
-    if (!inviteCode) {
-      openAlert('Please enter an invite code.', 'error')
+    if (inviteCode.length !== INVITE_CODE_LENGTH) {
+      openAlert(`Please enter a ${INVITE_CODE_LENGTH}-character invite code.`, 'error')
       return
     }
     openAlert(`Joining game with code ${inviteCode}`, 'info')

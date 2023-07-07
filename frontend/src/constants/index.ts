@@ -31,4 +31,6 @@ export const GAME_STAGES = {
   NEW_GAME_STAGE: 'new-game'
 }
 
+export const INVITE_CODE_LENGTH = 6
+
 export const requireLoginPages = ['/profile']
