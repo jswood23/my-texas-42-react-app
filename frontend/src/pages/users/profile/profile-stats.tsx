@@ -27,7 +27,7 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 const StatsEntry = styled(Typography)(({ theme }) => ({
-  color: '#A0A0A0',
+  color: theme.palette.light.main,
   flexBasis: isMobile ? '50%' : '25%',
   fontSize: theme.spacing(1),
   paddingLeft: theme.spacing(1),
