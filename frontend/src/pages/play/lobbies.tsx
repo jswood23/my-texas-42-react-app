@@ -12,17 +12,10 @@ interface Props {
 }
 
 const StyledRoot = styled.div(({ theme }) => ({
-  '.new-game-button': {
-    backgroundColor: theme.palette.primary.alt,
-    color: theme.palette.secondary.main,
+  '.divider-text': {
+    color: theme.palette.light.main,
     fontSize: theme.spacing(2),
-    marginTop: theme.spacing(2),
-    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
-    minWidth: theme.spacing(13),
-    '&:hover': {
-      color: theme.palette.secondary.alt,
-      backgroundColor: theme.palette.primary.main
-    }
+    fontStyle: 'italic'
   },
   '.horizontal-centered-item-container': {
     display: 'flex',
@@ -44,18 +37,42 @@ const StyledRoot = styled.div(({ theme }) => ({
       backgroundColor: theme.palette.primary.main
     }
   },
+  '.lobby-lists-container': {
+    alignItems: theme.isMobile ? 'center' : 'flex-start',
+    display: 'flex',
+    flexDirection: theme.isMobile ? 'column' : 'row',
+    justifyContent: theme.isMobile ? 'flex-start' : 'center',
+    width: '100%'
+  },
+  '.lobby-header-divider': {
+    width: '90%'
+  },
+  '.lobby-list': {
+    alignItems: 'center',
+    display: 'flex',
+    flexBasis: '50%',
+    flexDirection: 'column',
+    marginBottom: theme.spacing(1)
+  },
+  '.new-game-button': {
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.spacing(2),
+    marginTop: theme.spacing(2),
+    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
+    minWidth: theme.spacing(13),
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    }
+  },
   '.new-game-icon': {
     marginRight: theme.spacing(1)
   },
   '.or-divider': {
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
-    width: theme.isMobile ? '75%' : '50%',
-    '.or-text': {
-      color: theme.palette.light.main,
-      fontSize: theme.spacing(2),
-      fontStyle: 'italic'
-    }
+    width: theme.isMobile ? '75%' : '50%'
   },
   '.vertical-centered-item-container': {
     alignItems: 'center',
@@ -94,7 +111,7 @@ const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
           Start new game
         </Button>
         <Divider className="or-divider">
-          <Typography className="or-text">or</Typography>
+          <Typography className="divider-text">or</Typography>
         </Divider>
         <div className="horizontal-centered-item-container">
           <TextField
@@ -114,8 +131,26 @@ const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
           </Button>
         </div>
         <Divider className="or-divider">
-          <Typography className="or-text">or</Typography>
+          <Typography className="divider-text">or</Typography>
         </Divider>
+        <div className="lobby-lists-container">
+          <div className="lobby-list">
+            <Divider className="lobby-header-divider">
+              <Typography className="divider-text">
+                Join a public lobby
+              </Typography>
+            </Divider>
+            <Typography>Some text</Typography>
+          </div>
+          <div className="lobby-list">
+            <Divider className="lobby-header-divider">
+              <Typography className="divider-text">
+                Join a friend&apos;s lobby
+              </Typography>
+            </Divider>
+            <Typography>Some text</Typography>
+          </div>
+        </div>
       </div>
     </StyledRoot>
   )
