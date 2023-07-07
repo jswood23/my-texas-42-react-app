@@ -17,6 +17,13 @@ export interface ProfileData {
   total_rounds_as_counter: number
 }
 
+export interface Rule {
+  rule_name: string
+  rule_description: string
+  excludes: string[]
+  requires: string[]
+}
+
 export interface UserData {
   exists: boolean
   readonly username: string
