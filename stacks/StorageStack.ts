@@ -93,26 +93,11 @@ export function StorageStack({ stack, app }: StackContext) {
       },
     });
 
-    const ruleTable = new Table(stack, 'Rule', {
-      fields: {
-        rule_id: 'string',
-        rule_name: 'string',
-        rule_description: 'string',
-      },
-      primaryIndex: { partitionKey: 'rule_id' },
-      cdk: {
-        table: {
-          pointInTimeRecovery: false,
-        },
-      },
-    });
-
     return {
       bucket,
       matchHistoryTable,
       notesTable,
       rulesetTable,
-      ruleTable,
       userInfoTable,
     };
 }
