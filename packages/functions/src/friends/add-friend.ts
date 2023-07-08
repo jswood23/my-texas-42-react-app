@@ -53,7 +53,7 @@ export const main = handler(async (event: any) =>
         UpdateExpression: "SET incoming_friend_requests = :incoming_friend_requests",
         ExpressionAttributeValues: {
             //make a database request to set incoming_friend_request to new_request
-            ":incoming_friend_requests": new_list
+            ":incoming_friend_requests": new_list,
         },
         ReturnValues: "ALL_NEW",
     };
