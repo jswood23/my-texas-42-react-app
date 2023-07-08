@@ -16,7 +16,7 @@ export const main = handler(async (event: any) =>
     //get new friend as user object
     const new_friend = await getUserByUsername(you);
 
-    //get yourself as string and then user object
+    //get yourself as string and user object
     const me_fr_fr = event.requestContext.authorizer.iam.cognitoIdentity.amr[2].slice(-36);
     const accepter = await getUserById(me_fr_fr)
 
@@ -37,7 +37,7 @@ export const main = handler(async (event: any) =>
             //make databse request to set friends equal to new_list
             ":friends": new_list
         },
-        ReturnValues: "ALL NEW",
+        ReturnValues: "ALL_NEW",
     };
     
     await dynamoDB.update(params);
