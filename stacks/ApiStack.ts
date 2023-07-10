@@ -19,6 +19,8 @@ export function ApiStack({ stack, app }: StackContext) {
         },
       },
       routes: {
+        // game lobbies
+        'GET /list_lobbies': 'packages/functions/src/lobbies/list-lobbies.main', // list all lobbies available to the user
         // user profiles
         'GET /users/{username}': 'packages/functions/src/users/get-user-profile.main', // get a user's profile information by username
         // notes api from tutorial
