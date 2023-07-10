@@ -23,7 +23,8 @@ const StyledRoot = styled.div(({ theme }) => ({
   '.divider-text': {
     color: theme.palette.light.main,
     fontSize: theme.spacing(2),
-    fontStyle: 'italic'
+    fontStyle: 'italic',
+    userSelect: 'none'
   },
   '.empty-lobby-list-text': {
     color: theme.palette.light.main,

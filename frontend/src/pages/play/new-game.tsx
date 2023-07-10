@@ -46,7 +46,8 @@ const StyledRoot = styled.div(({ theme }) => ({
     boxShadow: '0 2px 5px 3px #E0E0E0',
     marginBottom: theme.spacing(1),
     marginTop: theme.spacing(1),
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
+    userSelect: 'none'
   },
   '.rules-title-text': {
     color: theme.palette.light.main,
