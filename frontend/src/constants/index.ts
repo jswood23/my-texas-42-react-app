@@ -21,6 +21,8 @@ export const defaultUserData: UserData = {
   username: ''
 }
 
+export const EMPTY_MEMBER_TEXT = '--empty--'
+
 export const GAME_STAGES = {
   IN_GAME_LOADING: 'in-game loading',
   IN_GAME_STAGE: 'in-game',
