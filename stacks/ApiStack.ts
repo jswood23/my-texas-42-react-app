@@ -2,7 +2,13 @@ import { Api, StackContext, use } from "sst/constructs";
 import { StorageStack } from "./StorageStack";
 
 export function ApiStack({ stack, app }: StackContext) {
-    const { matchHistoryTable, notesTable, rulesetTable, userInfoTable } = use(StorageStack);
+    const {
+      currentMatchTable,
+      matchHistoryTable,
+      notesTable,
+      rulesetTable,
+      userInfoTable,
+    } = use(StorageStack);
 
     // Create the API
     const api = new Api(stack, 'Api', {
@@ -11,6 +17,7 @@ export function ApiStack({ stack, app }: StackContext) {
         authorizer: 'iam',
         function: {
           bind: [
+            currentMatchTable,
             matchHistoryTable,
             notesTable,
             rulesetTable,
