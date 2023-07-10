@@ -14,6 +14,8 @@ import styled from 'styled-components'
 interface Props {
   onChangeStage: (newStage: string) => void
   openAlert: OpenAlert
+  privateLobbies: LobbyInfo[]
+  publicLobbies: LobbyInfo[]
   userData: UserData
 }
 
@@ -93,20 +95,8 @@ const StyledRoot = styled.div(({ theme }) => ({
   }
 }))
 
-const emptyLobbyList: LobbyInfo[] = []
-
-const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
+const Lobbies = ({ onChangeStage, openAlert, privateLobbies, publicLobbies, userData }: Props) => {
   const [inviteCode, setInviteCode] = React.useState('')
-  const [publicLobbies, setPublicLobbies] = React.useState(emptyLobbyList)
-  const [privateLobbies, setPrivateLobbies] = React.useState(emptyLobbyList)
-
-  React.useEffect(() => {
-    // const exampleLobbyList = []
-    // for (let i = 0; i < 0; i++) {
-    //   exampleLobbyList.push(exampleLobby)
-    // }
-    // setPublicLobbies(exampleLobbyList)
-  }, [])
 
   const onChangeInviteCode = (e: { target: { value: string } }) => {
     setInviteCode(e.target.value)
