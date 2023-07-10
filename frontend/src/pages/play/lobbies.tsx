@@ -1,6 +1,10 @@
 import { AddCircle } from '@mui/icons-material'
-import { Button, Divider, TextField, Typography } from '@mui/material'
-import { GAME_STAGES, INVITE_CODE_LENGTH } from '../../constants'
+import { Button, Divider, Pagination, TextField, Typography } from '@mui/material'
+import {
+  GAME_STAGES,
+  INVITE_CODE_LENGTH,
+  ITEMS_PER_PAGE
+} from '../../constants'
 import { isMobile } from 'react-device-detect'
 import type { LobbyInfo, OpenAlert, UserData } from '../../types'
 import LobbyCard from './lobby-card'
@@ -18,6 +22,11 @@ const StyledRoot = styled.div(({ theme }) => ({
     color: theme.palette.light.main,
     fontSize: theme.spacing(2),
     fontStyle: 'italic'
+  },
+  '.empty-lobby-list-text': {
+    color: theme.palette.light.main,
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2)
   },
   '.horizontal-centered-item-container': {
     display: 'flex',
@@ -84,18 +93,20 @@ const StyledRoot = styled.div(({ theme }) => ({
   }
 }))
 
-const exampleLobby: LobbyInfo = {
-  match_id: 'lobby_id_1',
-  match_name: 'Example Lobby',
-  match_privacy: 0,
-  allowed_players: [],
-  rules: ['Forced 31 bid', '2-mark Nil', '2-mark Splash', '2-mark Plunge'],
-  team_1: [],
-  team_2: []
-}
+const emptyLobbyList: LobbyInfo[] = []
 
 const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
   const [inviteCode, setInviteCode] = React.useState('')
+  const [publicLobbies, setPublicLobbies] = React.useState(emptyLobbyList)
+  const [privateLobbies, setPrivateLobbies] = React.useState(emptyLobbyList)
+
+  React.useEffect(() => {
+    // const exampleLobbyList = []
+    // for (let i = 0; i < 0; i++) {
+    //   exampleLobbyList.push(exampleLobby)
+    // }
+    // setPublicLobbies(exampleLobbyList)
+  }, [])
 
   const onChangeInviteCode = (e: { target: { value: string } }) => {
     setInviteCode(e.target.value)
@@ -111,12 +122,53 @@ const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
 
   const onClickStartNewGame = () => { onChangeStage(GAME_STAGES.NEW_GAME_STAGE) }
 
+  const displayLobbyList = (lobbyList: LobbyInfo[]) => {
+    const [page, setPage] = React.useState(1)
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(Math.min(value, totalPages))
+    }
+
+    const totalPages = Math.ceil(lobbyList.length / ITEMS_PER_PAGE)
+    const p = page - 1
+    const thisPage = lobbyList.slice(
+      p * ITEMS_PER_PAGE,
+      (p + 1) * ITEMS_PER_PAGE
+    )
+
+    let i = 0
+    return (
+      <>
+        {thisPage.map((thisLobby: LobbyInfo) => {
+          i++
+          return (
+            <LobbyCard
+              key={`lobby-card-${i}`}
+              lobbyInfo={thisLobby}
+              openAlert={openAlert}
+              userData={userData}
+            />
+          )
+        })}
+        {lobbyList.length > 0
+          ? <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+          />
+          : <Typography className='empty-lobby-list-text'>
+            No open lobbies.
+          </Typography>
+        }
+      </>
+    )
+  }
+
   const privateLobbyList = (
     <div className="lobby-list">
       <Divider className="lobby-header-divider">
         <Typography className="divider-text">Join a private lobby</Typography>
       </Divider>
-      <Typography>Some text</Typography>
+      {displayLobbyList(privateLobbies)}
     </div>
   )
 
@@ -125,7 +177,7 @@ const Lobbies = ({ onChangeStage, openAlert, userData }: Props) => {
       <Divider className="lobby-header-divider">
         <Typography className="divider-text">Join a public lobby</Typography>
       </Divider>
-      <LobbyCard lobbyInfo={exampleLobby} openAlert={openAlert} userData={userData} />
+      {displayLobbyList(publicLobbies)}
     </div>
   )
 

@@ -35,4 +35,6 @@ export const GAME_STAGES = {
 
 export const INVITE_CODE_LENGTH = 6
 
+export const ITEMS_PER_PAGE = 4
+
 export const requireLoginPages = ['/profile']
