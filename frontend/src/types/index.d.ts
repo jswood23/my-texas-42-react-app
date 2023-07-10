@@ -1,8 +1,8 @@
 export interface LobbyInfo {
   match_id: string
   match_name: string
+  match_invite_code: string
   match_privacy: number
-  allowed_players: string[]
   rules: string[]
   team_1: string[]
   team_2: string[]
