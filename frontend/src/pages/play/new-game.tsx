@@ -1,4 +1,5 @@
-import { Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, TextField, Tooltip, Typography } from '@mui/material'
+import { Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, TextField, Tooltip, Typography } from '@mui/material'
+import { GAME_STAGES } from '../../constants'
 import type { OpenAlert, Rule, UserData } from '../../types'
 import { RULES } from '../../constants/rules'
 import { validateField } from '../../utils/user-utils'
@@ -12,6 +13,21 @@ const StyledRoot = styled.div(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'column',
+  '.back-button': {
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.primary.alt,
+    fontSize: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
+    width: '100%',
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.alt,
+      color: theme.palette.primary.main
+    },
+    borderColor: theme.palette.primary.main,
+    border: '1px solid'
+  },
   '.form-container': {
     width: theme.spacing(35),
     display: 'flex',
@@ -28,12 +44,27 @@ const StyledRoot = styled.div(({ theme }) => ({
     border: '1px solid #D0D0D0',
     borderRadius: '5px',
     boxShadow: '0 2px 5px 3px #E0E0E0',
+    marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(1),
     padding: theme.spacing(1)
   },
   '.rules-title-text': {
     color: theme.palette.light.main,
     fontSize: theme.spacing(2),
     fontStyle: 'italic'
+  },
+  '.submit-button': {
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
+    width: '100%',
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    }
   }
 }))
 
@@ -84,6 +115,10 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
 
   const onChangePrivacy = (e: SelectChangeEvent) => {
     setPrivacy(+e.target.value)
+  }
+
+  const onClickBack = () => {
+    onChangeStage(GAME_STAGES.LOBBY_STAGE)
   }
 
   const getRule = (ruleName: string) => {
@@ -174,12 +209,14 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
             <MenuItem value={2}>Invite only</MenuItem>
           </Select>
         </FormControl>
-        <FormGroup className='rules-container'>
+        <FormGroup className="rules-container">
           <Divider>
             <Typography className="rules-title-text">Rules</Typography>
           </Divider>
           {displayRuleOptions()}
         </FormGroup>
+        <Button className="submit-button">Start game</Button>
+        <Button className="back-button" onClick={onClickBack}>Back</Button>
       </div>
     </StyledRoot>
   )
