@@ -32,14 +32,14 @@ export const RULES: Rule[] = [
   {
     rule_name: '2-mark Splash',
     rule_description:
-      'A player may bid 2 marks and choose Splash as an option.',
+      'A player may bid 2 marks and choose Splash as an option. The player must have at least 3 doubles in their hand.',
     excludes: [],
     requires: []
   },
   {
     rule_name: '2-mark Plunge',
     rule_description:
-      'A player may bid 2 marks and choose Plunge as an option. Upon choosing plunge, the bid is raised by one mark.',
+      'A player may bid 2 marks and choose Plunge as an option. The player must have at least 4 doubles in their hand. Upon choosing plunge, the bid is raised by one mark.',
     excludes: [],
     requires: ['2-mark Splash']
   },
@@ -52,7 +52,8 @@ export const RULES: Rule[] = [
   },
   {
     rule_name: 'Delve',
-    rule_description: 'A player may bid delve if they have not yet looked at their hand. Upon bidding delve, the bid is raised to seven marks.',
+    rule_description:
+      'A player may bid delve if they have not yet looked at their hand. Upon bidding delve, the bid is raised to seven marks.',
     excludes: [],
     requires: []
   }
