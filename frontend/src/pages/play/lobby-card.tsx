@@ -11,6 +11,8 @@ interface Props {
 }
 
 const StyledCard = styled(Card)(({ theme }) => ({
+  marginBottom: theme.spacing(1),
+  marginTop: theme.spacing(1),
   padding: theme.spacing(1),
   width: theme.isMobile ? '100%' : '75%',
   '.horizontal-row-item-container': {
