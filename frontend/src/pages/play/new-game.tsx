@@ -1,5 +1,6 @@
+import { API } from 'aws-amplify'
+import { apiContext, GAME_STAGES } from '../../constants'
 import { Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, TextField, Tooltip, Typography } from '@mui/material'
-import { GAME_STAGES } from '../../constants'
 import type { OpenAlert, Rule, UserData } from '../../types'
 import { RULES } from '../../constants/rules'
 import { validateField } from '../../utils/user-utils'
@@ -77,7 +78,7 @@ interface Props {
 
 const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
   const [matchName, setMatchName] = React.useState('')
-  const [privacy, setPrivacy] = React.useState(0)
+  const [privacy, setPrivacy] = React.useState(1)
   const [errors, setErrors] = React.useState({
     hasError: false,
     matchName: null
@@ -120,6 +121,27 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
 
   const onClickBack = () => {
     onChangeStage(GAME_STAGES.LOBBY_STAGE)
+  }
+
+  const onClickStartGame = async () => {
+    const startGameParams = {
+      body: {
+        matchName,
+        privacy,
+        rules
+      }
+    }
+
+    console.log(startGameParams)
+
+    await API.put(apiContext, '/start_lobby', startGameParams)
+      .then((response) => {
+        console.log(response)
+        onChangeStage(GAME_STAGES.IN_GAME_LOADING)
+      }).catch((error) => {
+        console.log(error)
+        openAlert('There was an issue starting the game.', 'error')
+      })
   }
 
   const getRule = (ruleName: string) => {
@@ -205,9 +227,9 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
             value={privacy.toString()}
             onChange={onChangePrivacy}
           >
-            <MenuItem value={0}>Public</MenuItem>
-            <MenuItem value={1}>Friends only</MenuItem>
-            <MenuItem value={2}>Invite only</MenuItem>
+            <MenuItem value={1}>Public</MenuItem>
+            <MenuItem value={2}>Friends only</MenuItem>
+            <MenuItem value={3}>Invite only</MenuItem>
           </Select>
         </FormControl>
         <FormGroup className="rules-container">
@@ -216,7 +238,7 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
           </Divider>
           {displayRuleOptions()}
         </FormGroup>
-        <Button className="submit-button">Start game</Button>
+        <Button className="submit-button" onClick={onClickStartGame}>Start game</Button>
         <Button className="back-button" onClick={onClickBack}>Back</Button>
       </div>
     </StyledRoot>
