@@ -7,6 +7,7 @@ export function ApiStack({ stack, app }: StackContext) {
       matchHistoryTable,
       notesTable,
       rulesetTable,
+      socketConnectionTable,
       userInfoTable,
     } = use(StorageStack);
 
@@ -21,6 +22,7 @@ export function ApiStack({ stack, app }: StackContext) {
             matchHistoryTable,
             notesTable,
             rulesetTable,
+            socketConnectionTable,
             userInfoTable
           ],
         },
