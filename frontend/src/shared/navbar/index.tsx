@@ -1,7 +1,6 @@
 import { AccountCircle, Login, Logout, PersonAdd, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
 import { AppBar, Toolbar, CssBaseline } from '@material-ui/core'
 import { Auth } from 'aws-amplify'
-import { isMobile } from 'react-device-detect'
 import { makeStyles } from '@material-ui/core/styles'
 import { NavLink, useNavigate } from 'react-router-dom'
 import type { OpenAlert, UserData } from '../../types'
@@ -39,8 +38,8 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     userSelect: 'none',
 
     margin: 'none',
-    paddingLeft: theme.spacing(isMobile ? 1 : 2),
-    paddingRight: theme.spacing(isMobile ? 1 : 2),
+    paddingLeft: theme.spacing(theme.isMobile ? 1 : 2),
+    paddingRight: theme.spacing(theme.isMobile ? 1 : 2),
     paddingTop: theme.spacing(1.5),
     paddingBottom: theme.spacing(1.5),
     '&:hover': {

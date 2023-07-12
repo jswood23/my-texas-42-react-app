@@ -1,3 +1,13 @@
+export interface LobbyInfo {
+  match_id: string
+  match_name: string
+  match_invite_code: string
+  match_privacy: number
+  rules: string[]
+  team_1: string[]
+  team_2: string[]
+}
+
 export type OpenAlert = (message: string, severity: string) => void
 
 export interface ProfileData {
@@ -15,6 +25,13 @@ export interface ProfileData {
   total_rounds_as_support: number
   total_points_as_counter: number
   total_rounds_as_counter: number
+}
+
+export interface Rule {
+  rule_name: string
+  rule_description: string
+  excludes: string[]
+  requires: string[]
 }
 
 export interface UserData {

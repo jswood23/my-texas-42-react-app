@@ -21,11 +21,20 @@ export const defaultUserData: UserData = {
   username: ''
 }
 
+export const EMPTY_MEMBER_TEXT = '--empty--'
+
 export const GAME_STAGES = {
+  IN_GAME_LOADING: 'in-game loading',
   IN_GAME_STAGE: 'in-game',
   LOADING_STATE: 'loading',
+  LOBBY_LOADING: 'lobbies loading',
   LOBBY_STAGE: 'lobbies',
+  NEW_GAME_LOADING: 'new-game loading',
   NEW_GAME_STAGE: 'new-game'
 }
+
+export const INVITE_CODE_LENGTH = 6
+
+export const ITEMS_PER_PAGE = 4
 
 export const requireLoginPages = ['/profile']

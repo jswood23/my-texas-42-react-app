@@ -2,7 +2,13 @@ import { Api, StackContext, use } from "sst/constructs";
 import { StorageStack } from "./StorageStack";
 
 export function ApiStack({ stack, app }: StackContext) {
-    const { matchHistoryTable, notesTable, rulesetTable, ruleTable, userInfoTable } = use(StorageStack);
+    const {
+      currentMatchTable,
+      matchHistoryTable,
+      notesTable,
+      rulesetTable,
+      userInfoTable,
+    } = use(StorageStack);
 
     // Create the API
     const api = new Api(stack, 'Api', {
@@ -11,15 +17,18 @@ export function ApiStack({ stack, app }: StackContext) {
         authorizer: 'iam',
         function: {
           bind: [
+            currentMatchTable,
             matchHistoryTable,
             notesTable,
             rulesetTable,
-            ruleTable,
             userInfoTable
           ],
         },
       },
       routes: {
+        // game lobbies
+        'PUT /start_lobby': 'packages/functions/src/lobbies/start-lobby.main', // start new lobby
+        'GET /list_lobbies': 'packages/functions/src/lobbies/list-lobbies.main', // list all lobbies available to the user
         // user profiles
         'GET /users/{username}': 'packages/functions/src/users/get-user-profile.main', // get a user's profile information by username
         // notes api from tutorial

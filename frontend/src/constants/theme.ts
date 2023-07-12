@@ -12,8 +12,12 @@ export const THEME = {
       alt: '#700000'
     },
     secondary: {
-      main: '#FFFCEB',
-      alt: '#FFFEF5'
+      main: '#FFFEF5',
+      alt: '#FFFCEB'
+    },
+    light: {
+      main: '#A0A0A0',
+      alt: '#EAEAEA'
     },
     domino: {
       color1: '#E31837', // red
@@ -24,5 +28,6 @@ export const THEME = {
       color6: '#696161' // grey
     }
   },
+  isMobile,
   spacing: (n: number) => spacing(n)
 }
