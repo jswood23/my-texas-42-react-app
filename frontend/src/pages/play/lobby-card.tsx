@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, Typography } from '@mui/material'
+import { Button, Card, CardActions, CardContent, CircularProgress, Typography } from '@mui/material'
 import { EMPTY_MEMBER_TEXT } from '../../constants'
 import type { LobbyInfo, OpenAlert, UserData } from '../../types'
 import { limitString } from '../../utils/string-utils'
@@ -40,7 +40,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
   '.lobby-card-rules': {
     color: theme.palette.light.main,
-    fontSize: theme.spacing(1.5)
+    fontSize: theme.spacing(1.5),
+    marginBottom: theme.spacing(1)
   },
   '.team-title-text': {
     width: '100%',
@@ -59,6 +60,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 const LobbyCard = ({ lobbyInfo, openAlert, userData }: Props) => {
   const lobbyName = limitString(lobbyInfo.match_name, 30)
+  const isTeam1Full = lobbyInfo.team_1.length >= 2
+  const isTeam2Full = lobbyInfo.team_2.length >= 2
 
   const displayRules = () => {
     let rulesStr = 'Rules: '
@@ -74,12 +77,13 @@ const LobbyCard = ({ lobbyInfo, openAlert, userData }: Props) => {
   }
 
   const displayTeam = (team: string[]) => {
-    while (team.length < 2) {
-      team.push(EMPTY_MEMBER_TEXT)
+    const teamMembers = Object.assign([], team) // make shallow copy of team list to add --empty-- to
+    while (teamMembers.length < 2) {
+      teamMembers.push(EMPTY_MEMBER_TEXT)
     }
 
     let i = 0
-    return team.map((member: string) => {
+    return teamMembers.map((member: string) => {
       const isEmpty = member === EMPTY_MEMBER_TEXT
       i++
       return (
@@ -91,6 +95,10 @@ const LobbyCard = ({ lobbyInfo, openAlert, userData }: Props) => {
         </Typography>
       )
     })
+  }
+
+  const handleJoinGame = (team: number) => {
+    console.log(`Joining team ${team} for game with invite code ${lobbyInfo.match_invite_code}`)
   }
 
   return (
@@ -111,12 +119,22 @@ const LobbyCard = ({ lobbyInfo, openAlert, userData }: Props) => {
       </CardContent>
       <CardActions className="horizontal-row-container">
         <div className="horizontal-row-item-container">
-          <Button className="join-lobby-button" variant="contained">
+          <Button
+            className="join-lobby-button"
+            variant="contained"
+            disabled={isTeam1Full}
+            onClick={() => { handleJoinGame(1) }}
+          >
             Join Team 1
           </Button>
         </div>
         <div className="horizontal-row-item-container">
-          <Button className="join-lobby-button" variant="contained">
+          <Button
+            className="join-lobby-button"
+            variant="contained"
+            disabled={isTeam2Full}
+            onClick={() => { handleJoinGame(2) }}
+          >
             Join Team 2
           </Button>
         </div>
