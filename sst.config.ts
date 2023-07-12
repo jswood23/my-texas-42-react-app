@@ -3,6 +3,7 @@ import { AuthStack } from "./stacks/AuthStack";
 import { FrontendStack } from "./stacks/FrontendStack";
 import { SSTConfig } from "sst";
 import { StorageStack } from "./stacks/StorageStack";
+import { WebSocketStack } from "./stacks/WebSocketStack";
 
 export default {
   config(_input) {
@@ -17,8 +18,10 @@ export default {
       app.setDefaultRemovalPolicy('destroy');
     }
 
-    app.stack(StorageStack)
+    app
+      .stack(StorageStack)
       .stack(ApiStack)
+      .stack(WebSocketStack)
       .stack(AuthStack)
       .stack(FrontendStack);
   },
