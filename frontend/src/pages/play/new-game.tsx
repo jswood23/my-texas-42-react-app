@@ -1,6 +1,6 @@
 import { API } from 'aws-amplify'
 import { apiContext, GAME_STAGES } from '../../constants'
-import { Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, TextField, Tooltip, Typography } from '@mui/material'
+import { Button, Checkbox, CircularProgress, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, TextField, Tooltip, Typography } from '@mui/material'
 import type { OpenAlert, Rule, UserData } from '../../types'
 import { RULES } from '../../constants/rules'
 import { validateField } from '../../utils/user-utils'
@@ -66,6 +66,9 @@ const StyledRoot = styled.div(({ theme }) => ({
     '&:hover': {
       color: theme.palette.secondary.alt,
       backgroundColor: theme.palette.primary.main
+    },
+    '&.Mui-disabled': {
+      backgroundColor: theme.palette.light.alt
     }
   }
 }))
@@ -83,6 +86,10 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
     hasError: false,
     matchName: null
   })
+  const [isLoading, setIsLoading] = React.useState(false)
+  const disableSubmitButton = isLoading || Object.values(errors).some(
+    (e: any) => e?.hasError
+  )
 
   const defaultRules: string[] = []
   const defaultExcluded: string[] = []
@@ -124,6 +131,12 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
   }
 
   const onClickStartGame = async () => {
+    runValidationTasks('matchName', matchName)
+
+    if (Object.values(errors).some((e: any) => e?.hasError) || !matchName) {
+      return
+    }
+
     const startGameParams = {
       body: {
         matchName,
@@ -134,6 +147,7 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
 
     console.log(startGameParams)
 
+    setIsLoading(true)
     await API.put(apiContext, '/start_lobby', startGameParams)
       .then((response) => {
         console.log(response)
@@ -142,6 +156,7 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
         console.log(error)
         openAlert('There was an issue starting the game.', 'error')
       })
+    setIsLoading(false)
   }
 
   const getRule = (ruleName: string) => {
@@ -238,8 +253,16 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
           </Divider>
           {displayRuleOptions()}
         </FormGroup>
-        <Button className="submit-button" onClick={onClickStartGame}>Start game</Button>
-        <Button className="back-button" onClick={onClickBack}>Back</Button>
+        <Button
+          className="submit-button"
+          disabled={disableSubmitButton}
+          onClick={onClickStartGame}
+        >
+          {isLoading ? <CircularProgress size={35} /> : 'Start game'}
+        </Button>
+        <Button className="back-button" onClick={onClickBack}>
+          Back
+        </Button>
       </div>
     </StyledRoot>
   )
