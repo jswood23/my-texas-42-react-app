@@ -46,6 +46,13 @@ export function StorageStack({ stack, app }: StackContext) {
         total_rounds_as_support: 'number',
         total_points_as_counter: 'number',
         total_rounds_as_counter: 'number',
+        times_bidding_total: 'number',
+        times_bidding_by_suit: 'number',
+        times_bidding_nil: 'number',
+        times_bidding_splash: 'number',
+        times_bidding_plunge: 'number',
+        times_bidding_sevens: 'number',
+        times_bidding_delve: 'number',
       },
       primaryIndex: { partitionKey: 'user_id' },
       cdk: {
