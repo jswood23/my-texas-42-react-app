@@ -95,7 +95,18 @@ export function StorageStack({ stack, app }: StackContext) {
         allowed_players: 'string', // list
         rules: 'string', // list
         team_1: 'string', // list
-        team_2: 'string' // list
+        team_2: 'string', // list
+        current_round:	'number',
+        current_starting_bidder:	'number',
+        current_is_bidding:	'binary',
+        current_player_turn:	'number',
+        current_round_rules:	'string',
+        current_team_1_round_score:	'number',
+        current_team_2_round_score:	'number',
+        current_team_1_total_score:	'number',
+        current_team_2_total_score:	'number',
+        current_round_history:	'string',
+        total_round_history:	'string',
       },
       primaryIndex: { partitionKey: 'match_id' },
       cdk: {

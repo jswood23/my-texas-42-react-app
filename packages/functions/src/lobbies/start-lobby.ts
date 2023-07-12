@@ -31,6 +31,17 @@ export const main = handler(async (event: any) => {
       rules: data.rules ?? [],
       team_1: [thisUser.username],
       team_2: [],
+      current_round: 0,
+      current_starting_bidder: 0,
+      current_is_bidding: true,
+      current_player_turn: 0,
+      current_round_rules: data.rules ?? [],
+      current_team_1_round_score: 0,
+      current_team_2_round_score: 0,
+      current_team_1_total_score: 0,
+      current_team_2_total_score: 0,
+      current_round_history: [],
+      total_round_history: [],
     },
   };
 
