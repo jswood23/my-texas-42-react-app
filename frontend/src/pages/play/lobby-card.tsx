@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, CircularProgress, Typography } from '@mui/material'
+import { Button, Card, CardActions, CardContent, Typography } from '@mui/material'
 import { EMPTY_MEMBER_TEXT } from '../../constants'
 import type { LobbyInfo, OpenAlert, UserData } from '../../types'
 import { limitString } from '../../utils/string-utils'
