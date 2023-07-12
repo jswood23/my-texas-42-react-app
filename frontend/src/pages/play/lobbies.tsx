@@ -140,13 +140,15 @@ const Lobbies = ({ onChangeStage, openAlert, privateLobbies, publicLobbies, user
             />
           )
         })}
-        {lobbyList.length > 0
-          ? <Pagination
+        {lobbyList.length > ITEMS_PER_PAGE &&
+          <Pagination
             count={totalPages}
             page={page}
             onChange={handlePageChange}
           />
-          : <Typography className='empty-lobby-list-text'>
+        }
+        {lobbyList.length === 0 &&
+          <Typography className="empty-lobby-list-text">
             No open lobbies.
           </Typography>
         }
