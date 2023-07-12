@@ -2,6 +2,7 @@ import { Table } from 'sst/node/table';
 import handler from '@my-texas-42-react-app/core/handler';
 import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
 import { getCurrentUser } from 'src/utils/user-utils';
+import { isLobbyFull } from 'src/utils/lobby-utils';
 
 export const main = handler(async (event: any) => {
   const params = {
@@ -27,6 +28,11 @@ export const main = handler(async (event: any) => {
     const lobbyCount: number = result.Items.length
     for (let i = 0; i < lobbyCount; i++) {
       const lobby = result.Items[i];
+
+      if (isLobbyFull(lobby)) {
+        continue;
+      }
+
       switch (lobby.match_privacy) {
         // 1: public, 2: friends only, 3: invite only (don't show)
         case 1: {
