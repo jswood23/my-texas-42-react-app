@@ -24,14 +24,14 @@ export const main = handler(async (event: any) => {
     TableName: Table.CurrentMatch.tableName,
     Item: {
       match_id: uuid.v1(),
-      match_name: data.match_name,
+      match_name: data.matchName,
       match_invite_code: generateString(6),
       match_privacy: data.privacy,
       allowed_players: thisUser.friends,
       rules: data.rules ?? [],
       team_1: [thisUser.username],
-      team_2: []
-    }
+      team_2: [],
+    },
   };
 
   await dynamoDB.put(params);
