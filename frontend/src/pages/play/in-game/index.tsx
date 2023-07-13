@@ -2,6 +2,7 @@ import { CONNECTION_STATES } from '../../../constants'
 import type { OpenAlert, UserData } from '../../../types'
 import { Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import ChatBox from './chat-box'
 import config from '../../../constants/config'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -30,7 +31,7 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
     username: userData.username
   }
 
-  const { readyState } = useWebSocket(socketUrl, { queryParams })
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, { queryParams })
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: CONNECTION_STATES.connecting,
@@ -54,6 +55,12 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
       <Typography>Connection Status: {connectionStatus}</Typography>
       <Typography>Invite Code: {inviteCode}</Typography>
       <Typography>Team Number: {teamNumber}</Typography>
+      <ChatBox
+        lastMessage={lastMessage}
+        openAlert={openAlert}
+        sendMessage={sendMessage}
+        userData={userData}
+      />
     </StyledRoot>
   )
 }
