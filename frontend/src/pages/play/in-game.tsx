@@ -22,7 +22,8 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
   const queryParams = {
     match_invite_code: inviteCode,
     team_number: teamNumber,
-    user_id: userData.attributes.sub
+    user_id: userData.attributes.sub,
+    username: userData.username
   }
 
   const { readyState } = useWebSocket(socketUrl, { queryParams })

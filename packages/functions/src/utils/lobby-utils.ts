@@ -1,6 +1,47 @@
 import { Table } from 'sst/node/table';
 import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
 
+export interface Lobby {
+  match_id: string
+  match_name: string
+  match_invite_code: string
+  match_privacy: number
+  allowed_players: string[]
+  rules: string[]
+  team_1: string[]
+  team_1_connections: string[]
+  team_2: string[]
+  team_2_connections: string[]
+  current_round: number
+  current_starting_bidder: number
+  current_is_bidding: boolean
+  current_player_turn: number
+  current_round_rules: string[]
+  current_team_1_round_score: number
+  current_team_2_round_score: number
+  current_team_1_total_score: number
+  current_team_2_total_score: number
+  current_round_history: string[]
+  total_round_history: string[]
+}
+
+export const getLobbyById = async (match_id: string) => {
+  const params = {
+    TableName: Table.CurrentMatch.tableName,
+    Key: {
+      match_id: match_id,
+    },
+  };
+
+  const result = await dynamoDB.get(params);
+
+  if (!result.Item) {
+    throw new Error('Lobby does not exist.');
+  }
+
+  return (result.Item as Lobby);
+};
+
 export const getLobbyByInviteCode = async (match_invite_code: string) => {
   const findGameParams = {
     TableName: Table.CurrentMatch.tableName,
@@ -16,12 +57,58 @@ export const getLobbyByInviteCode = async (match_invite_code: string) => {
     throw new Error('Lobby does not exist.');
   }
 
-  return result.Items[0];
+  return (result.Items[0] as Lobby);
 };
 
-export const isLobbyFull = (lobby: any) => {
+export const isLobbyFull = (lobby: Lobby) => {
   if (lobby.team_1.length > 2 || lobby.team_2.length > 2) {
     console.log('One of the teams has too many players.');
   }
   return lobby.team_1.length >= 2 && lobby.team_2.length >= 2;
+};
+
+export const updateLobby = async (lobby: Lobby) => {
+  const attributesToChange = [
+    'team_1',
+    'team_1_connections',
+    'team_2',
+    'team_2_connections',
+    'current_round',
+    'current_starting_bidder',
+    'current_is_bidding',
+    'current_player_turn',
+    'current_round_rules',
+    'current_team_1_round_score',
+    'current_team_2_round_score',
+    'current_team_1_total_score',
+    'current_team_2_total_score',
+    'current_round_history',
+    'total_round_history',
+  ];
+  let UpdateExpression = 'SET ';
+  let ExpressionAttributeValues = {};
+  for (let i = 0; i < attributesToChange.length; i++) {
+    UpdateExpression += `${attributesToChange[i]} = :${attributesToChange[i]}`;
+    if (i < attributesToChange.length - 1) {
+      UpdateExpression += ', ';
+    }
+    ExpressionAttributeValues = {
+      ...ExpressionAttributeValues,
+      [`:${attributesToChange[i]}`]: (lobby as any)[attributesToChange[i]]
+    }
+  }
+
+  const params = {
+    TableName: Table.CurrentMatch.tableName,
+    Key: {
+      match_id: lobby.match_id,
+    },
+    UpdateExpression,
+    ExpressionAttributeValues,
+    ReturnValues: 'ALL_NEW',
+  };
+
+  await dynamoDB.update(params);
+
+  return { status: true };
 };
