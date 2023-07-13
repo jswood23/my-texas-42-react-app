@@ -112,3 +112,24 @@ export const updateLobby = async (lobby: Lobby) => {
 
   return { status: true };
 };
+
+export const removePlayerFromLobby = async (
+  match_id: string,
+  conn_id: string
+) => {
+  let lobby = await getLobbyById(match_id);
+
+  if (lobby.team_1_connections.includes(conn_id)) {
+    const index = lobby.team_1_connections.indexOf(conn_id);
+    lobby.team_1_connections.splice(index, 1);
+    lobby.team_1.splice(index, 1);
+  } else if (lobby.team_2_connections.includes(conn_id)) {
+    const index = lobby.team_2_connections.indexOf(conn_id);
+    lobby.team_2_connections.splice(index, 1);
+    lobby.team_2.splice(index, 1);
+  } else {
+    throw new Error('Player not found in lobby.');
+  }
+
+  await updateLobby(lobby);
+};

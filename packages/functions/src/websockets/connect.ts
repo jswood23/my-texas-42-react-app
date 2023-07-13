@@ -1,8 +1,6 @@
 import { addConnectionToTable } from "src/utils/websocket-utils";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { getLobbyByInviteCode, isLobbyFull, updateLobby } from "src/utils/lobby-utils";
-import { Table } from "sst/node/table";
-import dynamodb from "@my-texas-42-react-app/core/dynamodb";
 
 export const main: APIGatewayProxyHandler = async (event) => {
   const { match_invite_code, user_id, username } =
