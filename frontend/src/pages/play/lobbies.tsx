@@ -135,6 +135,7 @@ const Lobbies = ({ onChangeStage, openAlert, privateLobbies, publicLobbies, user
             <LobbyCard
               key={`lobby-card-${i}`}
               lobbyInfo={thisLobby}
+              onChangeStage={onChangeStage}
               openAlert={openAlert}
               userData={userData}
             />

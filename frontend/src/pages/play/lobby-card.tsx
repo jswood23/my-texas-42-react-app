@@ -1,11 +1,12 @@
 import { Button, Card, CardActions, CardContent, Typography } from '@mui/material'
-import { EMPTY_MEMBER_TEXT } from '../../constants'
+import { EMPTY_MEMBER_TEXT, GAME_STAGES } from '../../constants'
 import type { LobbyInfo, OpenAlert, UserData } from '../../types'
 import { limitString } from '../../utils/string-utils'
 import styled from 'styled-components'
 
 interface Props {
   lobbyInfo: LobbyInfo
+  onChangeStage: (newStage: string) => void
   openAlert: OpenAlert
   userData: UserData
 }
@@ -58,7 +59,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   }
 }))
 
-const LobbyCard = ({ lobbyInfo, openAlert, userData }: Props) => {
+const LobbyCard = ({ lobbyInfo, onChangeStage, openAlert, userData }: Props) => {
   const lobbyName = limitString(lobbyInfo.match_name, 30)
   const isTeam1Full = lobbyInfo.team_1.length >= 2
   const isTeam2Full = lobbyInfo.team_2.length >= 2
@@ -98,7 +99,10 @@ const LobbyCard = ({ lobbyInfo, openAlert, userData }: Props) => {
   }
 
   const handleJoinGame = (team: number) => {
-    console.log(`Joining team ${team} for game with invite code ${lobbyInfo.match_invite_code}`)
+    console.log(
+      `Joining team ${team} for game with invite code ${lobbyInfo.match_invite_code}`
+    )
+    onChangeStage(GAME_STAGES.IN_GAME_STAGE)
   }
 
   return (
@@ -123,7 +127,9 @@ const LobbyCard = ({ lobbyInfo, openAlert, userData }: Props) => {
             className="join-lobby-button"
             variant="contained"
             disabled={isTeam1Full}
-            onClick={() => { handleJoinGame(1) }}
+            onClick={() => {
+              handleJoinGame(1)
+            }}
           >
             Join Team 1
           </Button>
@@ -133,7 +139,9 @@ const LobbyCard = ({ lobbyInfo, openAlert, userData }: Props) => {
             className="join-lobby-button"
             variant="contained"
             disabled={isTeam2Full}
-            onClick={() => { handleJoinGame(2) }}
+            onClick={() => {
+              handleJoinGame(2)
+            }}
           >
             Join Team 2
           </Button>
