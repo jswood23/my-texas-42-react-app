@@ -29,7 +29,7 @@ export const main = handler(async (event: any) => {
       match_privacy: data.privacy,
       allowed_players: thisUser.friends,
       rules: data.rules ?? [],
-      team_1: [thisUser.username],
+      team_1: [],
       team_1_connections: [],
       team_2: [],
       team_2_connections: [],
