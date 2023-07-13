@@ -18,6 +18,7 @@ const PlayPage = ({ openAlert, userData }: Props) => {
   const [stage, setStage] = React.useState(GAME_STAGES.LOBBY_LOADING)
   const [publicLobbies, setPublicLobbies] = React.useState(emptyLobbyList)
   const [privateLobbies, setPrivateLobbies] = React.useState(emptyLobbyList)
+  const [inviteCode, setInviteCode] = React.useState('')
 
   const isInLobby = stage.includes(GAME_STAGES.LOBBY_STAGE)
   const isNewGame = stage.includes(GAME_STAGES.NEW_GAME_STAGE)
@@ -33,8 +34,11 @@ const PlayPage = ({ openAlert, userData }: Props) => {
 
   const location = useLocation()
 
-  const onChangeStage = (newStage: string) => {
+  const onChangeStage = (newStage: string, newInviteCode = '') => {
     setStage(newStage)
+    if (newInviteCode) {
+      setInviteCode(newInviteCode.toUpperCase())
+    }
   }
 
   React.useEffect(() => {
@@ -89,6 +93,7 @@ const PlayPage = ({ openAlert, userData }: Props) => {
       )}
       {isInGame && (
         <InGame
+          inviteCode={inviteCode}
           onChangeStage={onChangeStage}
           openAlert={openAlert}
           userData={userData}
