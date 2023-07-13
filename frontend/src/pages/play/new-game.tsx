@@ -74,7 +74,11 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 interface Props {
-  onChangeStage: (newStage: string, newInviteCode?: string) => void
+  onChangeStage: (
+    newStage: string,
+    newInviteCode?: string,
+    newTeamNumber?: number
+  ) => void
   openAlert: OpenAlert
   userData: UserData
 }
@@ -150,7 +154,7 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
       .then((response) => {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         const { match_invite_code } = response ?? { match_invite_code: '' }
-        onChangeStage(GAME_STAGES.IN_GAME_STAGE, match_invite_code)
+        onChangeStage(GAME_STAGES.IN_GAME_STAGE, match_invite_code, 1)
       }).catch((error) => {
         console.log(error)
         openAlert('There was an issue starting the game.', 'error')

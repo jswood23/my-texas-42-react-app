@@ -6,7 +6,11 @@ import styled from 'styled-components'
 
 interface Props {
   lobbyInfo: LobbyInfo
-  onChangeStage: (newStage: string, newInviteCode?: string) => void
+  onChangeStage: (
+    newStage: string,
+    newInviteCode?: string,
+    newTeamNumber?: number
+  ) => void
   openAlert: OpenAlert
   userData: UserData
 }
@@ -102,7 +106,7 @@ const LobbyCard = ({ lobbyInfo, onChangeStage, openAlert, userData }: Props) => 
     console.log(
       `Joining team ${team} for game with invite code ${lobbyInfo.match_invite_code}`
     )
-    onChangeStage(GAME_STAGES.IN_GAME_STAGE, lobbyInfo.match_invite_code)
+    onChangeStage(GAME_STAGES.IN_GAME_STAGE, lobbyInfo.match_invite_code, team)
   }
 
   return (

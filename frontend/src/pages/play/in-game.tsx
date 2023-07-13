@@ -10,20 +10,22 @@ const StyledRoot = styled.div(() => ({
 
 interface Props {
   inviteCode: string
-  onChangeStage: (newStage: string, newInviteCode?: string) => void
+  onChangeStage: (newStage: string, newInviteCode?: string, newTeamNumber?: number) => void
   openAlert: OpenAlert
+  teamNumber: number
   userData: UserData
 }
 
-const InGame = ({ inviteCode, onChangeStage, openAlert, userData }: Props) => {
+const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: Props) => {
   const socketUrl = config.websocket.URL ?? ''
 
   const queryParams = {
     match_invite_code: inviteCode,
+    team_number: teamNumber,
     user_id: userData.attributes.sub
   }
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, { queryParams })
+  const { readyState } = useWebSocket(socketUrl, { queryParams })
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: 'Connecting',
@@ -37,6 +39,7 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, userData }: Props) => {
     <StyledRoot>
       <Typography>Connection Status: {connectionStatus}</Typography>
       <Typography>Invite Code: {inviteCode}</Typography>
+      <Typography>Team Number: {teamNumber}</Typography>
     </StyledRoot>
   )
 }

@@ -19,6 +19,7 @@ const PlayPage = ({ openAlert, userData }: Props) => {
   const [publicLobbies, setPublicLobbies] = React.useState(emptyLobbyList)
   const [privateLobbies, setPrivateLobbies] = React.useState(emptyLobbyList)
   const [inviteCode, setInviteCode] = React.useState('')
+  const [teamNumber, setTeamNumber] = React.useState(0)
 
   const isInLobby = stage.includes(GAME_STAGES.LOBBY_STAGE)
   const isNewGame = stage.includes(GAME_STAGES.NEW_GAME_STAGE)
@@ -34,10 +35,11 @@ const PlayPage = ({ openAlert, userData }: Props) => {
 
   const location = useLocation()
 
-  const onChangeStage = (newStage: string, newInviteCode = '') => {
+  const onChangeStage = (newStage: string, newInviteCode = '', newTeamNumber = 0) => {
     setStage(newStage)
-    if (newInviteCode) {
+    if (newInviteCode && newTeamNumber) {
       setInviteCode(newInviteCode.toUpperCase())
+      setTeamNumber(newTeamNumber)
     }
   }
 
@@ -96,6 +98,7 @@ const PlayPage = ({ openAlert, userData }: Props) => {
           inviteCode={inviteCode}
           onChangeStage={onChangeStage}
           openAlert={openAlert}
+          teamNumber={teamNumber}
           userData={userData}
         />
       )}

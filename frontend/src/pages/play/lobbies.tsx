@@ -12,7 +12,11 @@ import * as React from 'react'
 import styled from 'styled-components'
 
 interface Props {
-  onChangeStage: (newStage: string, newInviteCode?: string) => void
+  onChangeStage: (
+    newStage: string,
+    newInviteCode?: string,
+    newTeamNumber?: number
+  ) => void
   openAlert: OpenAlert
   privateLobbies: LobbyInfo[]
   publicLobbies: LobbyInfo[]
@@ -109,7 +113,7 @@ const Lobbies = ({ onChangeStage, openAlert, privateLobbies, publicLobbies, user
       return
     }
     openAlert(`Joining game with code ${inviteCode}`, 'info')
-    onChangeStage(GAME_STAGES.IN_GAME_STAGE, inviteCode)
+    onChangeStage(GAME_STAGES.IN_GAME_STAGE, inviteCode, 1)
   }
 
   const onClickStartNewGame = () => { onChangeStage(GAME_STAGES.NEW_GAME_STAGE) }
