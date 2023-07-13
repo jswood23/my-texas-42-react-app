@@ -60,6 +60,10 @@ export const getLobbyByInviteCode = async (match_invite_code: string) => {
   return (result.Items[0] as Lobby);
 };
 
+export const isLobbyEmpty = (lobby: Lobby) => {
+  return lobby.team_1.length === 0 && lobby.team_2.length === 0;
+};
+
 export const isLobbyFull = (lobby: Lobby) => {
   if (lobby.team_1.length > 2 || lobby.team_2.length > 2) {
     console.log('One of the teams has too many players.');
@@ -113,6 +117,19 @@ export const updateLobby = async (lobby: Lobby) => {
   return { status: true };
 };
 
+export const removeLobby = async (match_id: string) => {
+  const params = {
+    TableName: Table.CurrentMatch.tableName,
+    Key: {
+      match_id
+    }
+  };
+
+  await dynamoDB.delete(params);
+
+  return { status: true };
+}
+
 export const removePlayerFromLobby = async (
   match_id: string,
   conn_id: string
@@ -129,6 +146,11 @@ export const removePlayerFromLobby = async (
     lobby.team_2.splice(index, 1);
   } else {
     throw new Error('Player not found in lobby.');
+  }
+
+  if (isLobbyEmpty(lobby)) {
+    await removeLobby(lobby.match_id);
+    return;
   }
 
   await updateLobby(lobby);
