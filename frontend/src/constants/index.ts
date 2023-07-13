@@ -2,6 +2,14 @@ import type { ProfileData, UserData } from '../types'
 
 export const apiContext = 'mytexas42api'
 
+export const CONNECTION_STATES = {
+  connecting: 'Connecting',
+  open: 'Open',
+  closing: 'Closing',
+  closed: 'Closed',
+  uninstantiated: 'Uninstantiated'
+}
+
 export const defaultProfileData: ProfileData = {
   game_history: [],
   games_played: 0,

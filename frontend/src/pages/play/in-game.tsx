@@ -1,6 +1,9 @@
+import { CONNECTION_STATES } from '../../constants'
 import type { OpenAlert, UserData } from '../../types'
 import { Typography } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import config from '../../constants/config'
+import * as React from 'react'
 import styled from 'styled-components'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 
@@ -17,6 +20,7 @@ interface Props {
 }
 
 const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: Props) => {
+  const navigate = useNavigate()
   const socketUrl = config.websocket.URL ?? ''
 
   const queryParams = {
@@ -29,12 +33,21 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
   const { readyState } = useWebSocket(socketUrl, { queryParams })
 
   const connectionStatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Open',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Closed',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated'
+    [ReadyState.CONNECTING]: CONNECTION_STATES.connecting,
+    [ReadyState.OPEN]: CONNECTION_STATES.open,
+    [ReadyState.CLOSING]: CONNECTION_STATES.closing,
+    [ReadyState.CLOSED]: CONNECTION_STATES.closed,
+    [ReadyState.UNINSTANTIATED]: CONNECTION_STATES.uninstantiated
   }[readyState]
+
+  React.useEffect(() => {
+    switch (connectionStatus) {
+      case CONNECTION_STATES.closed: {
+        openAlert('Unable to connect to lobby.', 'error')
+        navigate('/play')
+      }
+    }
+  }, [connectionStatus])
 
   return (
     <StyledRoot>
