@@ -31,7 +31,9 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
     username: userData.username
   }
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, { queryParams })
+  const { sendJsonMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+    queryParams
+  })
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: CONNECTION_STATES.connecting,
@@ -58,7 +60,7 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
       <ChatBox
         lastMessage={lastMessage}
         openAlert={openAlert}
-        sendMessage={sendMessage}
+        sendJsonMessage={sendJsonMessage}
         userData={userData}
       />
     </StyledRoot>
