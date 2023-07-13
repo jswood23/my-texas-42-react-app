@@ -54,8 +54,9 @@ const ChatBox = ({
     const jsonMessage = {
       action: 'sendmessage',
       data: {
-        is_chat: true,
-        message: draftMessage
+        messageType: 'chat',
+        message: draftMessage,
+        username: userData.username
       }
     }
     sendJsonMessage(jsonMessage)
