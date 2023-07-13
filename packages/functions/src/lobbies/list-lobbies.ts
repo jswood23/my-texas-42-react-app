@@ -1,21 +1,22 @@
+import { getCurrentUser } from 'src/utils/user-utils';
+import { Lobby, isLobbyFull } from 'src/utils/lobby-utils';
 import { Table } from 'sst/node/table';
 import handler from '@my-texas-42-react-app/core/handler';
 import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
-import { getCurrentUser } from 'src/utils/user-utils';
-
-export interface LobbyInfo {
-  match_id: string;
-  match_name: string;
-  match_invite_code: string;
-  match_privacy: number;
-  rules: string[];
-  team_1: string[];
-  team_2: string[];
-}
 
 export const main = handler(async (event: any) => {
   const params = {
     TableName: Table.CurrentMatch.tableName,
+    AttributesToGet: [
+      'match_id',
+      'match_name',
+      'match_invite_code',
+      'match_privacy',
+      'allowed_players',
+      'rules',
+      'team_1',
+      'team_2',
+    ],
   };
 
   const result = await dynamoDB.scan(params);
@@ -26,7 +27,12 @@ export const main = handler(async (event: any) => {
   if (result.Items) {
     const lobbyCount: number = result.Items.length
     for (let i = 0; i < lobbyCount; i++) {
-      const lobby = result.Items[i];
+      const lobby = (result.Items[i] as Lobby);
+
+      if (isLobbyFull(lobby)) {
+        continue;
+      }
+
       switch (lobby.match_privacy) {
         // 1: public, 2: friends only, 3: invite only (don't show)
         case 1: {

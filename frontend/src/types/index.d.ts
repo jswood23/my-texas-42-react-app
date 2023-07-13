@@ -36,5 +36,10 @@ export interface Rule {
 
 export interface UserData {
   exists: boolean
+  readonly attributes: {
+    email: string
+    email_verified: boolean
+    sub: string
+  }
   readonly username: string
 }

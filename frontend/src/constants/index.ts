@@ -18,6 +18,11 @@ export const defaultProfileData: ProfileData = {
 
 export const defaultUserData: UserData = {
   exists: false,
+  attributes: {
+    email: 'default@email.com',
+    email_verified: false,
+    sub: '12345'
+  },
   username: ''
 }
 
