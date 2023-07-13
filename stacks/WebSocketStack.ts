@@ -10,7 +10,6 @@ export function WebSocketStack({stack, app}: StackContext) {
   } = use(StorageStack);
 
   const socketApi = new WebSocketApi(stack, 'Api', {
-    authorizer: 'iam',
     customDomain: app.stage === 'prod' ? 'socket.mytexas42.com' : undefined,
     defaults: {
       function: {
@@ -22,7 +21,10 @@ export function WebSocketStack({stack, app}: StackContext) {
         ],
       },
     },
-    routes: {},
+    routes: {
+      $connect: 'packages/functions/src/websockets/connect.main',
+      $disconnect: 'packages/functions/src/websockets/disconnect.main',
+    },
   });
 
   stack.addOutputs({
