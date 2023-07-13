@@ -44,6 +44,7 @@ export const main = handler(async (event: any) => {
       current_team_2_total_score: 0,
       current_round_history: [],
       total_round_history: [],
+      chat_log: []
     },
   };
 
