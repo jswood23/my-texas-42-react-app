@@ -1,4 +1,4 @@
-import type { OpenAlert, UserData } from '../../../types'
+import type { ChatMessage, OpenAlert, UserData } from '../../../types'
 import { Button, TextField, Typography } from '@mui/material'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -20,7 +20,7 @@ interface Props {
   userData: UserData
 }
 
-const defaultChatHistory: string[] = ['placeholder']
+const defaultChatHistory: ChatMessage[] = []
 
 const ChatBox = ({
   lastMessage,
@@ -33,8 +33,10 @@ const ChatBox = ({
 
   React.useEffect(() => {
     if (lastMessage !== null) {
-      console.log(lastMessage)
-      // setChatHistory((prev) => prev.concat(lastMessage))
+      const messageData = (JSON.parse(lastMessage.data) as ChatMessage)
+      if (messageData?.messageType === 'chat') {
+        setChatHistory((prev) => prev.concat(messageData))
+      }
     }
   }, [lastMessage, setChatHistory])
 
@@ -42,7 +44,7 @@ const ChatBox = ({
     let i = 0
     return chatHistory.map((chatMessage) => {
       i++
-      return <Typography key={`chat-message-${i}`}>{chatMessage}</Typography>
+      return <Typography key={`chat-message-${i}`}>{chatMessage.username}: {chatMessage.message}</Typography>
     })
   }
 
@@ -51,15 +53,12 @@ const ChatBox = ({
   }
 
   const onSendMessage = () => {
-    const jsonMessage = {
-      action: 'sendmessage',
-      data: {
-        messageType: 'chat',
-        message: draftMessage,
-        username: userData.username
-      }
+    const messageData: ChatMessage = {
+      messageType: 'chat',
+      message: draftMessage,
+      username: userData.username
     }
-    sendJsonMessage(jsonMessage)
+    sendJsonMessage({ action: 'sendmessage', data: messageData })
     setDraftMessage('')
   }
 

@@ -1,3 +1,9 @@
+export interface ChatMessage {
+  messageType: string
+  message: string
+  username: string
+}
+
 export interface LobbyInfo {
   match_id: string
   match_name: string
