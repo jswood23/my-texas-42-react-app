@@ -37,6 +37,30 @@ export const getConnectionById = async (conn_id: string) => {
   }
 
   return result.Item as WebSocketConnection;
+};
+
+export const getConnectionsByMatchId = async (match_id: string) => {
+  const params = {
+    TableName: Table.SocketConnection.tableName,
+    FilterExpression: 'match_id = :match_id',
+    ExpressionAttributeValues: {
+      ':match_id': match_id,
+    },
+  };
+
+  const result = await dynamoDB.scan(params);
+
+  if (!result.Items) {
+    throw new Error('There are currently no connected users in the specified lobby.');
+  }
+
+  const conn_ids: string[] = [];
+
+  (result.Items as WebSocketConnection[]).forEach((connection: WebSocketConnection) => {
+    conn_ids.push(connection.conn_id);
+  })
+
+  return conn_ids;
 }
 
 export const removeConnectionFromTable = async (conn_id: string) => {
