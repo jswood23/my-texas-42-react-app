@@ -6,7 +6,9 @@ import styled from 'styled-components'
 const StyledRoot = styled.div(() => ({
   border: '1px solid #A0A0A0',
   borderRadius: '5px',
-  boxShadow: '0 2px 5px 3px #E0E0E0'
+  boxShadow: '0 2px 5px 3px #E0E0E0',
+  flexBasis: '70%',
+  height: '72vh'
 }))
 
 interface Props {
