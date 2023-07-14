@@ -82,25 +82,27 @@ export const removeConnectionFromTable = async (conn_id: string) => {
 export const sendToConnections = async (event: APIGatewayProxyEvent, match_id: string, messageData: any, conn_ids: string[]) => {
   const { stage, domainName } = event.requestContext;
 
-  const apiG = new ApiGatewayManagementApi({
-    endpoint: `${domainName}/${stage}`,
-  });
+  if (stage && domainName) {
+    const apiG = new ApiGatewayManagementApi({
+      endpoint: `${domainName}/${stage}`,
+    });
 
-  const messageDataStr = JSON.stringify(messageData);
+    const messageDataStr = JSON.stringify(messageData);
 
-  await Promise.all(conn_ids.map(async (conn_id) => {
-    try {
-      await apiG
-        .postToConnection({ ConnectionId: conn_id, Data: messageDataStr })
-        .promise()
-    } catch (e: any) {
-      if (e.statusCode === 410) {
-        await removePlayerFromLobby(match_id, conn_id);
-        await removeConnectionFromTable(conn_id);
-      } else {
-        console.log('Unknown error encountered:');
-        console.log(e);
+    await Promise.all(conn_ids.map(async (conn_id) => {
+      try {
+        await apiG
+          .postToConnection({ ConnectionId: conn_id, Data: messageDataStr })
+          .promise()
+      } catch (e: any) {
+        if (e.statusCode === 410) {
+          await removePlayerFromLobby(match_id, conn_id);
+          await removeConnectionFromTable(conn_id);
+        } else {
+          console.log('Unknown error encountered:');
+          console.log(e);
+        }
       }
-    }
-  }));
+    }));
+  }
 };
