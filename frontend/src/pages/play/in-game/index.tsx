@@ -1,15 +1,16 @@
 import { CONNECTION_STATES } from '../../../constants'
 import type { OpenAlert, UserData } from '../../../types'
-import { Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import ChatBox from './chat-box'
 import config from '../../../constants/config'
 import * as React from 'react'
 import styled from 'styled-components'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
+import GameWindow from './game-window'
 
-const StyledRoot = styled.div(() => ({
-
+const StyledRoot = styled.div(({ theme }) => ({
+  display: 'flex',
+  flexDirection: theme.isMobile ? 'column' : 'row'
 }))
 
 interface Props {
@@ -54,9 +55,15 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
 
   return (
     <StyledRoot>
-      <Typography>Connection Status: {connectionStatus}</Typography>
-      <Typography>Invite Code: {inviteCode}</Typography>
-      <Typography>Team Number: {teamNumber}</Typography>
+      <GameWindow
+        connectionStatus={connectionStatus}
+        inviteCode={inviteCode}
+        lastMessage={lastMessage}
+        openAlert={openAlert}
+        sendJsonMessage={sendJsonMessage}
+        teamNumber={teamNumber}
+        userData={userData}
+      />
       <ChatBox
         lastMessage={lastMessage}
         openAlert={openAlert}
