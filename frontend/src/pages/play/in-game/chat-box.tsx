@@ -15,11 +15,12 @@ const StyledRoot = styled.div(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-end',
+  maxWidth: '30%',
   '.chat-message': {
-    flex: 0,
     fontSize: theme.spacing(1.5),
     marginBottom: theme.spacing(1),
-    width: '100%'
+    overflow: 'hidden',
+    wordWrap: 'break-word'
   },
   '.messages-container': {
     alignItems: 'end',
