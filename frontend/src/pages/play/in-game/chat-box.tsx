@@ -1,4 +1,4 @@
-import type { ChatMessage, OpenAlert, UserData } from '../../../types'
+import type { ChatMessage, OpenAlert, UserData, WebSocketConnection } from '../../../types'
 import { Button, TextField, Typography } from '@mui/material'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -51,18 +51,16 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 interface Props {
-  lastMessage?: any
+  connection: WebSocketConnection
   openAlert: OpenAlert
-  sendJsonMessage: (message: any) => void
   userData: UserData
 }
 
 const defaultChatHistory: ChatMessage[] = []
 
 const ChatBox = ({
-  lastMessage,
+  connection,
   openAlert,
-  sendJsonMessage,
   userData
 }: Props) => {
   const [chatHistory, setChatHistory] = React.useState(defaultChatHistory)
@@ -86,14 +84,14 @@ const ChatBox = ({
   }, [shouldScroll, setShouldScroll])
 
   React.useEffect(() => {
-    if (lastMessage !== null) {
-      const messageData = (JSON.parse(lastMessage.data) as ChatMessage)
+    if (connection.lastMessage !== null) {
+      const messageData = (JSON.parse(connection.lastMessage.data) as ChatMessage)
       if (messageData?.messageType === 'chat') {
         setChatHistory((prev) => prev.concat(messageData))
         setShouldScroll(true)
       }
     }
-  }, [lastMessage, setChatHistory, setShouldScroll])
+  }, [connection.lastMessage, setChatHistory, setShouldScroll])
 
   const listMessages = () => {
     let i = 0
@@ -123,7 +121,7 @@ const ChatBox = ({
       message: draftMessage,
       username: userData.username
     }
-    sendJsonMessage({ action: 'sendmessage', data: messageData })
+    connection.sendJsonMessage({ action: 'sendmessage', data: JSON.stringify(messageData) })
     setDraftMessage('')
   }
 

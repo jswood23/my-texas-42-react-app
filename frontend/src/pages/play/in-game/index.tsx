@@ -1,5 +1,5 @@
 import { CONNECTION_STATES } from '../../../constants'
-import type { OpenAlert, UserData } from '../../../types'
+import type { OpenAlert, UserData, WebSocketConnection } from '../../../types'
 import { useNavigate } from 'react-router-dom'
 import ChatBox from './chat-box'
 import config from '../../../constants/config'
@@ -44,6 +44,12 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
     [ReadyState.UNINSTANTIATED]: CONNECTION_STATES.uninstantiated
   }[readyState]
 
+  const connection: WebSocketConnection = {
+    connectionStatus,
+    lastMessage,
+    sendJsonMessage
+  }
+
   React.useEffect(() => {
     switch (connectionStatus) {
       case CONNECTION_STATES.closed: {
@@ -56,18 +62,15 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
   return (
     <StyledRoot>
       <GameWindow
-        connectionStatus={connectionStatus}
+        connection={connection}
         inviteCode={inviteCode}
-        lastMessage={lastMessage}
         openAlert={openAlert}
-        sendJsonMessage={sendJsonMessage}
         teamNumber={teamNumber}
         userData={userData}
       />
       <ChatBox
-        lastMessage={lastMessage}
+        connection={connection}
         openAlert={openAlert}
-        sendJsonMessage={sendJsonMessage}
         userData={userData}
       />
     </StyledRoot>

@@ -8,7 +8,7 @@ export const sendGameChat = async (event: APIGatewayProxyEvent) => {
 
   const conn_ids = await getConnectionsByMatchId(thisConnection.match_id);
 
-  const messageData = JSON.parse((event.body as string)).data;
+  const messageData = JSON.parse(JSON.parse((event.body as string)).data as string);
 
   await sendToConnections(event, thisConnection.match_id, messageData, conn_ids);
 }
