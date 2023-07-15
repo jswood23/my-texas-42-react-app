@@ -6,7 +6,8 @@ import styled from 'styled-components'
 const StyledRoot = styled.div(({ theme }) => ({
   backgroundColor: 'white',
   flexBasis: '30%',
-  height: '72vh',
+  height: theme.isMobile ? theme.spacing(50) : theme.spacing(67),
+  minHeight: theme.spacing(50),
 
   border: '1px solid #A0A0A0',
   borderRadius: '5px',
@@ -15,7 +16,7 @@ const StyledRoot = styled.div(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-end',
-  maxWidth: '30%',
+  maxWidth: theme.isMobile ? '100%' : '30%',
   '.chat-message': {
     fontSize: theme.spacing(1.5),
     marginBottom: theme.spacing(1),
@@ -35,7 +36,14 @@ const StyledRoot = styled.div(({ theme }) => ({
     width: '100%'
   },
   '.send-message-button': {
-    flexBasis: '25%'
+    flexBasis: '25%',
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.isMobile ? theme.spacing(2) : theme.spacing(1.5),
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    }
   },
   '.send-message-text-field': {
     flexBasis: '75%'
@@ -64,6 +72,8 @@ const ChatBox = ({
 
   const bottomEl = React.useRef(null)
 
+  const disableSendButton = !draftMessage
+
   const scrollToBottom = () => {
     (bottomEl?.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -83,7 +93,7 @@ const ChatBox = ({
         setShouldScroll(true)
       }
     }
-  }, [lastMessage, setChatHistory])
+  }, [lastMessage, setChatHistory, setShouldScroll])
 
   const listMessages = () => {
     let i = 0
@@ -96,7 +106,8 @@ const ChatBox = ({
           key={`chat-message-${i}`}
           ref={isBottomEl ? bottomEl : null}
         >
-          {chatMessage.username}: {chatMessage.message}
+          <strong>{chatMessage.username}: </strong>
+          {chatMessage.message}
         </Typography>
       )
     })
@@ -146,7 +157,8 @@ const ChatBox = ({
         />
         <Button
           className="send-message-button"
-          disabled={!draftMessage}
+          variant="contained"
+          disabled={disableSendButton}
           onClick={onSendMessage}
         >
           Send
