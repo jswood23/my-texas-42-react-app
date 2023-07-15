@@ -19,10 +19,12 @@ interface Props {
 }
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  padding: 'none',
   backgroundColor: theme.palette.primary.main,
   display: 'flex',
   flexDirection: 'row',
+  padding: 'none',
+  position: 'fixed',
+  top: 0,
   width: '100%',
   '.logo': {
     color: theme.palette.secondary.main,

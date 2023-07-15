@@ -1,4 +1,4 @@
-import { addConnectionToTable } from "src/utils/websocket-utils";
+import { addConnectionToTable, getConnectionsByMatchId, sendToConnections } from "src/utils/websocket-utils";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { getLobbyByInviteCode, isLobbyFull, updateLobby } from "src/utils/lobby-utils";
 
@@ -49,7 +49,18 @@ export const main: APIGatewayProxyHandler = async (event) => {
   await updateLobby(lobby);
 
   const { match_id } = lobby;
+
+  const conn_ids = await getConnectionsByMatchId(match_id);
+
   await addConnectionToTable(conn_id, match_id, user_id);
+
+  const connectedPlayerMessage = {
+    messageType: 'chat',
+    message: `${username} connected.`,
+    username: '(System)'
+  }
+
+  await sendToConnections(event, match_id, connectedPlayerMessage, conn_ids);
 
   return { statusCode: 200, body: 'Connected' };
 }

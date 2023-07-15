@@ -1,3 +1,17 @@
+import { type SendJsonMessage } from 'react-use-websocket/dist/lib/types'
+
+export interface ChatMessage {
+  messageType: string
+  message: string
+  username: string
+}
+
+export interface WebSocketConnection {
+  connectionStatus: string
+  lastMessage?: any
+  sendJsonMessage: SendJsonMessage
+}
+
 export interface LobbyInfo {
   match_id: string
   match_name: string

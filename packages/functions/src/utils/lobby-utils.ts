@@ -136,12 +136,16 @@ export const removePlayerFromLobby = async (
 ) => {
   let lobby = await getLobbyById(match_id);
 
+  let removedPlayerUsername = '';
+
   if (lobby.team_1_connections.includes(conn_id)) {
     const index = lobby.team_1_connections.indexOf(conn_id);
+    removedPlayerUsername = lobby.team_1[index];
     lobby.team_1_connections.splice(index, 1);
     lobby.team_1.splice(index, 1);
   } else if (lobby.team_2_connections.includes(conn_id)) {
     const index = lobby.team_2_connections.indexOf(conn_id);
+    removedPlayerUsername = lobby.team_2[index];
     lobby.team_2_connections.splice(index, 1);
     lobby.team_2.splice(index, 1);
   } else {
@@ -150,8 +154,10 @@ export const removePlayerFromLobby = async (
 
   if (isLobbyEmpty(lobby)) {
     await removeLobby(lobby.match_id);
-    return;
+    return { removedPlayerUsername, isEmpty: true };
   }
 
   await updateLobby(lobby);
+
+  return { removedPlayerUsername, isEmpty: false };
 };

@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { getConnectionById, removeConnectionFromTable } from 'src/utils/websocket-utils';
+import { getConnectionById, getConnectionsByMatchId, removeConnectionFromTable, sendToConnections } from 'src/utils/websocket-utils';
 import { removePlayerFromLobby } from 'src/utils/lobby-utils';
 
 export const main: APIGatewayProxyHandler = async (event) => {
@@ -7,9 +7,23 @@ export const main: APIGatewayProxyHandler = async (event) => {
 
   const connection = await getConnectionById(conn_id);
 
-  await removePlayerFromLobby(connection.match_id, conn_id);
+  const removePlayerResult = await removePlayerFromLobby(connection.match_id, conn_id);
 
   await removeConnectionFromTable(conn_id);
+
+  if (!removePlayerResult.isEmpty) {
+
+    const conn_ids = await getConnectionsByMatchId(connection.match_id);
+
+    const removedPlayerUsername = removePlayerResult?.removedPlayerUsername ?? 'Someone';
+    const disconnectedPlayerMessage = {
+      messageType: 'chat',
+      message: `${removedPlayerUsername} disconnected.`,
+      username: '(System)'
+    };
+
+    await sendToConnections(event, connection.match_id, disconnectedPlayerMessage, conn_ids);
+  }
 
   return { statusCode: 200, body: 'Disconnected' };
 };

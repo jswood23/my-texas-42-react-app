@@ -11,16 +11,19 @@ interface Props {
   userData: UserData
 }
 
-const StyledContainer = styled(Container)(({ theme }) => ({
-  backgroundColor: 'white',
-  minHeight: theme.isMobile ? '560px' : '800px',
-  width: '100%',
-  marginTop: theme.spacing(2),
-  padding: theme.spacing(2),
+const StyledRoot = styled(Container)(({ theme }) => ({
+  '.page-container': {
+    backgroundColor: 'white',
+    minHeight: theme.isMobile ? '560px' : '800px',
+    width: '100%',
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(10),
+    padding: theme.spacing(2),
 
-  border: '1px solid #A0A0A0',
-  borderRadius: '5px',
-  boxShadow: '0 2px 5px 3px #E0E0E0',
+    border: '1px solid #A0A0A0',
+    borderRadius: '5px',
+    boxShadow: '0 2px 5px 3px #E0E0E0'
+  },
   '.circular-progress-container': {
     width: '100%',
     height: theme.isMobile ? '400px' : '600px',
@@ -51,28 +54,30 @@ const StyledContainer = styled(Container)(({ theme }) => ({
 
 const PageContainer = ({ action, children, isLoading = false, openAlert, title, userData }: Props) => {
   return (
-    <StyledContainer fixed>
-      <div className="row-multiple-items">
-        <div className="item-align-left">
-          <Typography className='page-header'>
-            {title}
-          </Typography>
+    <StyledRoot>
+      <Container fixed className='page-container'>
+        <div className="row-multiple-items">
+          <div className="item-align-left">
+            <Typography className='page-header'>
+              {title}
+            </Typography>
+          </div>
+          <div className="item-align-right">
+            {action}
+          </div>
         </div>
-        <div className="item-align-right">
-          {action}
-        </div>
-      </div>
-      <hr />
-      {isLoading
-        ? (
-        <div className="circular-progress-container">
-          <CircularProgress />
-        </div>
-          )
-        : (
-            children
-          )}
-    </StyledContainer>
+        <hr />
+        {isLoading
+          ? (
+          <div className="circular-progress-container">
+            <CircularProgress />
+          </div>
+            )
+          : (
+              children
+            )}
+      </Container>
+    </StyledRoot>
   )
 }
 
