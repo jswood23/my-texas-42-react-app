@@ -60,6 +60,7 @@ const ChatBox = ({
   const [chatHistory, setChatHistory] = React.useState(defaultChatHistory)
   const [draftMessage, setDraftMessage] = React.useState('')
   const [textFieldSelected, setTextFieldSelected] = React.useState(false)
+  const [shouldScroll, setShouldScroll] = React.useState(false)
 
   const bottomEl = React.useRef(null)
 
@@ -68,11 +69,18 @@ const ChatBox = ({
   }
 
   React.useEffect(() => {
+    if (shouldScroll) {
+      scrollToBottom()
+      setShouldScroll(false)
+    }
+  }, [shouldScroll, setShouldScroll])
+
+  React.useEffect(() => {
     if (lastMessage !== null) {
       const messageData = (JSON.parse(lastMessage.data) as ChatMessage)
       if (messageData?.messageType === 'chat') {
         setChatHistory((prev) => prev.concat(messageData))
-        scrollToBottom()
+        setShouldScroll(true)
       }
     }
   }, [lastMessage, setChatHistory])
@@ -81,10 +89,12 @@ const ChatBox = ({
     let i = 0
     return chatHistory.map((chatMessage) => {
       i++
+      const isBottomEl = i === chatHistory.length - 1
       return (
         <Typography
           className='chat-message'
           key={`chat-message-${i}`}
+          ref={isBottomEl ? bottomEl : null}
         >
           {chatMessage.username}: {chatMessage.message}
         </Typography>
@@ -123,7 +133,6 @@ const ChatBox = ({
     <StyledRoot>
       <div className="messages-container">
         {listMessages()}
-        <div ref={bottomEl}>.</div>
       </div>
       <div className="send-message-row">
         <TextField
