@@ -1,5 +1,6 @@
-import type { ChatMessage, OpenAlert, UserData, WebSocketConnection } from '../../../types'
 import { Button, TextField, Typography } from '@mui/material'
+import type { ChatMessage, OpenAlert, UserData, WebSocketConnection } from '../../../types'
+import { CONNECTION_STATES } from '../../../constants'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -70,7 +71,7 @@ const ChatBox = ({
 
   const bottomEl = React.useRef(null)
 
-  const disableSendButton = !draftMessage
+  const disableSendButton = !draftMessage || connection.connectionStatus !== CONNECTION_STATES.open
 
   const scrollToBottom = () => {
     (bottomEl?.current as any)?.scrollIntoView({ behavior: 'smooth' })
