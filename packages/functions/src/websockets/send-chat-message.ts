@@ -8,23 +8,18 @@ export const main: APIGatewayProxyHandler = async (event) => {
   const thisConnection = await getConnectionById(connectionId);
 
   const messageData = JSON.parse(JSON.parse((event.body as string)).data as string);
-
-  const { messageType } = messageData;
   
-  switch (messageType) {
-    case 'chat': {
-      const conn_ids = await getConnectionsByMatchId(thisConnection.match_id);
+  const conn_ids = await getConnectionsByMatchId(thisConnection.match_id);
 
-      const chatLogMessage = {
-        message: messageData.message,
-        username: messageData.username
-      };
-    
-      await addToGameChat(thisConnection.match_id, JSON.stringify(chatLogMessage));
+  await addToGameChat(thisConnection.match_id, JSON.stringify(messageData));
 
-      await sendToConnections(event, thisConnection.match_id, messageData, conn_ids);
-    }
-  }
+  const chatMessageResponse = {
+    messageType: 'chat',
+    message: messageData.message,
+    username: messageData.username
+  };
+
+  await sendToConnections(event, thisConnection.match_id, chatMessageResponse, conn_ids);
 
   return { statusCode: 200, body: "Message sent"};
 }

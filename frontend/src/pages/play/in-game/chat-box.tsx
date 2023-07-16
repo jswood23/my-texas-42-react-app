@@ -1,5 +1,5 @@
 import { Button, TextField, Typography } from '@mui/material'
-import type { ChatMessage, OpenAlert, UserData, WebSocketConnection } from '../../../types'
+import type { ChatMessage, OpenAlert, ServerMessage, UserData, WebSocketConnection } from '../../../types'
 import { CONNECTION_STATES } from '../../../constants'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -86,9 +86,13 @@ const ChatBox = ({
 
   React.useEffect(() => {
     if (connection.lastMessage !== null) {
-      const messageData = (JSON.parse(connection.lastMessage.data) as ChatMessage)
+      const messageData = (JSON.parse(connection.lastMessage.data) as ServerMessage)
       if (messageData?.messageType === 'chat') {
-        setChatHistory((prev) => prev.concat(messageData))
+        const newChatMessage: ChatMessage = {
+          username: messageData.username,
+          message: messageData.message
+        }
+        setChatHistory((prev) => prev.concat(newChatMessage))
         setShouldScroll(true)
       }
     }
@@ -118,7 +122,6 @@ const ChatBox = ({
 
   const onSendMessage = () => {
     const messageData: ChatMessage = {
-      messageType: 'chat',
       message: draftMessage,
       username: userData.username
     }

@@ -1,9 +1,34 @@
 import { type SendJsonMessage } from 'react-use-websocket/dist/lib/types'
 
 export interface ChatMessage {
-  messageType: string
-  message: string
+  message?: string
   username: string
+}
+
+export interface GameState {
+  match_name: string
+  match_invite_code: string
+  rules: string[]
+  team_1: string[]
+  team_2: string[]
+  current_round: number
+  current_starting_bidder: number
+  current_is_bidding: boolean
+  current_player_turn: number
+  current_round_rules: string[]
+  this_player_dominoes: string
+  current_team_1_round_score: number
+  current_team_2_round_score: number
+  current_team_1_total_score: number
+  current_team_2_total_score: number
+  current_round_history: string[]
+  total_round_history: string[][]
+  chat_log: ChatMessage[]
+}
+
+export interface ServerMessage extends ChatMessage {
+  gameData?: GameState
+  messageType?: string
 }
 
 export interface WebSocketConnection {
