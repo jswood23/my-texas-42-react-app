@@ -25,6 +25,27 @@ export interface Lobby {
   total_round_history: string[]
 }
 
+export const addToGameChat = async (match_id: string, new_message: string) => {
+  const params = {
+    TableName: Table.CurrentMatch.tableName,
+    Key: {
+      match_id,
+    },
+    UpdateExpression: 'SET #cl = list_append(#cl, :new_message)',
+    ExpressionAttributeNames: {
+      '#cl': 'chat_log',
+    },
+    ExpressionAttributeValues: {
+      ':new_message': [new_message],
+    },
+    ReturnValues: 'ALL_NEW',
+  };
+
+  await dynamoDB.update(params);
+
+  return { status: true };
+}
+
 export const getLobbyById = async (match_id: string) => {
   const params = {
     TableName: Table.CurrentMatch.tableName,
