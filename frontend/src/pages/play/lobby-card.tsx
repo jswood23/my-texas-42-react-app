@@ -103,9 +103,6 @@ const LobbyCard = ({ lobbyInfo, onChangeStage, openAlert, userData }: Props) => 
   }
 
   const handleJoinGame = (team: number) => {
-    console.log(
-      `Joining team ${team} for game with invite code ${lobbyInfo.match_invite_code}`
-    )
     onChangeStage(GAME_STAGES.IN_GAME_STAGE, lobbyInfo.match_invite_code, team)
   }
 

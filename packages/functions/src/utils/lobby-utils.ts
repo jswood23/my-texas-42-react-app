@@ -1,3 +1,5 @@
+import type { APIGatewayProxyEvent } from 'aws-lambda';
+import { sendToSingleConnection } from './websocket-utils';
 import { Table } from 'sst/node/table';
 import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
 
@@ -23,6 +25,15 @@ export interface Lobby {
   current_team_2_total_score: number
   current_round_history: string[]
   total_round_history: string[]
+}
+
+export interface GlobalGameState extends Lobby {
+  all_player_dominoes: string[]
+  chat_log: string[]
+}
+
+export interface PlayerGameState extends Lobby {
+  player_dominoes: string
 }
 
 export const addToGameChat = async (match_id: string, new_message: string) => {
@@ -60,7 +71,7 @@ export const getLobbyById = async (match_id: string) => {
     throw new Error('Lobby does not exist.');
   }
 
-  return (result.Item as Lobby);
+  return (result.Item as GlobalGameState);
 };
 
 export const getLobbyByInviteCode = async (match_invite_code: string) => {
@@ -78,21 +89,53 @@ export const getLobbyByInviteCode = async (match_invite_code: string) => {
     throw new Error('Lobby does not exist.');
   }
 
-  return (result.Items[0] as Lobby);
+  return (result.Items[0] as GlobalGameState);
 };
 
-export const isLobbyEmpty = (lobby: Lobby) => {
+export const getPlayerNumByConnId = (lobby: GlobalGameState, connectionId: string) => {
+  // 0: t1p1 (team 1 player 1), 1: t2p1, 2: t1p2, 3: t2p2, -1: not found
+  if (lobby.team_1_connections.includes(connectionId)) {
+    const index = lobby.team_1_connections.indexOf(connectionId);
+    return index * 2;
+  } else if (lobby.team_2_connections.includes(connectionId)) {
+    const index = lobby.team_2_connections.indexOf(connectionId);
+    return index * 2 + 1;
+  } else {
+    return -1;
+  }
+};
+
+const getPlayerGSFromGlobalGS = (lobby: GlobalGameState, connectionId: string) => {
+  let player_dominoes = '';
+
+  if (lobby.all_player_dominoes.length) {
+    const playerNum = getPlayerNumByConnId(lobby, connectionId);
+    player_dominoes = lobby.all_player_dominoes[playerNum];
+  }
+
+  // remove all_player_dominoes so that we don't send this information to the frontend
+  const { all_player_dominoes, ...gameState } = lobby;
+  
+  const playerGameState: PlayerGameState = {
+    ...gameState,
+    player_dominoes
+  };
+
+  return playerGameState;
+};
+
+export const isLobbyEmpty = (lobby: GlobalGameState) => {
   return lobby.team_1.length === 0 && lobby.team_2.length === 0;
 };
 
-export const isLobbyFull = (lobby: Lobby) => {
+export const isLobbyFull = (lobby: GlobalGameState) => {
   if (lobby.team_1.length > 2 || lobby.team_2.length > 2) {
     console.log('One of the teams has too many players.');
   }
   return lobby.team_1.length >= 2 && lobby.team_2.length >= 2;
 };
 
-export const updateLobby = async (lobby: Lobby) => {
+export const updateLobby = async (lobby: GlobalGameState) => {
   const attributesToChange = [
     'team_1',
     'team_1_connections',
@@ -103,6 +146,7 @@ export const updateLobby = async (lobby: Lobby) => {
     'current_is_bidding',
     'current_player_turn',
     'current_round_rules',
+    'all_player_dominoes',
     'current_team_1_round_score',
     'current_team_2_round_score',
     'current_team_1_total_score',
@@ -138,6 +182,25 @@ export const updateLobby = async (lobby: Lobby) => {
   return { status: true };
 };
 
+export const refreshPlayerGameStates = async (event: APIGatewayProxyEvent, match_id: string) => {
+  const thisLobby = await getLobbyById(match_id);
+
+  const playerConnections = thisLobby.team_1_connections.concat(thisLobby.team_2_connections);
+
+  let promises: any[] = [];
+
+  playerConnections.forEach(async (playerConnection) => {
+    const playerGameState = getPlayerGSFromGlobalGS(thisLobby, playerConnection);
+    const serverMessage = {
+      messageType: 'game-update',
+      gameData: playerGameState
+    };
+    promises.push(sendToSingleConnection(event, match_id, serverMessage, playerConnection));
+  });
+
+  await Promise.all(promises);
+};
+
 export const removeLobby = async (match_id: string) => {
   const params = {
     TableName: Table.CurrentMatch.tableName,
@@ -149,7 +212,7 @@ export const removeLobby = async (match_id: string) => {
   await dynamoDB.delete(params);
 
   return { status: true };
-}
+};
 
 export const removePlayerFromLobby = async (
   match_id: string,

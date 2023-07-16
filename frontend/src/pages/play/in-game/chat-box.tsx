@@ -1,6 +1,6 @@
 import { Button, TextField, Typography } from '@mui/material'
-import type { ChatMessage, OpenAlert, UserData, WebSocketConnection } from '../../../types'
-import { CONNECTION_STATES } from '../../../constants'
+import type { ChatMessage, OpenAlert, ServerMessage, UserData, WebSocketConnection } from '../../../types'
+import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../constants'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -86,9 +86,13 @@ const ChatBox = ({
 
   React.useEffect(() => {
     if (connection.lastMessage !== null) {
-      const messageData = (JSON.parse(connection.lastMessage.data) as ChatMessage)
-      if (messageData?.messageType === 'chat') {
-        setChatHistory((prev) => prev.concat(messageData))
+      const messageData = (JSON.parse(connection.lastMessage.data) as ServerMessage)
+      if (messageData?.messageType === SERVER_MESSAGE_TYPES.chat) {
+        const newChatMessage: ChatMessage = {
+          username: messageData.username,
+          message: messageData.message
+        }
+        setChatHistory((prev) => prev.concat(newChatMessage))
         setShouldScroll(true)
       }
     }
@@ -118,24 +122,25 @@ const ChatBox = ({
 
   const onSendMessage = () => {
     const messageData: ChatMessage = {
-      messageType: 'chat',
       message: draftMessage,
       username: userData.username
     }
-    connection.sendJsonMessage({ action: 'sendmessage', data: JSON.stringify(messageData) })
+    connection.sendJsonMessage({ action: 'send_chat_message', data: JSON.stringify(messageData) })
     setDraftMessage('')
   }
 
   React.useEffect(() => {
-    const listener = (event: { code: string, preventDefault: () => void }) => {
-      if (textFieldSelected && (event.code === 'Enter' || event.code === 'NumpadEnter')) {
-        event.preventDefault()
-        onSendMessage()
+    if (!disableSendButton) {
+      const listener = (event: { code: string, preventDefault: () => void }) => {
+        if (textFieldSelected && (event.code === 'Enter' || event.code === 'NumpadEnter')) {
+          event.preventDefault()
+          onSendMessage()
+        }
       }
-    }
-    document.addEventListener('keydown', listener)
-    return () => {
-      document.removeEventListener('keydown', listener)
+      document.addEventListener('keydown', listener)
+      return () => {
+        document.removeEventListener('keydown', listener)
+      }
     }
   }, [onSendMessage, textFieldSelected])
 

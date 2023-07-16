@@ -24,7 +24,8 @@ export function WebSocketStack({stack, app}: StackContext) {
     routes: {
       $connect: 'packages/functions/src/websockets/connect.main',
       $disconnect: 'packages/functions/src/websockets/disconnect.main',
-      sendmessage: 'packages/functions/src/websockets/sendmessage.main'
+      refresh_player_game_state: 'packages/functions/src/websockets/refresh-player-game-state.main',
+      send_chat_message: 'packages/functions/src/websockets/send-chat-message.main'
     },
   });
 
