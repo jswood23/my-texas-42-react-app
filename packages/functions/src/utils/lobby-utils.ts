@@ -23,15 +23,15 @@ export interface Lobby {
   current_team_2_total_score: number
   current_round_history: string[]
   total_round_history: string[]
-  chat_log: string[]
 }
 
 export interface GlobalGameState extends Lobby {
-  all_player_dominoes?: string[]
+  all_player_dominoes: string[]
+  chat_log: string[]
 }
 
 export interface PlayerGameState extends Lobby {
-  player_dominoes?: string
+  player_dominoes: string
 }
 
 export const addToGameChat = async (match_id: string, new_message: string) => {

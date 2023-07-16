@@ -16,14 +16,13 @@ export interface GameState {
   current_is_bidding: boolean
   current_player_turn: number
   current_round_rules: string[]
-  this_player_dominoes: string
+  player_dominoes: string
   current_team_1_round_score: number
   current_team_2_round_score: number
   current_team_1_total_score: number
   current_team_2_total_score: number
   current_round_history: string[]
   total_round_history: string[][]
-  chat_log: ChatMessage[]
 }
 
 export interface ServerMessage extends ChatMessage {
