@@ -1,3 +1,5 @@
+import type { APIGatewayProxyEvent } from 'aws-lambda';
+import { sendToSingleConnection } from './websocket-utils';
 import { Table } from 'sst/node/table';
 import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
 
@@ -101,7 +103,26 @@ export const getPlayerNumByConnId = (lobby: GlobalGameState, connectionId: strin
   } else {
     return -1;
   }
-}
+};
+
+const getPlayerGSFromGlobalGS = (lobby: GlobalGameState, connectionId: string) => {
+  let player_dominoes = '';
+
+  if (lobby.all_player_dominoes.length) {
+    const playerNum = getPlayerNumByConnId(lobby, connectionId);
+    player_dominoes = lobby.all_player_dominoes[playerNum];
+  }
+
+  // remove all_player_dominoes so that we don't send this information to the frontend
+  const { all_player_dominoes, ...gameState } = lobby;
+  
+  const playerGameState: PlayerGameState = {
+    ...gameState,
+    player_dominoes
+  };
+
+  return playerGameState;
+};
 
 export const isLobbyEmpty = (lobby: GlobalGameState) => {
   return lobby.team_1.length === 0 && lobby.team_2.length === 0;
@@ -161,6 +182,25 @@ export const updateLobby = async (lobby: GlobalGameState) => {
   return { status: true };
 };
 
+export const refreshPlayerGameStates = async (event: APIGatewayProxyEvent, match_id: string) => {
+  const thisLobby = await getLobbyById(match_id);
+
+  const playerConnections = thisLobby.team_1_connections.concat(thisLobby.team_2_connections);
+
+  let promises: any[] = [];
+
+  playerConnections.forEach(async (playerConnection) => {
+    const playerGameState = getPlayerGSFromGlobalGS(thisLobby, playerConnection);
+    const serverMessage = {
+      messageType: 'game-update',
+      gameData: playerGameState
+    };
+    promises.push(sendToSingleConnection(event, match_id, serverMessage, playerConnection));
+  });
+
+  await Promise.all(promises);
+};
+
 export const removeLobby = async (match_id: string) => {
   const params = {
     TableName: Table.CurrentMatch.tableName,
@@ -172,7 +212,7 @@ export const removeLobby = async (match_id: string) => {
   await dynamoDB.delete(params);
 
   return { status: true };
-}
+};
 
 export const removePlayerFromLobby = async (
   match_id: string,
