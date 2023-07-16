@@ -122,7 +122,7 @@ const ChatBox = ({
       message: draftMessage,
       username: userData.username
     }
-    connection.sendJsonMessage({ action: 'sendmessage', data: JSON.stringify(messageData) })
+    connection.sendJsonMessage({ action: 'send_chat_message', data: JSON.stringify(messageData) })
     setDraftMessage('')
   }
 
