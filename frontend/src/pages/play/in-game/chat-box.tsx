@@ -1,6 +1,6 @@
 import { Button, TextField, Typography } from '@mui/material'
 import type { ChatMessage, OpenAlert, ServerMessage, UserData, WebSocketConnection } from '../../../types'
-import { CONNECTION_STATES } from '../../../constants'
+import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../constants'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -87,7 +87,7 @@ const ChatBox = ({
   React.useEffect(() => {
     if (connection.lastMessage !== null) {
       const messageData = (JSON.parse(connection.lastMessage.data) as ServerMessage)
-      if (messageData?.messageType === 'chat') {
+      if (messageData?.messageType === SERVER_MESSAGE_TYPES.chat) {
         const newChatMessage: ChatMessage = {
           username: messageData.username,
           message: messageData.message
