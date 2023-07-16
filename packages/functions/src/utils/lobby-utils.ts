@@ -17,8 +17,6 @@ export interface Lobby {
   current_is_bidding: boolean
   current_player_turn: number
   current_round_rules: string[]
-  all_player_dominoes?: string[]
-  player_dominoes?: string
   current_team_1_round_score: number
   current_team_2_round_score: number
   current_team_1_total_score: number
@@ -26,6 +24,14 @@ export interface Lobby {
   current_round_history: string[]
   total_round_history: string[]
   chat_log: string[]
+}
+
+export interface GlobalGameState extends Lobby {
+  all_player_dominoes?: string[]
+}
+
+export interface PlayerGameState extends Lobby {
+  player_dominoes?: string
 }
 
 export const addToGameChat = async (match_id: string, new_message: string) => {
@@ -63,7 +69,7 @@ export const getLobbyById = async (match_id: string) => {
     throw new Error('Lobby does not exist.');
   }
 
-  return (result.Item as Lobby);
+  return (result.Item as GlobalGameState);
 };
 
 export const getLobbyByInviteCode = async (match_invite_code: string) => {
@@ -81,21 +87,21 @@ export const getLobbyByInviteCode = async (match_invite_code: string) => {
     throw new Error('Lobby does not exist.');
   }
 
-  return (result.Items[0] as Lobby);
+  return (result.Items[0] as GlobalGameState);
 };
 
-export const isLobbyEmpty = (lobby: Lobby) => {
+export const isLobbyEmpty = (lobby: GlobalGameState) => {
   return lobby.team_1.length === 0 && lobby.team_2.length === 0;
 };
 
-export const isLobbyFull = (lobby: Lobby) => {
+export const isLobbyFull = (lobby: GlobalGameState) => {
   if (lobby.team_1.length > 2 || lobby.team_2.length > 2) {
     console.log('One of the teams has too many players.');
   }
   return lobby.team_1.length >= 2 && lobby.team_2.length >= 2;
 };
 
-export const updateLobby = async (lobby: Lobby) => {
+export const updateLobby = async (lobby: GlobalGameState) => {
   const attributesToChange = [
     'team_1',
     'team_1_connections',
@@ -106,6 +112,7 @@ export const updateLobby = async (lobby: Lobby) => {
     'current_is_bidding',
     'current_player_turn',
     'current_round_rules',
+    'all_player_dominoes',
     'current_team_1_round_score',
     'current_team_2_round_score',
     'current_team_1_total_score',

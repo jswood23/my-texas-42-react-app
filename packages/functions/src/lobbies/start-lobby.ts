@@ -1,5 +1,5 @@
 import { getCurrentUser } from 'src/utils/user-utils';
-import type { Lobby } from 'src/utils/lobby-utils';
+import type { GlobalGameState } from 'src/utils/lobby-utils';
 import { Table } from 'sst/node/table';
 import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
 import handler from '@my-texas-42-react-app/core/handler';
@@ -21,7 +21,7 @@ export const main = handler(async (event: any) => {
   if (!data.matchName) throw new Error('Please specify a match name.');
   if (!data.privacy) throw new Error('Please specify a match privacy level.');
 
-  const newLobby: Lobby = {
+  const newLobby: GlobalGameState = {
     match_id: uuid.v1(),
     match_name: data.matchName,
     match_invite_code: generateString(6),
