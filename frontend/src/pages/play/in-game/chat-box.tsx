@@ -130,15 +130,17 @@ const ChatBox = ({
   }
 
   React.useEffect(() => {
-    const listener = (event: { code: string, preventDefault: () => void }) => {
-      if (textFieldSelected && (event.code === 'Enter' || event.code === 'NumpadEnter')) {
-        event.preventDefault()
-        onSendMessage()
+    if (!disableSendButton) {
+      const listener = (event: { code: string, preventDefault: () => void }) => {
+        if (textFieldSelected && (event.code === 'Enter' || event.code === 'NumpadEnter')) {
+          event.preventDefault()
+          onSendMessage()
+        }
       }
-    }
-    document.addEventListener('keydown', listener)
-    return () => {
-      document.removeEventListener('keydown', listener)
+      document.addEventListener('keydown', listener)
+      return () => {
+        document.removeEventListener('keydown', listener)
+      }
     }
   }, [onSendMessage, textFieldSelected])
 
