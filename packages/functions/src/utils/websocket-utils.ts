@@ -106,3 +106,29 @@ export const sendToConnections = async (event: APIGatewayProxyEvent, match_id: s
     }));
   }
 };
+
+export const sendToSingleConnection = async (event: APIGatewayProxyEvent, match_id: string, messageData: any, conn_id: string) => {
+  const { stage, domainName } = event.requestContext;
+
+  if (stage && domainName) {
+    const apiG = new ApiGatewayManagementApi({
+      endpoint: `${domainName}/${stage}`,
+    });
+
+    const messageDataStr = JSON.stringify(messageData);
+
+    try {
+      await apiG
+        .postToConnection({ ConnectionId: conn_id, Data: messageDataStr })
+        .promise()
+    } catch (e: any) {
+      if (e.statusCode === 410) {
+        await removePlayerFromLobby(match_id, conn_id);
+        await removeConnectionFromTable(conn_id);
+      } else {
+        console.log('Unknown error encountered:');
+        console.log(e);
+      }
+    }
+  }
+};

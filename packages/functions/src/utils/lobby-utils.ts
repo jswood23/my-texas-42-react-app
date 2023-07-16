@@ -90,6 +90,19 @@ export const getLobbyByInviteCode = async (match_invite_code: string) => {
   return (result.Items[0] as GlobalGameState);
 };
 
+export const getPlayerNumByConnId = (lobby: GlobalGameState, connectionId: string) => {
+  // 0: t1p1 (team 1 player 1), 1: t2p1, 2: t1p2, 3: t2p2, -1: not found
+  if (lobby.team_1_connections.includes(connectionId)) {
+    const index = lobby.team_1_connections.indexOf(connectionId);
+    return index * 2;
+  } else if (lobby.team_2_connections.includes(connectionId)) {
+    const index = lobby.team_2_connections.indexOf(connectionId);
+    return index * 2 + 1;
+  } else {
+    return -1;
+  }
+}
+
 export const isLobbyEmpty = (lobby: GlobalGameState) => {
   return lobby.team_1.length === 0 && lobby.team_2.length === 0;
 };
