@@ -1,6 +1,7 @@
 import { Auth } from 'aws-amplify'
 import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { defaultUserData, requireLoginPages } from './constants'
+import { CONNECTION_STATES, defaultUserData, requireLoginPages } from './constants'
+import { type WebSocketConnection, type GlobalObj } from './types'
 import * as React from 'react'
 import Homepage from './pages/home'
 import LoginPage from './pages/users/login'
@@ -10,7 +11,7 @@ import ProfilePage from './pages/users/profile'
 import Rulespage from './pages/rules'
 import SignupPage from './pages/users/signup'
 import SnackbarAlert from './shared/snackbar-alert'
-import { type GlobalObj } from './types'
+import useWebSocket, { ReadyState } from 'react-use-websocket'
 
 const RouterElements = () => {
   // snackbar alert logic
@@ -55,7 +56,47 @@ const RouterElements = () => {
     getAuthData()
   }, [location, navigate])
 
+  // get connection data and functions
+  const [socketUrl, setSocketUrl] = React.useState('')
+  const [queryParams, setQueryParams] = React.useState({})
+  const { sendJsonMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+    queryParams
+  })
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: CONNECTION_STATES.connecting,
+    [ReadyState.OPEN]: CONNECTION_STATES.open,
+    [ReadyState.CLOSING]: CONNECTION_STATES.closing,
+    [ReadyState.CLOSED]: CONNECTION_STATES.closed,
+    [ReadyState.UNINSTANTIATED]: CONNECTION_STATES.uninstantiated
+  }[readyState]
+  React.useEffect(() => {
+    switch (connectionStatus) {
+      case CONNECTION_STATES.open: {
+        openAlert('Connected to lobby.', 'info')
+        break
+      }
+      case CONNECTION_STATES.connecting: {
+        break
+      }
+      default: {
+        openAlert('Lobby connection closed.', 'info')
+        break
+      }
+    }
+  }, [connectionStatus])
+  const connection: WebSocketConnection = {
+    connectionStatus,
+    lastMessage,
+    queryParams,
+    setQueryParams,
+    setSocketUrl,
+    sendJsonMessage,
+    socketUrl,
+    readyState
+  }
+
   const globals: GlobalObj = {
+    connection,
     openAlert: (message: string, severity: string) => { openAlert(message, severity) },
     userData
   }

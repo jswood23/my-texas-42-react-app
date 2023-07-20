@@ -1,5 +1,5 @@
 import { API } from 'aws-amplify'
-import { GAME_STAGES, apiContext } from '../../constants'
+import { CONNECTION_STATES, GAME_STAGES, apiContext } from '../../constants'
 import type { GlobalObj, LobbyInfo } from '../../types'
 import { useLocation } from 'react-router-dom'
 import InGame from './in-game'
@@ -66,7 +66,13 @@ const PlayPage = ({ globals }: Props) => {
       onChangeStage(isInGame ? GAME_STAGES.IN_GAME_LOADING : GAME_STAGES.LOBBY_STAGE)
     }
 
-    getLobbyLists()
+    if (globals.connection.connectionStatus === CONNECTION_STATES.open) {
+      onChangeStage(GAME_STAGES.IN_GAME_STAGE)
+    } else {
+      globals.connection.setQueryParams({})
+      globals.connection.setSocketUrl('')
+      getLobbyLists()
+    }
   }, [location])
 
   return (

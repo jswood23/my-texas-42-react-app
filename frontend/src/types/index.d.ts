@@ -1,4 +1,5 @@
-import { type SendJsonMessage } from 'react-use-websocket/dist/lib/types'
+import type { ReadyState } from 'react-use-websocket'
+import type { SendJsonMessage } from 'react-use-websocket/dist/lib/types'
 
 export interface ChatMessage {
   message?: string
@@ -34,6 +35,11 @@ export interface WebSocketConnection {
   connectionStatus: string
   lastMessage?: any
   sendJsonMessage: SendJsonMessage
+  socketUrl: string
+  setSocketUrl: (url: string) => void
+  queryParams: any
+  readyState: ReadyState
+  setQueryParams: (params: any) => void
 }
 
 export interface LobbyInfo {
@@ -83,7 +89,7 @@ export interface UserData {
 }
 
 export interface GlobalObj {
-  // connection: WebSocketConnection
+  connection: WebSocketConnection
   openAlert: OpenAlert
   userData: UserData
 }
