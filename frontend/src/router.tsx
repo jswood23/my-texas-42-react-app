@@ -69,6 +69,7 @@ const RouterElements = () => {
     [ReadyState.CLOSED]: CONNECTION_STATES.closed,
     [ReadyState.UNINSTANTIATED]: CONNECTION_STATES.uninstantiated
   }[readyState]
+  const prevConnectionStatus = React.useRef<string>(connectionStatus)
   React.useEffect(() => {
     switch (connectionStatus) {
       case CONNECTION_STATES.open: {
@@ -79,10 +80,13 @@ const RouterElements = () => {
         break
       }
       default: {
-        openAlert('Lobby connection closed.', 'info')
+        if (prevConnectionStatus.current === CONNECTION_STATES.open) {
+          openAlert('Lobby connection closed.', 'info')
+        }
         break
       }
     }
+    prevConnectionStatus.current = connectionStatus
   }, [connectionStatus])
   const connection: WebSocketConnection = {
     connectionStatus,
