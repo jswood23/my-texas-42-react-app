@@ -3,7 +3,7 @@ import { apiContext, defaultProfileData } from '../../../constants'
 import { Button, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import { Cancel, GroupAdd, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
 import { limitString } from '../../../utils/string-utils'
-import type { OpenAlert, UserData } from '../../../types'
+import type { GlobalObj } from '../../../types'
 import { useLocation } from 'react-router-dom'
 import PageContainer from '../../../shared/page-container'
 import ProfileStats from './profile-stats'
@@ -13,8 +13,7 @@ import ProfileFriends from './profile-friends'
 import styled from 'styled-components'
 
 interface Props {
-  openAlert: OpenAlert
-  userData: UserData
+  globals: GlobalObj
 }
 
 const StyledPageElements = styled.div(({ theme }) => ({
@@ -36,7 +35,7 @@ const StyledRoot = styled(Button)(({ theme }) => ({
   }
 }))
 
-const ProfilePage = ({ openAlert, userData }: Props) => {
+const ProfilePage = ({ globals }: Props) => {
   const location = useLocation()
   const queryParams = queryString.parse(location.search)
   const queryUsername = (queryParams.username as string) ?? ''
@@ -49,7 +48,7 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
   const [username, setUsername] = React.useState(queryUsername)
 
   const pageHeader = username.length ? `${limitString(username, 25)}'s Profile` : 'User not found'
-  const isOwnProfile = username === userData.username
+  const isOwnProfile = username === globals.userData.username
 
   React.useEffect(() => {
     const getProfileData = async () => {
@@ -65,7 +64,7 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
           setIsError(true)
           setUsername('')
 
-          openAlert('There was an error getting the profile.', 'error')
+          globals.openAlert('There was an error getting the profile.', 'error')
         })
       setIsLoading(false)
     }
@@ -74,8 +73,8 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
   }, [location])
 
   const getProfileFriendAction = () => {
-    const isFriends = profileData?.friends?.includes(userData?.username)
-    const isRequested = profileData?.incoming_friend_requests?.includes(userData?.username)
+    const isFriends = profileData?.friends?.includes(globals.userData?.username)
+    const isRequested = profileData?.incoming_friend_requests?.includes(globals.userData?.username)
 
     const handleCloseDropdown = React.useCallback(() => {
       setAnchorEl(null)
@@ -89,10 +88,10 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
       handleCloseDropdown()
       await API.get(apiContext, `/friends/send_request/${username}`, {})
         .then(() => {
-          openAlert(`Sent friend request to ${username}.`, 'success')
+          globals.openAlert(`Sent friend request to ${username}.`, 'success')
         }).catch((error) => {
           console.log(error)
-          openAlert('There was an error sending the friend request.', 'error')
+          globals.openAlert('There was an error sending the friend request.', 'error')
         })
     }
 
@@ -100,10 +99,10 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
       handleCloseDropdown()
       await API.get(apiContext, `/friends/cancel_request/${username}`, {})
         .then(() => {
-          openAlert(`Canceled friend request to ${username}.`, 'success')
+          globals.openAlert(`Canceled friend request to ${username}.`, 'success')
         }).catch((error) => {
           console.log(error)
-          openAlert('There was an error canceling the friend request.', 'error')
+          globals.openAlert('There was an error canceling the friend request.', 'error')
         })
     }
 
@@ -111,10 +110,10 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
       handleCloseDropdown()
       await API.get(apiContext, `/friends/remove_friend/${username}`, {})
         .then(() => {
-          openAlert(`Removed ${username} from friend list.`, 'success')
+          globals.openAlert(`Removed ${username} from friend list.`, 'success')
         }).catch((error) => {
           console.log(error)
-          openAlert('There was an error removing this friend.', 'error')
+          globals.openAlert('There was an error removing this friend.', 'error')
         })
     }
 
@@ -172,8 +171,8 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
     ? (
     <PageContainer
       title={pageHeader}
-      openAlert={openAlert}
-      userData={userData}
+      openAlert={globals.openAlert}
+      userData={globals.userData}
     />
       )
     : (
@@ -181,16 +180,16 @@ const ProfilePage = ({ openAlert, userData }: Props) => {
       action={getProfileFriendAction()}
       isLoading={isLoading}
       title={pageHeader}
-      openAlert={openAlert}
-      userData={userData}
+      openAlert={globals.openAlert}
+      userData={globals.userData}
     >
       <StyledPageElements>
         <ProfileStats profileData={profileData} />
         {isOwnProfile && (
           <ProfileFriends
-            openAlert={openAlert}
+            openAlert={globals.openAlert}
             profileData={profileData}
-            userData={userData}
+            userData={globals.userData}
           />
         )}
       </StyledPageElements>

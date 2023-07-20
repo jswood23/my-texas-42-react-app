@@ -1,6 +1,6 @@
 import { API } from 'aws-amplify'
 import { GAME_STAGES, apiContext } from '../../constants'
-import type { LobbyInfo, OpenAlert, UserData } from '../../types'
+import type { GlobalObj, LobbyInfo } from '../../types'
 import { useLocation } from 'react-router-dom'
 import InGame from './in-game'
 import Lobbies from './lobbies'
@@ -9,11 +9,10 @@ import PageContainer from '../../shared/page-container'
 import * as React from 'react'
 
 interface Props {
-  openAlert: OpenAlert
-  userData: UserData
+  globals: GlobalObj
 }
 
-const PlayPage = ({ openAlert, userData }: Props) => {
+const PlayPage = ({ globals }: Props) => {
   const emptyLobbyList: LobbyInfo[] = []
   const [stage, setStage] = React.useState(GAME_STAGES.LOBBY_LOADING)
   const [publicLobbies, setPublicLobbies] = React.useState(emptyLobbyList)
@@ -59,7 +58,7 @@ const PlayPage = ({ openAlert, userData }: Props) => {
         })
         .catch((error) => {
           console.log(error)
-          openAlert('There was an error getting the list of lobbies.', 'error')
+          globals.openAlert('There was an error getting the list of lobbies.', 'error')
           setPublicLobbies(emptyLobbyList)
           setPrivateLobbies(emptyLobbyList)
         })
@@ -74,32 +73,32 @@ const PlayPage = ({ openAlert, userData }: Props) => {
     <PageContainer
       isLoading={isLoading}
       title={pageTitle}
-      openAlert={openAlert}
-      userData={userData}
+      openAlert={globals.openAlert}
+      userData={globals.userData}
     >
       {isInLobby && (
         <Lobbies
           onChangeStage={onChangeStage}
-          openAlert={openAlert}
+          openAlert={globals.openAlert}
           privateLobbies={privateLobbies}
           publicLobbies={publicLobbies}
-          userData={userData}
+          userData={globals.userData}
         />
       )}
       {isNewGame && (
         <NewGame
           onChangeStage={onChangeStage}
-          openAlert={openAlert}
-          userData={userData}
+          openAlert={globals.openAlert}
+          userData={globals.userData}
         />
       )}
       {isInGame && (
         <InGame
           inviteCode={inviteCode}
           onChangeStage={onChangeStage}
-          openAlert={openAlert}
+          openAlert={globals.openAlert}
           teamNumber={teamNumber}
-          userData={userData}
+          userData={globals.userData}
         />
       )}
     </PageContainer>

@@ -66,31 +66,31 @@ const RouterElements = () => {
       <Routes>
           <Route
             path="/"
-            element={<Homepage openAlert={openAlert} userData={userData} />}
+            element={<Homepage globals={globals} />}
           />
           <Route path="/home" element={<Navigate to="/" />} />
           <Route
             path="/rules"
-            element={<Rulespage openAlert={openAlert} userData={userData} />}
+            element={<Rulespage globals={globals} />}
           />
           {!userData.exists && <>
             <Route
               path='/login'
-              element={<LoginPage openAlert={openAlert} userData={userData} />}
+              element={<LoginPage globals={globals} />}
             />
             <Route
               path='/signup'
-              element={<SignupPage openAlert={openAlert} userData={userData} />}
+              element={<SignupPage globals={globals} />}
             />
           </>}
           {userData.exists && <>
             <Route
               path='/profile'
-              element={<ProfilePage openAlert={openAlert} userData={userData} />}
+              element={<ProfilePage globals={globals} />}
             />
             <Route
               path='/play'
-              element={<PlayPage openAlert={openAlert} userData={userData} />}
+              element={<PlayPage globals={globals} />}
             />
           </>}
       </Routes>

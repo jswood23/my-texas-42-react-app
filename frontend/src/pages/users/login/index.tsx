@@ -1,6 +1,6 @@
 import { Button, CircularProgress, Collapse, FormControl, TextField } from '@mui/material'
 import { Auth } from 'aws-amplify'
-import type { OpenAlert, UserData } from '../../../types'
+import type { GlobalObj } from '../../../types'
 import { useNavigate } from 'react-router-dom'
 import { validateField } from '../../../utils/user-utils'
 import * as React from 'react'
@@ -27,11 +27,10 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 interface Props {
-  openAlert: OpenAlert
-  userData: UserData
+  globals: GlobalObj
 }
 
-const LoginPage = ({ openAlert, userData }: Props) => {
+const LoginPage = ({ globals }: Props) => {
   const initialValues = {
     username: '',
     password: ''
@@ -107,7 +106,7 @@ const LoginPage = ({ openAlert, userData }: Props) => {
       setIsLoading(true)
       // const { user } = await Auth.signUp(modelFields);
       await Auth.signIn(username, password)
-      openAlert('Signed in successfully!', 'success')
+      globals.openAlert('Signed in successfully!', 'success')
       goToHome()
     } catch (error: any) {
       let errorMessage = 'An error occurred while signing in.'
@@ -117,14 +116,14 @@ const LoginPage = ({ openAlert, userData }: Props) => {
           setConfirmingUser(true)
         }
       }
-      openAlert(errorMessage, 'error')
+      globals.openAlert(errorMessage, 'error')
     }
     setIsLoading(false)
   }, [
     confirmingUser,
     errors,
     goToHome,
-    openAlert,
+    globals.openAlert,
     password,
     runValidationTasks,
     username
@@ -144,7 +143,7 @@ const LoginPage = ({ openAlert, userData }: Props) => {
   }, [onSubmit])
 
   return (
-    <PageContainer openAlert={openAlert} title="Login" userData={userData}>
+    <PageContainer openAlert={globals.openAlert} title="Login" userData={globals.userData}>
       <StyledRoot>
         <div className="form-container">
           <FormControl>
@@ -191,8 +190,8 @@ const LoginPage = ({ openAlert, userData }: Props) => {
           <ConfirmUserForm
             defaultUsername={defaultUsername}
             defaultPassword={defaultPassword}
-            openAlert={openAlert}
-            userData={userData}
+            openAlert={globals.openAlert}
+            userData={globals.userData}
           />
         </Collapse>
       </StyledRoot>

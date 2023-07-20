@@ -1,13 +1,12 @@
 import PageContainer from '../../shared/page-container'
-import type { OpenAlert, UserData } from '../../types'
+import type { GlobalObj } from '../../types'
 
 interface Props {
-  openAlert: OpenAlert
-  userData: UserData
+  globals: GlobalObj
 }
 
-const Homepage = ({ openAlert, userData }: Props) => (
-  <PageContainer openAlert={openAlert} title="Home" userData={userData}>
+const Homepage = ({ globals }: Props) => (
+  <PageContainer openAlert={globals.openAlert} title="Home" userData={globals.userData}>
     <p>Home page stuff</p>
   </PageContainer>
 )
