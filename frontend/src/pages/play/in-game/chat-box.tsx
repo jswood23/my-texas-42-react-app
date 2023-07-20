@@ -1,5 +1,5 @@
 import { Button, TextField, Typography } from '@mui/material'
-import type { ChatMessage, OpenAlert, ServerMessage, UserData, WebSocketConnection } from '../../../types'
+import type { ChatMessage, GlobalObj, ServerMessage, WebSocketConnection } from '../../../types'
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../constants'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -53,16 +53,14 @@ const StyledRoot = styled.div(({ theme }) => ({
 
 interface Props {
   connection: WebSocketConnection
-  openAlert: OpenAlert
-  userData: UserData
+  globals: GlobalObj
 }
 
 const defaultChatHistory: ChatMessage[] = []
 
 const ChatBox = ({
   connection,
-  openAlert,
-  userData
+  globals
 }: Props) => {
   const [chatHistory, setChatHistory] = React.useState(defaultChatHistory)
   const [draftMessage, setDraftMessage] = React.useState('')
@@ -123,7 +121,7 @@ const ChatBox = ({
   const onSendMessage = () => {
     const messageData: ChatMessage = {
       message: draftMessage,
-      username: userData.username
+      username: globals.userData.username
     }
     connection.sendJsonMessage({ action: 'send_chat_message', data: JSON.stringify(messageData) })
     setDraftMessage('')

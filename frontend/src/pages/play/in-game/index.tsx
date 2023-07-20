@@ -1,5 +1,5 @@
 import { CONNECTION_STATES } from '../../../constants'
-import type { OpenAlert, UserData, WebSocketConnection } from '../../../types'
+import type { GlobalObj, WebSocketConnection } from '../../../types'
 import { useNavigate } from 'react-router-dom'
 import ChatBox from './chat-box'
 import config from '../../../constants/config'
@@ -14,22 +14,21 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 interface Props {
+  globals: GlobalObj
   inviteCode: string
   onChangeStage: (newStage: string, newInviteCode?: string, newTeamNumber?: number) => void
-  openAlert: OpenAlert
   teamNumber: number
-  userData: UserData
 }
 
-const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: Props) => {
+const InGame = ({ globals, inviteCode, onChangeStage, teamNumber }: Props) => {
   const navigate = useNavigate()
   const socketUrl = config.websocket.URL ?? ''
 
   const queryParams = {
     match_invite_code: inviteCode,
     team_number: teamNumber,
-    user_id: userData.attributes.sub,
-    username: userData.username
+    user_id: globals.userData.attributes.sub,
+    username: globals.userData.username
   }
 
   const { sendJsonMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
@@ -53,7 +52,7 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
   React.useEffect(() => {
     switch (connectionStatus) {
       case CONNECTION_STATES.closed: {
-        openAlert('Unable to connect to lobby.', 'error')
+        globals.openAlert('Unable to connect to lobby.', 'error')
         navigate('/play')
       }
     }
@@ -63,15 +62,13 @@ const InGame = ({ inviteCode, onChangeStage, openAlert, teamNumber, userData }: 
     <StyledRoot>
       <GameWindow
         connection={connection}
+        globals={globals}
         inviteCode={inviteCode}
-        openAlert={openAlert}
         teamNumber={teamNumber}
-        userData={userData}
       />
       <ChatBox
         connection={connection}
-        openAlert={openAlert}
-        userData={userData}
+        globals={globals}
       />
     </StyledRoot>
   )

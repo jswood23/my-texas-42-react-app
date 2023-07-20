@@ -1,7 +1,7 @@
 import { API } from 'aws-amplify'
 import { apiContext, GAME_STAGES } from '../../constants'
 import { Button, Checkbox, CircularProgress, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, TextField, Tooltip, Typography } from '@mui/material'
-import type { OpenAlert, Rule, UserData } from '../../types'
+import type { GlobalObj, Rule } from '../../types'
 import { RULES } from '../../constants/rules'
 import { validateField } from '../../utils/user-utils'
 import Select, { type SelectChangeEvent } from '@mui/material/Select'
@@ -74,16 +74,15 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 interface Props {
+  globals: GlobalObj
   onChangeStage: (
     newStage: string,
     newInviteCode?: string,
     newTeamNumber?: number
   ) => void
-  openAlert: OpenAlert
-  userData: UserData
 }
 
-const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
+const NewGame = ({ globals, onChangeStage }: Props) => {
   const [matchName, setMatchName] = React.useState('')
   const [privacy, setPrivacy] = React.useState(1)
   const [errors, setErrors] = React.useState({
@@ -157,7 +156,7 @@ const NewGame = ({ onChangeStage, openAlert, userData }: Props) => {
         onChangeStage(GAME_STAGES.IN_GAME_STAGE, match_invite_code, 1)
       }).catch((error) => {
         console.log(error)
-        openAlert('There was an issue starting the game.', 'error')
+        globals.openAlert('There was an issue starting the game.', 'error')
       })
     setIsLoading(false)
   }

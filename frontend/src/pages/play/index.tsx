@@ -85,18 +85,16 @@ const PlayPage = ({ globals }: Props) => {
       )}
       {isNewGame && (
         <NewGame
+          globals={globals}
           onChangeStage={onChangeStage}
-          openAlert={globals.openAlert}
-          userData={globals.userData}
         />
       )}
       {isInGame && (
         <InGame
+          globals={globals}
           inviteCode={inviteCode}
           onChangeStage={onChangeStage}
-          openAlert={globals.openAlert}
           teamNumber={teamNumber}
-          userData={globals.userData}
         />
       )}
     </PageContainer>
