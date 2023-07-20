@@ -6,7 +6,7 @@ interface Props {
 }
 
 const Homepage = ({ globals }: Props) => (
-  <PageContainer openAlert={globals.openAlert} title="Home" userData={globals.userData}>
+  <PageContainer globals={globals} title="Home">
     <p>Home page stuff</p>
   </PageContainer>
 )

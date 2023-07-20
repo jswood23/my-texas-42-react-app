@@ -143,7 +143,7 @@ const LoginPage = ({ globals }: Props) => {
   }, [onSubmit])
 
   return (
-    <PageContainer openAlert={globals.openAlert} title="Login" userData={globals.userData}>
+    <PageContainer globals={globals} title="Login">
       <StyledRoot>
         <div className="form-container">
           <FormControl>

@@ -73,8 +73,7 @@ const PlayPage = ({ globals }: Props) => {
     <PageContainer
       isLoading={isLoading}
       title={pageTitle}
-      openAlert={globals.openAlert}
-      userData={globals.userData}
+      globals={globals}
     >
       {isInLobby && (
         <Lobbies

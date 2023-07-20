@@ -170,18 +170,16 @@ const ProfilePage = ({ globals }: Props) => {
   return isError
     ? (
     <PageContainer
+      globals={globals}
       title={pageHeader}
-      openAlert={globals.openAlert}
-      userData={globals.userData}
     />
       )
     : (
     <PageContainer
       action={getProfileFriendAction()}
+      globals={globals}
       isLoading={isLoading}
       title={pageHeader}
-      openAlert={globals.openAlert}
-      userData={globals.userData}
     >
       <StyledPageElements>
         <ProfileStats profileData={profileData} />

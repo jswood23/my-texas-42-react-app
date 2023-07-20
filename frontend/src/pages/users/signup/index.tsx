@@ -191,9 +191,8 @@ const SignupPage = ({ globals }: Props) => {
 
   return (
     <PageContainer
-      openAlert={globals.openAlert}
+      globals={globals}
       title="Create an account"
-      userData={globals.userData}
     >
       <StyledRoot>
         <div className="form-container">
