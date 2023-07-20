@@ -77,11 +77,10 @@ const PlayPage = ({ globals }: Props) => {
     >
       {isInLobby && (
         <Lobbies
+          globals={globals}
           onChangeStage={onChangeStage}
-          openAlert={globals.openAlert}
           privateLobbies={privateLobbies}
           publicLobbies={publicLobbies}
-          userData={globals.userData}
         />
       )}
       {isNewGame && (

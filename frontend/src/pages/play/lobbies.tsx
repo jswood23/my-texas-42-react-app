@@ -6,7 +6,7 @@ import {
   ITEMS_PER_PAGE
 } from '../../constants'
 import { isMobile } from 'react-device-detect'
-import type { LobbyInfo, OpenAlert, UserData } from '../../types'
+import type { GlobalObj, LobbyInfo } from '../../types'
 import LobbyCard from './lobby-card'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -17,10 +17,9 @@ interface Props {
     newInviteCode?: string,
     newTeamNumber?: number
   ) => void
-  openAlert: OpenAlert
+  globals: GlobalObj
   privateLobbies: LobbyInfo[]
   publicLobbies: LobbyInfo[]
-  userData: UserData
 }
 
 const StyledRoot = styled.div(({ theme }) => ({
@@ -100,7 +99,7 @@ const StyledRoot = styled.div(({ theme }) => ({
   }
 }))
 
-const Lobbies = ({ onChangeStage, openAlert, privateLobbies, publicLobbies, userData }: Props) => {
+const Lobbies = ({ globals, onChangeStage, privateLobbies, publicLobbies }: Props) => {
   const [inviteCode, setInviteCode] = React.useState('')
 
   const onChangeInviteCode = (e: { target: { value: string } }) => {
@@ -109,10 +108,10 @@ const Lobbies = ({ onChangeStage, openAlert, privateLobbies, publicLobbies, user
 
   const onClickJoinByInvite = () => {
     if (inviteCode.length !== INVITE_CODE_LENGTH) {
-      openAlert(`Please enter a ${INVITE_CODE_LENGTH}-character invite code.`, 'error')
+      globals.openAlert(`Please enter a ${INVITE_CODE_LENGTH}-character invite code.`, 'error')
       return
     }
-    openAlert(`Joining game with code ${inviteCode}`, 'info')
+    globals.openAlert(`Joining game with code ${inviteCode}`, 'info')
     onChangeStage(GAME_STAGES.IN_GAME_STAGE, inviteCode, 1)
   }
 
@@ -141,8 +140,7 @@ const Lobbies = ({ onChangeStage, openAlert, privateLobbies, publicLobbies, user
               key={`lobby-card-${i}`}
               lobbyInfo={thisLobby}
               onChangeStage={onChangeStage}
-              openAlert={openAlert}
-              userData={userData}
+              globals={globals}
             />
           )
         })}
