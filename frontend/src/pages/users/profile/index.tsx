@@ -185,9 +185,8 @@ const ProfilePage = ({ globals }: Props) => {
         <ProfileStats profileData={profileData} />
         {isOwnProfile && (
           <ProfileFriends
-            openAlert={globals.openAlert}
+            globals={globals}
             profileData={profileData}
-            userData={globals.userData}
           />
         )}
       </StyledPageElements>

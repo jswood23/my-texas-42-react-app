@@ -1,7 +1,7 @@
 import { Alert, Button, CircularProgress, FormControl, TextField } from '@mui/material'
 import { Auth } from 'aws-amplify'
 import { useNavigate } from 'react-router-dom'
-import type { OpenAlert, UserData } from '../../types'
+import type { GlobalObj } from '../../types'
 import { validateField } from '../../utils/user-utils'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -16,15 +16,13 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
 interface Props {
   defaultUsername: string
   defaultPassword: string
-  openAlert: OpenAlert
-  userData: UserData
+  globals: GlobalObj
 }
 
 const ConfirmUserForm = ({
   defaultUsername,
   defaultPassword,
-  openAlert,
-  userData
+  globals
 }: Props) => {
   const initialValues = {
     verificationCode: ''
@@ -84,7 +82,7 @@ const ConfirmUserForm = ({
 
       await Auth.signIn(defaultUsername, defaultPassword)
 
-      openAlert('Signed in successfully!', 'success')
+      globals.openAlert('Signed in successfully!', 'success')
 
       goToHome()
     } catch (error: any) {
@@ -92,7 +90,7 @@ const ConfirmUserForm = ({
       if (error) {
         errorMessage = error.message || error
       }
-      openAlert(errorMessage, 'error')
+      globals.openAlert(errorMessage, 'error')
     }
     setIsLoading(false)
   }, [
@@ -101,7 +99,7 @@ const ConfirmUserForm = ({
     errors,
     goToHome,
     isFieldSelected,
-    openAlert,
+    globals.openAlert,
     runValidationTasks,
     verificationCode
   ])
@@ -109,7 +107,7 @@ const ConfirmUserForm = ({
   const onResend = React.useCallback(async () => {
     try {
       await Auth.resendSignUp(defaultUsername)
-      openAlert(
+      globals.openAlert(
         'The verification code has been resent. Remember to check your spam folder.',
         'info'
       )
@@ -118,9 +116,9 @@ const ConfirmUserForm = ({
       if (error) {
         errorMessage = error.message
       }
-      openAlert(errorMessage, 'error')
+      globals.openAlert(errorMessage, 'error')
     }
-  }, [defaultUsername, openAlert])
+  }, [defaultUsername, globals.openAlert])
 
   React.useEffect(() => {
     const listener = (event: { code: string, preventDefault: () => void }) => {

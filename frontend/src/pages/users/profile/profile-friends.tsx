@@ -3,7 +3,7 @@ import { apiContext } from '../../../constants'
 import { Button, CircularProgress, IconButton, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material'
 import { Cancel, CheckCircle } from '@mui/icons-material'
 import { limitString } from '../../../utils/string-utils'
-import type { OpenAlert, ProfileData, UserData } from '../../../types'
+import type { GlobalObj, ProfileData } from '../../../types'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -66,12 +66,11 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 interface Props {
-  openAlert: OpenAlert
+  globals: GlobalObj
   profileData: ProfileData
-  userData: UserData
 }
 
-const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
+const ProfileFriends = ({ globals, profileData }: Props) => {
   const [friends, setFriends] = React.useState(profileData.friends)
   const numFriends = friends?.length
   const [friendsFilter, setFriendsFilter] = React.useState('')
@@ -94,40 +93,40 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
   const onClickAcceptRequest = async (friendUsername: string) => {
     await API.get(apiContext, `/friends/accept_request/${friendUsername}`, {})
       .then(() => {
-        openAlert(`Now friends with ${friendUsername}.`, 'success')
+        globals.openAlert(`Now friends with ${friendUsername}.`, 'success')
         friends?.push(friendUsername)
         requests?.splice(requests?.indexOf(friendUsername), 1)
       }).catch((error) => {
         console.log(error)
-        openAlert('There was an error accepting the friend request.', 'error')
+        globals.openAlert('There was an error accepting the friend request.', 'error')
       })
   }
 
   const onClickRejectRequest = async (friendUsername: string) => {
     await API.get(apiContext, `/friends/reject_request/${friendUsername}`, {})
       .then(() => {
-        openAlert(`Rejected friend request from ${friendUsername}.`, 'success')
+        globals.openAlert(`Rejected friend request from ${friendUsername}.`, 'success')
         requests?.splice(requests?.indexOf(friendUsername), 1)
       }).catch((error) => {
         console.log(error)
-        openAlert('There was an error rejecting the friend request.', 'error')
+        globals.openAlert('There was an error rejecting the friend request.', 'error')
       })
   }
 
   const onClickAddFriend = async () => {
     if (!addFriendUsername) {
-      openAlert('Please specify a username.', 'error')
+      globals.openAlert('Please specify a username.', 'error')
       return
     }
 
     setIsLoading(true)
     await API.get(apiContext, `/friends/send_request/${addFriendUsername}`, {})
       .then(() => {
-        openAlert(`Sent friend request to ${addFriendUsername}.`, 'success')
+        globals.openAlert(`Sent friend request to ${addFriendUsername}.`, 'success')
         setAddFriendUsername('')
       }).catch((error) => {
         console.log(error)
-        openAlert('There was an error sending the friend request.', 'error')
+        globals.openAlert('There was an error sending the friend request.', 'error')
       })
 
     setIsLoading(false)
@@ -136,11 +135,11 @@ const ProfileFriends = ({ openAlert, profileData, userData }: Props) => {
   const onClickRemoveFriend = async (friendUsername: string) => {
     await API.get(apiContext, `/friends/remove_friend/${friendUsername}`, {})
       .then(() => {
-        openAlert(`Removed ${friendUsername} from friend list.`, 'success')
+        globals.openAlert(`Removed ${friendUsername} from friend list.`, 'success')
         friends?.splice(friends?.indexOf(friendUsername), 1)
       }).catch((error) => {
         console.log(error)
-        openAlert('There was an error removing this friend.', 'error')
+        globals.openAlert('There was an error removing this friend.', 'error')
       })
   }
 

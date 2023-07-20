@@ -280,8 +280,7 @@ const SignupPage = ({ globals }: Props) => {
           <ConfirmUserForm
             defaultUsername={defaultUsername}
             defaultPassword={defaultPassword}
-            openAlert={globals.openAlert}
-            userData={globals.userData}
+            globals={globals}
           />
         </Collapse>
       </StyledRoot>
