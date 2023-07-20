@@ -1,6 +1,8 @@
 import { API } from 'aws-amplify'
+import { Button } from '@mui/material'
 import { CONNECTION_STATES, GAME_STAGES, apiContext } from '../../constants'
 import type { GlobalObj, LobbyInfo } from '../../types'
+import { styled } from 'styled-components'
 import { useLocation } from 'react-router-dom'
 import InGame from './in-game'
 import Lobbies from './lobbies'
@@ -11,6 +13,21 @@ import * as React from 'react'
 interface Props {
   globals: GlobalObj
 }
+
+const StyledRoot = styled.div(({ theme }) => ({
+  '.disconnect-button': {
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.isMobile ? theme.spacing(2) : theme.spacing(1.5),
+    marginLeft: theme.spacing(5),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3),
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    }
+  }
+}))
 
 const PlayPage = ({ globals }: Props) => {
   const emptyLobbyList: LobbyInfo[] = []
@@ -24,6 +41,7 @@ const PlayPage = ({ globals }: Props) => {
   const isNewGame = stage.includes(GAME_STAGES.NEW_GAME_STAGE)
   const isInGame = stage.includes(GAME_STAGES.IN_GAME_STAGE)
   const isLoading = stage.includes(GAME_STAGES.LOADING_STATE)
+  const disableDisconnectButton = globals.connection.connectionStatus !== CONNECTION_STATES.open
   const pageTitle = isInLobby
     ? 'Game Lobbies'
     : isNewGame
@@ -75,35 +93,51 @@ const PlayPage = ({ globals }: Props) => {
     }
   }, [location])
 
-  return (
-    <PageContainer
-      isLoading={isLoading}
-      title={pageTitle}
-      globals={globals}
+  const action = isInGame
+    ? (
+    <Button
+      className='disconnect-button'
+      disabled={disableDisconnectButton}
+      onClick={() => { globals.connection.disconnect() }}
+      variant='contained'
     >
-      {isInLobby && (
-        <Lobbies
-          globals={globals}
-          onChangeStage={onChangeStage}
-          privateLobbies={privateLobbies}
-          publicLobbies={publicLobbies}
-        />
-      )}
-      {isNewGame && (
-        <NewGame
-          globals={globals}
-          onChangeStage={onChangeStage}
-        />
-      )}
-      {isInGame && (
-        <InGame
-          globals={globals}
-          inviteCode={inviteCode}
-          onChangeStage={onChangeStage}
-          teamNumber={teamNumber}
-        />
-      )}
-    </PageContainer>
+      disconnect
+    </Button>
+      )
+    : <></>
+
+  return (
+    <StyledRoot>
+      <PageContainer
+        action={action}
+        isLoading={isLoading}
+        title={pageTitle}
+        globals={globals}
+      >
+        {isInLobby && (
+          <Lobbies
+            globals={globals}
+            onChangeStage={onChangeStage}
+            privateLobbies={privateLobbies}
+            publicLobbies={publicLobbies}
+          />
+        )}
+        {isNewGame && (
+          <NewGame
+            globals={globals}
+            onChangeStage={onChangeStage}
+          />
+        )}
+        {isInGame && (
+          <InGame
+            globals={globals}
+            inviteCode={inviteCode}
+            onChangeStage={onChangeStage}
+            teamNumber={teamNumber}
+          />
+        )}
+      </PageContainer>
+    </StyledRoot>
   )
 }
 

@@ -33,6 +33,7 @@ export interface ServerMessage extends ChatMessage {
 
 export interface WebSocketConnection {
   connectionStatus: string
+  disconnect: () => void
   lastMessage?: any
   sendJsonMessage: SendJsonMessage
   socketUrl: any

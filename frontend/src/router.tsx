@@ -61,7 +61,7 @@ const RouterElements = () => {
   const [socketUrl, setSocketUrl] = React.useState(defaultSocketUrl)
   const [queryParams, setQueryParams] = React.useState({})
   const connectionParams = socketUrl ? { queryParams } : {}
-  const { lastMessage, readyState, sendJsonMessage } = useWebSocket(socketUrl, connectionParams)
+  const { getWebSocket, lastMessage, readyState, sendJsonMessage } = useWebSocket(socketUrl, connectionParams)
   const connectionStatus = {
     [ReadyState.CONNECTING]: CONNECTION_STATES.connecting,
     [ReadyState.OPEN]: CONNECTION_STATES.open,
@@ -90,6 +90,7 @@ const RouterElements = () => {
   }, [connectionStatus])
   const connection: WebSocketConnection = {
     connectionStatus,
+    disconnect: () => getWebSocket()?.close(),
     lastMessage,
     queryParams,
     setQueryParams,
