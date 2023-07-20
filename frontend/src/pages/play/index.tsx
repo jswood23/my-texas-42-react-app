@@ -1,6 +1,8 @@
 import { API } from 'aws-amplify'
-import { GAME_STAGES, apiContext } from '../../constants'
-import type { LobbyInfo, OpenAlert, UserData } from '../../types'
+import { Button } from '@mui/material'
+import { CONNECTION_STATES, GAME_STAGES, apiContext } from '../../constants'
+import type { GlobalObj, LobbyInfo } from '../../types'
+import { styled } from 'styled-components'
 import { useLocation } from 'react-router-dom'
 import InGame from './in-game'
 import Lobbies from './lobbies'
@@ -9,11 +11,25 @@ import PageContainer from '../../shared/page-container'
 import * as React from 'react'
 
 interface Props {
-  openAlert: OpenAlert
-  userData: UserData
+  globals: GlobalObj
 }
 
-const PlayPage = ({ openAlert, userData }: Props) => {
+const StyledRoot = styled.div(({ theme }) => ({
+  '.disconnect-button': {
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.isMobile ? theme.spacing(2) : theme.spacing(1.5),
+    marginLeft: theme.spacing(5),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3),
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    }
+  }
+}))
+
+const PlayPage = ({ globals }: Props) => {
   const emptyLobbyList: LobbyInfo[] = []
   const [stage, setStage] = React.useState(GAME_STAGES.LOBBY_LOADING)
   const [publicLobbies, setPublicLobbies] = React.useState(emptyLobbyList)
@@ -25,6 +41,7 @@ const PlayPage = ({ openAlert, userData }: Props) => {
   const isNewGame = stage.includes(GAME_STAGES.NEW_GAME_STAGE)
   const isInGame = stage.includes(GAME_STAGES.IN_GAME_STAGE)
   const isLoading = stage.includes(GAME_STAGES.LOADING_STATE)
+  const disableDisconnectButton = globals.connection.connectionStatus !== CONNECTION_STATES.open
   const pageTitle = isInLobby
     ? 'Game Lobbies'
     : isNewGame
@@ -59,7 +76,7 @@ const PlayPage = ({ openAlert, userData }: Props) => {
         })
         .catch((error) => {
           console.log(error)
-          openAlert('There was an error getting the list of lobbies.', 'error')
+          globals.openAlert('There was an error getting the list of lobbies.', 'error')
           setPublicLobbies(emptyLobbyList)
           setPrivateLobbies(emptyLobbyList)
         })
@@ -67,42 +84,60 @@ const PlayPage = ({ openAlert, userData }: Props) => {
       onChangeStage(isInGame ? GAME_STAGES.IN_GAME_LOADING : GAME_STAGES.LOBBY_STAGE)
     }
 
-    getLobbyLists()
+    if (globals.connection.connectionStatus === CONNECTION_STATES.open) {
+      onChangeStage(GAME_STAGES.IN_GAME_STAGE)
+    } else {
+      globals.connection.setQueryParams({})
+      globals.connection.setSocketUrl(null)
+      getLobbyLists()
+    }
   }, [location])
 
-  return (
-    <PageContainer
-      isLoading={isLoading}
-      title={pageTitle}
-      openAlert={openAlert}
-      userData={userData}
+  const action = isInGame
+    ? (
+    <Button
+      className='disconnect-button'
+      disabled={disableDisconnectButton}
+      onClick={() => { globals.connection.disconnect() }}
+      variant='contained'
     >
-      {isInLobby && (
-        <Lobbies
-          onChangeStage={onChangeStage}
-          openAlert={openAlert}
-          privateLobbies={privateLobbies}
-          publicLobbies={publicLobbies}
-          userData={userData}
-        />
-      )}
-      {isNewGame && (
-        <NewGame
-          onChangeStage={onChangeStage}
-          openAlert={openAlert}
-          userData={userData}
-        />
-      )}
-      {isInGame && (
-        <InGame
-          inviteCode={inviteCode}
-          onChangeStage={onChangeStage}
-          openAlert={openAlert}
-          teamNumber={teamNumber}
-          userData={userData}
-        />
-      )}
-    </PageContainer>
+      disconnect
+    </Button>
+      )
+    : <></>
+
+  return (
+    <StyledRoot>
+      <PageContainer
+        action={action}
+        isLoading={isLoading}
+        title={pageTitle}
+        globals={globals}
+      >
+        {isInLobby && (
+          <Lobbies
+            globals={globals}
+            onChangeStage={onChangeStage}
+            privateLobbies={privateLobbies}
+            publicLobbies={publicLobbies}
+          />
+        )}
+        {isNewGame && (
+          <NewGame
+            globals={globals}
+            onChangeStage={onChangeStage}
+          />
+        )}
+        {isInGame && (
+          <InGame
+            globals={globals}
+            inviteCode={inviteCode}
+            onChangeStage={onChangeStage}
+            teamNumber={teamNumber}
+          />
+        )}
+      </PageContainer>
+    </StyledRoot>
   )
 }
 

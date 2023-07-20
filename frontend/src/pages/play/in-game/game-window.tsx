@@ -1,5 +1,5 @@
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../constants'
-import type { GameState, OpenAlert, ServerMessage, UserData, WebSocketConnection } from '../../../types'
+import type { GameState, GlobalObj, ServerMessage, WebSocketConnection } from '../../../types'
 import { Typography } from '@mui/material'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -13,11 +13,10 @@ const StyledRoot = styled.div(() => ({
 }))
 
 interface Props {
+  globals: GlobalObj
   inviteCode: string
-  openAlert: OpenAlert
   connection: WebSocketConnection
   teamNumber: number
-  userData: UserData
 }
 
 const defaultGameState: GameState = {
@@ -42,10 +41,9 @@ const defaultGameState: GameState = {
 
 const GameWindow = ({
   connection,
+  globals,
   inviteCode,
-  openAlert,
-  teamNumber,
-  userData
+  teamNumber
 }: Props) => {
   const [gameState, setGameState] = React.useState(defaultGameState)
 

@@ -1,6 +1,7 @@
 import { Auth } from 'aws-amplify'
 import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { defaultUserData, requireLoginPages } from './constants'
+import { CONNECTION_STATES, defaultUserData, requireLoginPages } from './constants'
+import { type WebSocketConnection, type GlobalObj } from './types'
 import * as React from 'react'
 import Homepage from './pages/home'
 import LoginPage from './pages/users/login'
@@ -10,6 +11,7 @@ import ProfilePage from './pages/users/profile'
 import Rulespage from './pages/rules'
 import SignupPage from './pages/users/signup'
 import SnackbarAlert from './shared/snackbar-alert'
+import useWebSocket, { ReadyState } from 'react-use-websocket'
 
 const RouterElements = () => {
   // snackbar alert logic
@@ -54,37 +56,87 @@ const RouterElements = () => {
     getAuthData()
   }, [location, navigate])
 
+  // get connection data and functions
+  const defaultSocketUrl: any = null
+  const [socketUrl, setSocketUrl] = React.useState(defaultSocketUrl)
+  const [queryParams, setQueryParams] = React.useState({})
+  const connectionParams = socketUrl ? { queryParams } : {}
+  const { getWebSocket, lastMessage, readyState, sendJsonMessage } = useWebSocket(socketUrl, connectionParams)
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: CONNECTION_STATES.connecting,
+    [ReadyState.OPEN]: CONNECTION_STATES.open,
+    [ReadyState.CLOSING]: CONNECTION_STATES.closing,
+    [ReadyState.CLOSED]: CONNECTION_STATES.closed,
+    [ReadyState.UNINSTANTIATED]: CONNECTION_STATES.uninstantiated
+  }[readyState]
+  const prevConnectionStatus = React.useRef<string>(connectionStatus)
+  React.useEffect(() => {
+    switch (connectionStatus) {
+      case CONNECTION_STATES.open: {
+        openAlert('Connected to lobby.', 'info')
+        break
+      }
+      case CONNECTION_STATES.connecting: {
+        break
+      }
+      default: {
+        if (prevConnectionStatus.current === CONNECTION_STATES.open) {
+          openAlert('Lobby connection closed.', 'info')
+        }
+        break
+      }
+    }
+    prevConnectionStatus.current = connectionStatus
+  }, [connectionStatus])
+  const connection: WebSocketConnection = {
+    connectionStatus,
+    disconnect: () => getWebSocket()?.close(),
+    lastMessage,
+    queryParams,
+    setQueryParams,
+    setSocketUrl,
+    sendJsonMessage,
+    socketUrl,
+    readyState
+  }
+
+  const globals: GlobalObj = {
+    connection,
+    openAlert: (message: string, severity: string) => { openAlert(message, severity) },
+    userData
+  }
+
   return (
     <>
-      <Navbar openAlert={openAlert} userData={userData} />
+      <Navbar globals={globals} />
       <Routes>
           <Route
             path="/"
-            element={<Homepage openAlert={openAlert} userData={userData} />}
+            element={<Homepage globals={globals} />}
           />
           <Route path="/home" element={<Navigate to="/" />} />
           <Route
             path="/rules"
-            element={<Rulespage openAlert={openAlert} userData={userData} />}
+            element={<Rulespage globals={globals} />}
           />
           {!userData.exists && <>
             <Route
               path='/login'
-              element={<LoginPage openAlert={openAlert} userData={userData} />}
+              element={<LoginPage globals={globals} />}
             />
             <Route
               path='/signup'
-              element={<SignupPage openAlert={openAlert} userData={userData} />}
+              element={<SignupPage globals={globals} />}
             />
           </>}
           {userData.exists && <>
             <Route
               path='/profile'
-              element={<ProfilePage openAlert={openAlert} userData={userData} />}
+              element={<ProfilePage globals={globals} />}
             />
             <Route
               path='/play'
-              element={<PlayPage openAlert={openAlert} userData={userData} />}
+              element={<PlayPage globals={globals} />}
             />
           </>}
       </Routes>

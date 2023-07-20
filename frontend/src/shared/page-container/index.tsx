@@ -1,14 +1,13 @@
 import { CircularProgress, Container, Typography } from '@mui/material'
-import type { OpenAlert, UserData } from '../../types'
+import type { GlobalObj } from '../../types'
 import styled from 'styled-components'
 
 interface Props {
   action?: any
   children?: any
+  globals: GlobalObj
   isLoading?: boolean
-  openAlert: OpenAlert
   title: string
-  userData: UserData
 }
 
 const StyledRoot = styled(Container)(({ theme }) => ({
@@ -52,7 +51,7 @@ const StyledRoot = styled(Container)(({ theme }) => ({
   }
 }))
 
-const PageContainer = ({ action, children, isLoading = false, openAlert, title, userData }: Props) => {
+const PageContainer = ({ action, children, globals, isLoading = false, title }: Props) => {
   return (
     <StyledRoot>
       <Container fixed className='page-container'>

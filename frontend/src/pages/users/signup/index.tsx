@@ -1,6 +1,6 @@
 import { Alert, Button, CircularProgress, Collapse, FormControl, TextField } from '@mui/material'
 import { Auth } from 'aws-amplify'
-import type { OpenAlert, UserData } from '../../../types'
+import type { GlobalObj } from '../../../types'
 import { validateField } from '../../../utils/user-utils'
 import * as React from 'react'
 import ConfirmUserForm from '../../../shared/confirm-user-form'
@@ -26,11 +26,10 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 interface Props {
-  openAlert: OpenAlert
-  userData: UserData
+  globals: GlobalObj
 }
 
-const SignupPage = ({ openAlert, userData }: Props) => {
+const SignupPage = ({ globals }: Props) => {
   const initialValues = {
     email: '',
     username: '',
@@ -163,7 +162,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
           errorMessage = 'This username is already taken.'
         }
       }
-      openAlert(errorMessage, 'error')
+      globals.openAlert(errorMessage, 'error')
     }
     setIsLoading(false)
   }, [
@@ -171,7 +170,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
     confirmingUser,
     email,
     errors,
-    openAlert,
+    globals.openAlert,
     password,
     runValidationTasks,
     username
@@ -192,9 +191,8 @@ const SignupPage = ({ openAlert, userData }: Props) => {
 
   return (
     <PageContainer
-      openAlert={openAlert}
+      globals={globals}
       title="Create an account"
-      userData={userData}
     >
       <StyledRoot>
         <div className="form-container">
@@ -282,8 +280,7 @@ const SignupPage = ({ openAlert, userData }: Props) => {
           <ConfirmUserForm
             defaultUsername={defaultUsername}
             defaultPassword={defaultPassword}
-            openAlert={openAlert}
-            userData={userData}
+            globals={globals}
           />
         </Collapse>
       </StyledRoot>

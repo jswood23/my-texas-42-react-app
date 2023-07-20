@@ -1,18 +1,17 @@
 import { Button, Card, CardActions, CardContent, Typography } from '@mui/material'
 import { EMPTY_MEMBER_TEXT, GAME_STAGES } from '../../constants'
-import type { LobbyInfo, OpenAlert, UserData } from '../../types'
+import type { GlobalObj, LobbyInfo } from '../../types'
 import { limitString } from '../../utils/string-utils'
 import styled from 'styled-components'
 
 interface Props {
+  globals: GlobalObj
   lobbyInfo: LobbyInfo
   onChangeStage: (
     newStage: string,
     newInviteCode?: string,
     newTeamNumber?: number
   ) => void
-  openAlert: OpenAlert
-  userData: UserData
 }
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -63,7 +62,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   }
 }))
 
-const LobbyCard = ({ lobbyInfo, onChangeStage, openAlert, userData }: Props) => {
+const LobbyCard = ({ globals, lobbyInfo, onChangeStage }: Props) => {
   const lobbyName = limitString(lobbyInfo.match_name, 30)
   const isTeam1Full = lobbyInfo.team_1.length >= 2
   const isTeam2Full = lobbyInfo.team_2.length >= 2
