@@ -10,6 +10,7 @@ import ProfilePage from './pages/users/profile'
 import Rulespage from './pages/rules'
 import SignupPage from './pages/users/signup'
 import SnackbarAlert from './shared/snackbar-alert'
+import { type GlobalObj } from './types'
 
 const RouterElements = () => {
   // snackbar alert logic
@@ -54,9 +55,14 @@ const RouterElements = () => {
     getAuthData()
   }, [location, navigate])
 
+  const globals: GlobalObj = {
+    openAlert: (message: string, severity: string) => { openAlert(message, severity) },
+    userData
+  }
+
   return (
     <>
-      <Navbar openAlert={openAlert} userData={userData} />
+      <Navbar globals={globals} />
       <Routes>
           <Route
             path="/"

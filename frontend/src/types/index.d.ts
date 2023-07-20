@@ -81,3 +81,9 @@ export interface UserData {
   }
   readonly username: string
 }
+
+export interface GlobalObj {
+  // connection: WebSocketConnection
+  openAlert: OpenAlert
+  userData: UserData
+}

@@ -1,9 +1,9 @@
 import { AccountCircle, Login, Logout, PersonAdd, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
 import { AppBar, Toolbar, CssBaseline } from '@material-ui/core'
 import { Auth } from 'aws-amplify'
+import type { GlobalObj } from '../../types'
 import { makeStyles } from '@material-ui/core/styles'
 import { NavLink, useNavigate } from 'react-router-dom'
-import type { OpenAlert, UserData } from '../../types'
 import * as React from 'react'
 import Button from '@mui/material/Button'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -14,8 +14,7 @@ import Logo42 from '../../images/42logo.png'
 import styled from 'styled-components'
 
 interface Props {
-  openAlert: OpenAlert
-  userData: UserData
+  globals: GlobalObj
 }
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -72,7 +71,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 
 const useStyles = makeStyles({}) // not sure why but all of the navbar styles break when I remove this
 
-const Navbar = ({ openAlert, userData }: Props) => {
+const Navbar = ({ globals }: Props) => {
   useStyles()
   const [anchorEl, setAnchorEl] = React.useState(null)
   const isDropdownOpen = Boolean(anchorEl)
@@ -94,8 +93,8 @@ const Navbar = ({ openAlert, userData }: Props) => {
 
   const handleClickProfile = React.useCallback(() => {
     handleCloseDropdown()
-    navigate(`/profile?username=${userData?.username}`)
-  }, [handleCloseDropdown, navigate, userData?.username])
+    navigate(`/profile?username=${globals.userData?.username}`)
+  }, [handleCloseDropdown, navigate, globals.userData?.username])
 
   const handleOpenDropdown = (event: any) => {
     setAnchorEl(event.currentTarget)
@@ -105,19 +104,19 @@ const Navbar = ({ openAlert, userData }: Props) => {
     handleCloseDropdown()
     try {
       await Auth.signOut()
-      openAlert('Signed out successfully!', 'success')
+      globals.openAlert('Signed out successfully!', 'success')
       navigate('/')
     } catch (error: any) {
       let errorMessage = 'An error occurred while signing out.'
       if (error) {
         errorMessage = error.message
       }
-      openAlert(errorMessage, 'error')
+      globals.openAlert(errorMessage, 'error')
     }
-  }, [handleCloseDropdown, openAlert, navigate])
+  }, [handleCloseDropdown, globals.openAlert, navigate])
 
   const navRightSide = () => {
-    if (userData.exists) {
+    if (globals.userData.exists) {
       return (
         <Toolbar className={'right-side'}>
           <Button
@@ -129,7 +128,7 @@ const Navbar = ({ openAlert, userData }: Props) => {
               isDropdownOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />
             }
           >
-            {userData.username}
+            {globals.userData.username}
           </Button>
           <Menu
             id="sign-in-dropdown-container"
@@ -200,7 +199,7 @@ const Navbar = ({ openAlert, userData }: Props) => {
         <NavLink to="/rules" className={'nav-bar-link'}>
           Rules
         </NavLink>
-        {userData.exists &&
+        {globals.userData.exists &&
           <NavLink to="/play" className={'nav-bar-link'}>
             Play
           </NavLink>
