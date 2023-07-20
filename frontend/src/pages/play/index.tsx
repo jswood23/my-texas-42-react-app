@@ -70,7 +70,7 @@ const PlayPage = ({ globals }: Props) => {
       onChangeStage(GAME_STAGES.IN_GAME_STAGE)
     } else {
       globals.connection.setQueryParams({})
-      globals.connection.setSocketUrl('')
+      globals.connection.setSocketUrl(null)
       getLobbyLists()
     }
   }, [location])

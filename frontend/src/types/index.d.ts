@@ -35,8 +35,8 @@ export interface WebSocketConnection {
   connectionStatus: string
   lastMessage?: any
   sendJsonMessage: SendJsonMessage
-  socketUrl: string
-  setSocketUrl: (url: string) => void
+  socketUrl: any
+  setSocketUrl: (url: any) => void
   queryParams: any
   readyState: ReadyState
   setQueryParams: (params: any) => void

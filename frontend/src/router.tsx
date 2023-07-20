@@ -57,11 +57,11 @@ const RouterElements = () => {
   }, [location, navigate])
 
   // get connection data and functions
-  const [socketUrl, setSocketUrl] = React.useState('')
+  const defaultSocketUrl: any = null
+  const [socketUrl, setSocketUrl] = React.useState(defaultSocketUrl)
   const [queryParams, setQueryParams] = React.useState({})
-  const { sendJsonMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
-    queryParams
-  })
+  const connectionParams = socketUrl ? { queryParams } : {}
+  const { lastMessage, readyState, sendJsonMessage } = useWebSocket(socketUrl, connectionParams)
   const connectionStatus = {
     [ReadyState.CONNECTING]: CONNECTION_STATES.connecting,
     [ReadyState.OPEN]: CONNECTION_STATES.open,

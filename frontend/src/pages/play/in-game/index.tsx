@@ -19,7 +19,7 @@ interface Props {
 
 const InGame = ({ globals, inviteCode, onChangeStage, teamNumber }: Props) => {
   React.useEffect(() => {
-    if (!globals.connection.socketUrl) {
+    if (!globals.connection.socketUrl && config.websocket.URL) {
       const queryParams = {
         match_invite_code: inviteCode,
         team_number: teamNumber,
@@ -28,7 +28,7 @@ const InGame = ({ globals, inviteCode, onChangeStage, teamNumber }: Props) => {
       }
 
       globals.connection.setQueryParams(queryParams)
-      globals.connection.setSocketUrl(config.websocket.URL ?? '')
+      globals.connection.setSocketUrl(config.websocket.URL)
     }
   }, [])
 
