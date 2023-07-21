@@ -1,6 +1,7 @@
+import { Button, CircularProgress, Typography } from '@mui/material'
 import { EMPTY_MEMBER_TEXT } from '../../../constants'
 import type { GameState, GlobalObj } from '../../../types'
-import { Button, Typography } from '@mui/material'
+import * as React from 'react'
 import styled from 'styled-components'
 
 const StyledRoot = styled.div(({ theme }) => ({
@@ -27,6 +28,9 @@ const StyledRoot = styled.div(({ theme }) => ({
     '&:hover': {
       color: theme.palette.secondary.alt,
       backgroundColor: theme.palette.primary.main
+    },
+    '&.Mui-disabled': {
+      backgroundColor: theme.palette.light.alt
     }
   },
   '.teams-container': {
@@ -66,6 +70,11 @@ interface Props {
 }
 
 const LobbyWaitingScreen = ({ gameState, globals }: Props) => {
+  const [switchingTeams, setSwitchingTeams] = React.useState(false)
+  const currentTeam = gameState.team_1.includes(globals.userData.username) ? 1 : 2
+  const isOtherTeamFull = (currentTeam === 1 && gameState.team_2.length === 2) || (currentTeam === 2 && gameState.team_1.length === 2)
+  const disableSwitchTeamsButton = switchingTeams || isOtherTeamFull
+
   const displayTeam = (teamMembers: string[]) => {
     const withEmpty = Object.assign([], teamMembers)
     while (withEmpty.length < 2) {
@@ -87,6 +96,16 @@ const LobbyWaitingScreen = ({ gameState, globals }: Props) => {
     })
   }
 
+  const onClickSwitchTeams = () => {
+    if (!isOtherTeamFull) {
+      setSwitchingTeams(true)
+    }
+  }
+
+  React.useEffect(() => {
+    setSwitchingTeams(false)
+  }, [gameState.team_1, gameState.team_2])
+
   return (
     <StyledRoot>
       <Typography className='waiting-text'>Waiting on players...</Typography>
@@ -102,8 +121,13 @@ const LobbyWaitingScreen = ({ gameState, globals }: Props) => {
       </div>
       <Button
         className='switch-teams-button'
+        disabled={disableSwitchTeamsButton}
+        onClick={onClickSwitchTeams}
       >
-        Switch teams
+        {switchingTeams
+          ? <CircularProgress size={20}/>
+          : 'Switch teams'
+        }
       </Button>
     </StyledRoot>
   )
