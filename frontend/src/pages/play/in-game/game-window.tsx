@@ -85,6 +85,7 @@ const GameWindow = ({
       }
       {(isConnected && !isLobbyFull) &&
         <LobbyWaitingScreen
+          gameState={gameState}
           globals={globals}
         />
       }
