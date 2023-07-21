@@ -4,12 +4,15 @@ import { Typography } from '@mui/material'
 import * as React from 'react'
 import styled from 'styled-components'
 
-const StyledRoot = styled.div(() => ({
+const StyledRoot = styled.div(({ theme }) => ({
   border: '1px solid #A0A0A0',
   borderRadius: '5px',
   boxShadow: '0 2px 5px 3px #E0E0E0',
   flexBasis: '70%',
-  height: '72vh'
+
+  height: theme.isMobile ? theme.spacing(50) : theme.spacing(67),
+  minHeight: theme.spacing(60),
+  marginBottom: theme.spacing(2)
 }))
 
 interface Props {
