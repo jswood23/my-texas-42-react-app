@@ -56,8 +56,8 @@ const GameWindow = ({
   teamNumber
 }: Props) => {
   const [gameState, setGameState] = React.useState(defaultGameState)
+  const [isLoading, setIsLoading] = React.useState(true)
   const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
-  const isConnecting = globals.connection.connectionStatus === CONNECTION_STATES.connecting
   const isLobbyFull = gameState.team_1.length === 2 && gameState.team_2.length === 2
 
   React.useEffect(() => {
@@ -72,13 +72,14 @@ const GameWindow = ({
       if (messageData?.messageType === SERVER_MESSAGE_TYPES.gameUpdate) {
         const newGameState: GameState = (messageData.gameData as GameState)
         setGameState(newGameState)
+        setIsLoading(false)
       }
     }
   }, [globals.connection.lastMessage])
 
   return (
     <StyledRoot>
-      {isConnecting &&
+      {isLoading &&
         <div className='circular-progress-container'>
           <CircularProgress size={50}/>
         </div>

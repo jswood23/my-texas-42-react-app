@@ -1,6 +1,6 @@
 import { EMPTY_MEMBER_TEXT } from '../../../constants'
 import type { GameState, GlobalObj } from '../../../types'
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import styled from 'styled-components'
 
 const StyledRoot = styled.div(({ theme }) => ({
@@ -18,11 +18,22 @@ const StyledRoot = styled.div(({ theme }) => ({
     fontStyle: 'italic',
     userSelect: 'none'
   },
+  '.switch-teams-button': {
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.isMobile ? theme.spacing(2) : theme.spacing(1.5),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3),
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    }
+  },
   '.teams-container': {
     display: 'flex',
     justifyContent: 'center',
-    marginBottom: theme.spacing(1),
-    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1.5),
+    marginTop: theme.spacing(1.5),
     width: '100%'
   },
   '.team-title-text': {
@@ -61,11 +72,13 @@ const LobbyWaitingScreen = ({ gameState, globals }: Props) => {
       withEmpty.push(EMPTY_MEMBER_TEXT)
     }
 
+    let i = 0
     return withEmpty.map((teamMember: string) => {
+      i += 1
       const isEmpty = teamMember === EMPTY_MEMBER_TEXT
       return (
         <Typography
-          key={`team-member-${teamMember}`}
+          key={`team-member-${i}`}
           className={isEmpty ? 'team-member-empty' : 'team-member-text'}
         >
           {teamMember}
@@ -87,6 +100,11 @@ const LobbyWaitingScreen = ({ gameState, globals }: Props) => {
           {displayTeam(gameState.team_2)}
         </div>
       </div>
+      <Button
+        className='switch-teams-button'
+      >
+        Switch teams
+      </Button>
     </StyledRoot>
   )
 }
