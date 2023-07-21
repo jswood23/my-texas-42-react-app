@@ -1,6 +1,7 @@
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../constants'
 import type { GameState, GlobalObj, ServerMessage } from '../../../types'
-import { Typography } from '@mui/material'
+import { CircularProgress } from '@mui/material'
+import LobbyWaitingScreen from './lobby-waiting-screen'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -12,7 +13,15 @@ const StyledRoot = styled.div(({ theme }) => ({
 
   height: theme.isMobile ? theme.spacing(50) : theme.spacing(67),
   minHeight: theme.spacing(60),
-  marginBottom: theme.spacing(2)
+  marginBottom: theme.spacing(2),
+
+  '.circular-progress-container': {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 }))
 
 interface Props {
@@ -47,6 +56,9 @@ const GameWindow = ({
   teamNumber
 }: Props) => {
   const [gameState, setGameState] = React.useState(defaultGameState)
+  const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
+  const isConnecting = globals.connection.connectionStatus === CONNECTION_STATES.connecting
+  const isLobbyFull = gameState.team_1.length === 2 && gameState.team_2.length === 2
 
   React.useEffect(() => {
     if (globals.connection.connectionStatus === CONNECTION_STATES.open) {
@@ -66,11 +78,16 @@ const GameWindow = ({
 
   return (
     <StyledRoot>
-      <Typography>Connection Status: {globals.connection.connectionStatus}</Typography>
-      <Typography>Invite Code: {inviteCode}</Typography>
-      <Typography>Team Number: {teamNumber}</Typography>
-      <Typography>Team 1: {gameState.team_1}</Typography>
-      <Typography>Team 2: {gameState.team_2}</Typography>
+      {isConnecting &&
+        <div className='circular-progress-container'>
+          <CircularProgress size={50}/>
+        </div>
+      }
+      {(isConnected && !isLobbyFull) &&
+        <LobbyWaitingScreen
+          globals={globals}
+        />
+      }
     </StyledRoot>
   )
 }
