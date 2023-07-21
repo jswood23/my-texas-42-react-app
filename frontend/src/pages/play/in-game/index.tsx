@@ -35,13 +35,11 @@ const InGame = ({ globals, inviteCode, onChangeStage, teamNumber }: Props) => {
   return (
     <StyledRoot>
       <GameWindow
-        connection={globals.connection}
         globals={globals}
         inviteCode={inviteCode}
         teamNumber={teamNumber}
       />
       <ChatBox
-        connection={globals.connection}
         globals={globals}
       />
     </StyledRoot>

@@ -1,5 +1,5 @@
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../constants'
-import type { GameState, GlobalObj, ServerMessage, WebSocketConnection } from '../../../types'
+import type { GameState, GlobalObj, ServerMessage } from '../../../types'
 import { Typography } from '@mui/material'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -18,7 +18,6 @@ const StyledRoot = styled.div(({ theme }) => ({
 interface Props {
   globals: GlobalObj
   inviteCode: string
-  connection: WebSocketConnection
   teamNumber: number
 }
 
@@ -43,7 +42,6 @@ const defaultGameState: GameState = {
 }
 
 const GameWindow = ({
-  connection,
   globals,
   inviteCode,
   teamNumber
@@ -51,24 +49,24 @@ const GameWindow = ({
   const [gameState, setGameState] = React.useState(defaultGameState)
 
   React.useEffect(() => {
-    if (connection.connectionStatus === CONNECTION_STATES.open) {
-      connection.sendJsonMessage({ action: 'refresh_player_game_state' })
+    if (globals.connection.connectionStatus === CONNECTION_STATES.open) {
+      globals.connection.sendJsonMessage({ action: 'refresh_player_game_state' })
     }
-  }, [connection.connectionStatus])
+  }, [globals.connection.connectionStatus])
 
   React.useEffect(() => {
-    if (connection.lastMessage !== null) {
-      const messageData = (JSON.parse(connection.lastMessage.data) as ServerMessage)
+    if (globals.connection.lastMessage !== null) {
+      const messageData = (JSON.parse(globals.connection.lastMessage.data) as ServerMessage)
       if (messageData?.messageType === SERVER_MESSAGE_TYPES.gameUpdate) {
         const newGameState: GameState = (messageData.gameData as GameState)
         setGameState(newGameState)
       }
     }
-  }, [connection.lastMessage])
+  }, [globals.connection.lastMessage])
 
   return (
     <StyledRoot>
-      <Typography>Connection Status: {connection.connectionStatus}</Typography>
+      <Typography>Connection Status: {globals.connection.connectionStatus}</Typography>
       <Typography>Invite Code: {inviteCode}</Typography>
       <Typography>Team Number: {teamNumber}</Typography>
       <Typography>Team 1: {gameState.team_1}</Typography>
