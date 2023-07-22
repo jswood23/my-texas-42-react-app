@@ -30,6 +30,11 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     height: theme.spacing(5),
     width: theme.spacing(5)
   },
+  '.logo-container': {
+    alignItems: 'center',
+    display: 'flex',
+    height: '100%'
+  },
   '.nav-bar-link': {
     backgroundColor: theme.palette.primary.main,
     color: 'white',
@@ -192,15 +197,17 @@ const Navbar = ({ globals }: Props) => {
     <StyledAppBar position="static">
       <CssBaseline />
       <Toolbar className={'left-side'}>
-        <img src={Logo42} alt="logo" className={'logo'} />
-        <NavLink to="/" className={'nav-bar-link'}>
+        <NavLink to="/" className="logo-container">
+          <img src={Logo42} alt="logo" className="logo" />
+        </NavLink>
+        <NavLink to="/" className="nav-bar-link">
           Home
         </NavLink>
-        <NavLink to="/rules" className={'nav-bar-link'}>
+        <NavLink to="/rules" className="nav-bar-link">
           Rules
         </NavLink>
         {globals.userData.exists &&
-          <NavLink to="/play" className={'nav-bar-link'}>
+          <NavLink to="/play" className="nav-bar-link">
             Play
           </NavLink>
         }
