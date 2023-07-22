@@ -99,6 +99,7 @@ const LobbyWaitingScreen = ({ gameState, globals }: Props) => {
   const onClickSwitchTeams = () => {
     if (!isOtherTeamFull) {
       setSwitchingTeams(true)
+      globals.connection.sendJsonMessage({ action: 'switch_teams' })
     }
   }
 
