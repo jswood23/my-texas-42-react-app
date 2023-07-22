@@ -44,8 +44,8 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     paddingTop: theme.spacing(1.5),
     paddingBottom: theme.spacing(1.5),
     '&:hover': {
-      color: theme.palette.secondary.main,
-      backgroundColor: theme.palette.primary.alt
+      color: theme.isMobile ? 'white' : theme.palette.secondary.main,
+      backgroundColor: theme.isMobile ? theme.palette.primary.main : theme.palette.primary.alt
     }
   },
   '.left-side': {
@@ -57,11 +57,11 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
   '.nav-button': {
     color: theme.palette.primary.main,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'white',
     borderColor: '#000000',
 
     '&:hover': {
-      backgroundColor: theme.palette.secondary.main
+      backgroundColor: theme.isMobile ? 'white' : theme.palette.secondary.main
     },
 
     fontSize: theme.spacing(1.5),
