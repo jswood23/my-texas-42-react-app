@@ -1,8 +1,7 @@
 const config = {
   // Backend config
   s3: {
-    REGION: process.env.REACT_APP_REGION,
-    BUCKET: process.env.REACT_APP_BUCKET
+    REGION: process.env.REACT_APP_REGION
   },
   apiGateway: {
     REGION: process.env.REACT_APP_REGION,
