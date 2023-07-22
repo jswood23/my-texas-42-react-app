@@ -48,14 +48,9 @@ export const main: APIGatewayProxyHandler = async (event) => {
     thisLobby.team_1.push(username);
   }
 
-  console.log(thisLobby);
+  await updateLobby(thisLobby);
 
-  // update game state in database and send it out to players in parallel
-  const promises = [
-    refreshPlayerGameStates(event, thisConnection.match_id),
-    updateLobby(thisLobby)
-  ];
-  await Promise.all(promises);
+  await refreshPlayerGameStates(event, thisConnection.match_id);
 
   return { statusCode: 200, body: `Successfully switched to team ${newTeam}.` }
 }
