@@ -1,6 +1,5 @@
+import { dynamoDB } from '@my-texas-42-react-app/core/aws-helpers';
 import { Table } from "sst/node/table";
-import handler from "@my-texas-42-react-app/core/handler";
-import dynamoDB from "@my-texas-42-react-app/core/dynamodb";
 
 export const main = (event: any, context: any) => {
     return new Promise(async function (resolve, reject) {

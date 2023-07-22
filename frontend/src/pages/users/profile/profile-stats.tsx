@@ -13,6 +13,7 @@ const StyledRoot = styled.div(({ theme }) => ({
   '.stats-entries': {
     display: 'flex',
     flexWrap: 'wrap',
+    justifyContent: 'center',
     paddingBottom: theme.spacing(1)
   },
   '.stats-title': {

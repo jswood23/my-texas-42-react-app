@@ -1,5 +1,5 @@
 import { Button, TextField, Typography } from '@mui/material'
-import type { ChatMessage, GlobalObj, ServerMessage, WebSocketConnection } from '../../../types'
+import type { ChatMessage, GlobalObj, ServerMessage } from '../../../types'
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../constants'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -52,14 +52,12 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 interface Props {
-  connection: WebSocketConnection
   globals: GlobalObj
 }
 
 const defaultChatHistory: ChatMessage[] = []
 
 const ChatBox = ({
-  connection,
   globals
 }: Props) => {
   const [chatHistory, setChatHistory] = React.useState(defaultChatHistory)
@@ -69,7 +67,7 @@ const ChatBox = ({
 
   const bottomEl = React.useRef(null)
 
-  const disableSendButton = !draftMessage || connection.connectionStatus !== CONNECTION_STATES.open
+  const disableSendButton = !draftMessage || globals.connection.connectionStatus !== CONNECTION_STATES.open
 
   const scrollToBottom = () => {
     (bottomEl?.current as any)?.scrollIntoView({ behavior: 'smooth' })
@@ -83,8 +81,8 @@ const ChatBox = ({
   }, [shouldScroll, setShouldScroll])
 
   React.useEffect(() => {
-    if (connection.lastMessage !== null) {
-      const messageData = (JSON.parse(connection.lastMessage.data) as ServerMessage)
+    if (globals.connection.lastMessage !== null) {
+      const messageData = (JSON.parse(globals.connection.lastMessage.data) as ServerMessage)
       if (messageData?.messageType === SERVER_MESSAGE_TYPES.chat) {
         const newChatMessage: ChatMessage = {
           username: messageData.username,
@@ -94,7 +92,7 @@ const ChatBox = ({
         setShouldScroll(true)
       }
     }
-  }, [connection.lastMessage, setChatHistory, setShouldScroll])
+  }, [globals.connection.lastMessage, setChatHistory, setShouldScroll])
 
   const listMessages = () => {
     let i = 0
@@ -123,7 +121,7 @@ const ChatBox = ({
       message: draftMessage,
       username: globals.userData.username
     }
-    connection.sendJsonMessage({ action: 'send_chat_message', data: JSON.stringify(messageData) })
+    globals.connection.sendJsonMessage({ action: 'send_chat_message', data: JSON.stringify(messageData) })
     setDraftMessage('')
   }
 

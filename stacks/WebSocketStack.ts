@@ -25,7 +25,8 @@ export function WebSocketStack({stack, app}: StackContext) {
       $connect: 'packages/functions/src/websockets/connect.main',
       $disconnect: 'packages/functions/src/websockets/disconnect.main',
       refresh_player_game_state: 'packages/functions/src/websockets/refresh-player-game-state.main',
-      send_chat_message: 'packages/functions/src/websockets/send-chat-message.main'
+      send_chat_message: 'packages/functions/src/websockets/send-chat-message.main',
+      switch_teams: 'packages/functions/src/websockets/switch-teams.main'
     },
   });
 

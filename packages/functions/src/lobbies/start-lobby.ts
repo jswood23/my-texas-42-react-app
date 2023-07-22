@@ -1,8 +1,7 @@
+import { dynamoDB, handler } from '@my-texas-42-react-app/core/aws-helpers';
 import { getCurrentUser } from 'src/utils/user-utils';
 import type { GlobalGameState } from 'src/utils/lobby-utils';
 import { Table } from 'sst/node/table';
-import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
-import handler from '@my-texas-42-react-app/core/handler';
 import * as uuid from "uuid";
 
 const generateString = (length: number) => {

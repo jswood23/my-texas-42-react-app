@@ -1,8 +1,8 @@
 import { ApiGatewayManagementApi } from 'aws-sdk';
 import type { APIGatewayProxyEvent } from 'aws-lambda';
-import { Table } from 'sst/node/table';
-import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
+import { dynamoDB } from '@my-texas-42-react-app/core/aws-helpers';
 import { removePlayerFromLobby } from './lobby-utils';
+import { Table } from 'sst/node/table';
 
 export interface WebSocketConnection {
   conn_id: string

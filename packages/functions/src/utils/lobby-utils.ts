@@ -1,7 +1,7 @@
 import type { APIGatewayProxyEvent } from 'aws-lambda';
+import { dynamoDB } from '@my-texas-42-react-app/core/aws-helpers';
 import { sendToSingleConnection } from './websocket-utils';
 import { Table } from 'sst/node/table';
-import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
 
 export interface Lobby {
   match_id: string
