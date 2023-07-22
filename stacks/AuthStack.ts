@@ -1,10 +1,9 @@
-import * as iam from "aws-cdk-lib/aws-iam";
-import { Cognito, use, StackContext, Api } from "sst/constructs";
+import { Cognito, use, StackContext } from "sst/constructs";
 import { StorageStack } from "./StorageStack";
 import { ApiStack } from "./ApiStack";
 
 export function AuthStack({ stack, app }: StackContext) {
-    const { bucket, userInfoTable } = use(StorageStack);
+    const { userInfoTable } = use(StorageStack);
     const { api } = use(ApiStack);
 
     const auth = new Cognito(stack, "Auth", {
@@ -18,15 +17,6 @@ export function AuthStack({ stack, app }: StackContext) {
     auth.attachPermissionsForAuthUsers(stack, [
         // Allow access to the API
         api,
-
-        // Policy granting access to a specific folder in the bucket
-        new iam.PolicyStatement({
-            actions: ["s3:*"],
-            effect: iam.Effect.ALLOW,
-            resources: [
-                bucket.bucketArn + "/private/${cognito-identity.amazonaws.com:sub}/*",
-            ],
-        }),
     ]);
 
     auth.bindForTriggers([userInfoTable]);
