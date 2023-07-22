@@ -10,6 +10,39 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
   '.form-text-input': {
     width: '100%',
     marginTop: theme.spacing(3)
+  },
+  '.verify-account-button': {
+    width: '100%',
+    marginTop: theme.spacing(3),
+
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    },
+    '&.Mui-disabled': {
+      backgroundColor: theme.palette.light.alt
+    }
+  },
+  '.resend-button': {
+    width: '100%',
+    marginTop: theme.spacing(1),
+
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.primary.alt,
+    fontSize: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.alt,
+      color: theme.palette.primary.main
+    },
+    borderColor: theme.palette.primary.main,
+    border: '1px solid'
   }
 }))
 
@@ -156,15 +189,20 @@ const ConfirmUserForm = ({
       />
 
       <Button
+        className="verify-account-button"
         type="submit"
+        variant="contained"
         disabled={disableSubmitButton}
         onClick={onSubmit}
-        className="form-text-input"
       >
         {isLoading ? <CircularProgress size={20} /> : <>Verify Account</>}
       </Button>
 
-      <Button onClick={onResend} className="form-text-input">
+      <Button
+        className="resend-button"
+        variant="contained"
+        onClick={onResend}
+      >
         Resend Verification Code
       </Button>
     </StyledFormControl>

@@ -1,15 +1,11 @@
 import { AccountCircle, Login, Logout, PersonAdd, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
 import { AppBar, Toolbar, CssBaseline } from '@material-ui/core'
 import { Auth } from 'aws-amplify'
+import { Button, Container, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import type { GlobalObj } from '../../types'
 import { makeStyles } from '@material-ui/core/styles'
 import { NavLink, useNavigate } from 'react-router-dom'
 import * as React from 'react'
-import Button from '@mui/material/Button'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
 import Logo42 from '../../images/42logo.png'
 import styled from 'styled-components'
 
@@ -19,8 +15,6 @@ interface Props {
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
-  display: 'flex',
-  flexDirection: 'row',
   padding: 'none',
   position: 'fixed',
   top: 0,
@@ -29,6 +23,11 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     color: theme.palette.secondary.main,
     height: theme.spacing(5),
     width: theme.spacing(5)
+  },
+  '.logo-container': {
+    alignItems: 'center',
+    display: 'flex',
+    height: '100%'
   },
   '.nav-bar-link': {
     backgroundColor: theme.palette.primary.main,
@@ -44,12 +43,14 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     paddingTop: theme.spacing(1.5),
     paddingBottom: theme.spacing(1.5),
     '&:hover': {
-      color: theme.palette.secondary.main,
-      backgroundColor: theme.palette.primary.alt
+      color: theme.isMobile ? 'white' : theme.palette.secondary.main,
+      backgroundColor: theme.isMobile ? theme.palette.primary.main : theme.palette.primary.alt
     }
   },
   '.left-side': {
-    justifyContent: 'left'
+    justifyContent: 'left',
+    margin: 'none',
+    padding: 'none'
   },
   '.right-side': {
     justifyContent: 'right',
@@ -57,22 +58,28 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
   '.nav-button': {
     color: theme.palette.primary.main,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'white',
     borderColor: '#000000',
 
     '&:hover': {
-      backgroundColor: theme.palette.secondary.main
+      backgroundColor: theme.isMobile ? 'white' : theme.palette.secondary.main
     },
 
     fontSize: theme.spacing(1.5),
     fontWeight: 'bold'
+  },
+  '.nav-buttons-container': {
+    display: 'flex',
+    flexDirection: 'row',
+    padding: 'none',
+    width: '100%'
   }
 }))
 
-const useStyles = makeStyles({}) // not sure why but all of the navbar styles break when I remove this
+const useStyles = makeStyles({})
 
 const Navbar = ({ globals }: Props) => {
-  useStyles()
+  useStyles() // not sure why but all of the navbar styles break when I remove this
   const [anchorEl, setAnchorEl] = React.useState(null)
   const isDropdownOpen = Boolean(anchorEl)
   const navigate = useNavigate()
@@ -118,7 +125,7 @@ const Navbar = ({ globals }: Props) => {
   const navRightSide = () => {
     if (globals.userData.exists) {
       return (
-        <Toolbar className={'right-side'}>
+        <Toolbar className="right-side" disableGutters>
           <Button
             className="nav-button"
             id="profile-dropdown-button"
@@ -133,7 +140,14 @@ const Navbar = ({ globals }: Props) => {
           <Menu
             id="sign-in-dropdown-container"
             anchorEl={anchorEl}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
             open={isDropdownOpen}
             onClose={handleCloseDropdown}
           >
@@ -154,7 +168,7 @@ const Navbar = ({ globals }: Props) => {
       )
     }
     return (
-      <Toolbar className={'right-side'}>
+      <Toolbar className="right-side" disableGutters>
         <Button
           className='nav-button'
           id="sign-in-dropdown-button"
@@ -167,7 +181,14 @@ const Navbar = ({ globals }: Props) => {
         <Menu
           id="sign-in-dropdown-container"
           anchorEl={anchorEl}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
           open={isDropdownOpen}
           onClose={handleCloseDropdown}
         >
@@ -191,22 +212,26 @@ const Navbar = ({ globals }: Props) => {
   return (
     <StyledAppBar position="static">
       <CssBaseline />
-      <Toolbar className={'left-side'}>
-        <img src={Logo42} alt="logo" className={'logo'} />
-        <NavLink to="/" className={'nav-bar-link'}>
-          Home
-        </NavLink>
-        <NavLink to="/rules" className={'nav-bar-link'}>
-          Rules
-        </NavLink>
-        {globals.userData.exists &&
-          <NavLink to="/play" className={'nav-bar-link'}>
-            Play
+      <Container fixed className="nav-buttons-container">
+        <Toolbar className="left-side" disableGutters>
+          <NavLink to="/" className="logo-container">
+            <img src={Logo42} alt="logo" className="logo" />
           </NavLink>
-        }
-      </Toolbar>
+          <NavLink to="/" className="nav-bar-link">
+            Home
+          </NavLink>
+          <NavLink to="/rules" className="nav-bar-link">
+            Rules
+          </NavLink>
+          {globals.userData.exists &&
+            <NavLink to="/play" className="nav-bar-link">
+              Play
+            </NavLink>
+          }
+        </Toolbar>
 
-      {navRightSide()}
+        {navRightSide()}
+      </Container>
     </StyledAppBar>
   )
 }

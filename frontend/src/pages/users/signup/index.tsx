@@ -22,6 +22,23 @@ const StyledRoot = styled.div(({ theme }) => ({
   '.form-text-input': {
     width: '100%',
     marginTop: theme.spacing(3)
+  },
+  '.submit-button': {
+    width: '100%',
+    marginTop: theme.spacing(3),
+
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    },
+    '&.Mui-disabled': {
+      backgroundColor: theme.palette.light.alt
+    }
   }
 }))
 
@@ -267,9 +284,10 @@ const SignupPage = ({ globals }: Props) => {
             />
 
             <Button
+              className="submit-button"
               type="submit"
+              variant="contained"
               onClick={onSubmit}
-              className="form-text-input"
               disabled={disableSubmitButton}
             >
               {isLoading ? <CircularProgress size={20} /> : <>Sign Up</>}

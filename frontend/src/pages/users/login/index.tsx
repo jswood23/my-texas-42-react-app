@@ -23,6 +23,39 @@ const StyledRoot = styled.div(({ theme }) => ({
   '.form-text-input': {
     width: '100%',
     marginTop: theme.spacing(3)
+  },
+  '.submit-button': {
+    width: '100%',
+    marginTop: theme.spacing(3),
+
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    },
+    '&.Mui-disabled': {
+      backgroundColor: theme.palette.light.alt
+    }
+  },
+  '.create-account-button': {
+    width: '100%',
+    marginTop: theme.spacing(1),
+
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.primary.alt,
+    fontSize: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.alt,
+      color: theme.palette.primary.main
+    },
+    borderColor: theme.palette.primary.main,
+    border: '1px solid'
   }
 }))
 
@@ -175,15 +208,22 @@ const LoginPage = ({ globals }: Props) => {
             />
 
             <Button
+              className="submit-button"
               type="submit"
+              variant="contained"
               onClick={onSubmit}
-              className="form-text-input"
               disabled={disableSubmitButton}
             >
               {isLoading ? <CircularProgress size={20} /> : <>Login</>}
             </Button>
 
-            <Button onClick={goToSignUp}>Create An Account</Button>
+            <Button
+              className="create-account-button"
+              variant="contained"
+              onClick={goToSignUp}
+            >
+              Create An Account
+            </Button>
           </FormControl>
         </div>
         <Collapse className="form-container" in={confirmingUser}>

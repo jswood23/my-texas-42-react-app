@@ -46,16 +46,20 @@ const StyledRoot = styled.div(({ theme }) => ({
     fontSize: theme.spacing(1.5)
   },
   '.add-friend-button': {
-    border: '0.5px solid',
-    borderColor: theme.palette.primary.main,
-    color: theme.palette.primary.main,
-    backgroundColor: '#FFFFFF',
-    fontSize: theme.spacing(1.5),
+    backgroundColor: theme.palette.primary.alt,
+    color: theme.palette.secondary.main,
+    fontSize: theme.spacing(2),
+    height: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
+    minWidth: theme.spacing(13),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3),
     '&:hover': {
-      backgroundColor: theme.palette.secondary.main
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
     },
-    minHeight: theme.isMobile ? theme.spacing(6) : theme.spacing(4),
-    minWidth: theme.spacing(13)
+    '&.Mui-disabled': {
+      backgroundColor: theme.palette.light.alt
+    }
   },
   '.green-button': {
     color: '#2EEE2E'
