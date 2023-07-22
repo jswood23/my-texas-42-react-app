@@ -1,8 +1,7 @@
+import { dynamoDB, handler } from '@my-texas-42-react-app/core/aws-helpers';
 import { getCurrentUser } from 'src/utils/user-utils';
-import { Lobby, isLobbyFull } from 'src/utils/lobby-utils';
+import { GlobalGameState, isLobbyFull } from 'src/utils/lobby-utils';
 import { Table } from 'sst/node/table';
-import handler from '@my-texas-42-react-app/core/handler';
-import dynamoDB from '@my-texas-42-react-app/core/dynamodb';
 
 export const main = handler(async (event: any) => {
   const params = {
@@ -27,7 +26,7 @@ export const main = handler(async (event: any) => {
   if (result.Items) {
     const lobbyCount: number = result.Items.length
     for (let i = 0; i < lobbyCount; i++) {
-      const lobby = (result.Items[i] as Lobby);
+      const lobby = (result.Items[i] as GlobalGameState);
 
       if (isLobbyFull(lobby)) {
         continue;

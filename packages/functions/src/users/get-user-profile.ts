@@ -1,5 +1,5 @@
 import { getUserByUsername } from "src/utils/user-utils";
-import handler from "@my-texas-42-react-app/core/handler";
+import { handler } from '@my-texas-42-react-app/core/aws-helpers';
 
 export const main = handler(async (event: any) => {
     const username = event.pathParameters?.username;
