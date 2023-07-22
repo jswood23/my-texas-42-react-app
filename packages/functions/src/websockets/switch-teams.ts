@@ -11,7 +11,7 @@ export const main: APIGatewayProxyHandler = async (event) => {
 
   const oldTeam = thisLobby.team_1_connections.includes(connectionId) ? 1 : 2;
 
-  const newTeam = oldTeam === 1 ? 1 : 2;
+  const newTeam = oldTeam === 1 ? 2 : 1;
 
   if (thisLobby.current_round > 0) {
     return { statusCode: 500, body: 'Game has already started.' }
