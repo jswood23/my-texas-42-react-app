@@ -10,7 +10,6 @@ export function WebSocketStack({stack, app}: StackContext) {
   } = use(StorageStack);
 
   const socketApi = new WebSocketApi(stack, 'Api', {
-    customDomain: app.stage === 'prod' ? 'socket.mytexas42.com' : undefined,
     defaults: {
       function: {
         bind: [
@@ -31,7 +30,7 @@ export function WebSocketStack({stack, app}: StackContext) {
   });
 
   stack.addOutputs({
-    ApiEndpoint: socketApi.customDomainUrl || socketApi.url,
+    ApiEndpoint: socketApi.url,
   });
 
   return {
