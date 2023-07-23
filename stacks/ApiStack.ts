@@ -6,7 +6,6 @@ export function ApiStack({ stack, app }: StackContext) {
       chatLogTable,
       currentMatchTable,
       matchHistoryTable,
-      notesTable,
       rulesetTable,
       socketConnectionTable,
       userInfoTable,
@@ -22,7 +21,6 @@ export function ApiStack({ stack, app }: StackContext) {
             chatLogTable,
             currentMatchTable,
             matchHistoryTable,
-            notesTable,
             rulesetTable,
             socketConnectionTable,
             userInfoTable
