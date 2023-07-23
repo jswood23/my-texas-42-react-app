@@ -92,6 +92,7 @@ const RouterElements = () => {
   const disconnect = () => {
     getWebSocket()?.close()
     setGameState(defaultGameState)
+    navigate('/')
   }
   const connection: WebSocketConnection = {
     connectionStatus,
