@@ -20,6 +20,7 @@ export interface DominoPlacement {
   currentY: number
   size: number
   rotation: number
+  duration: number
 }
 
 export interface GameState {
