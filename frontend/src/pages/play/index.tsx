@@ -42,12 +42,13 @@ const PlayPage = ({ globals }: Props) => {
   const isInGame = stage.includes(GAME_STAGES.IN_GAME_STAGE)
   const isLoading = stage.includes(GAME_STAGES.LOADING_STATE)
   const disableDisconnectButton = globals.connection.connectionStatus !== CONNECTION_STATES.open
+  const matchName = globals.gameState.match_name ?? 'undefined'
   const pageTitle = isInLobby
     ? 'Game Lobbies'
     : isNewGame
       ? 'New Game'
       : isInGame
-        ? 'Texas 42'
+        ? matchName
         : 'Undefined Stage'
 
   const location = useLocation()
