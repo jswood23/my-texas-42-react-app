@@ -33,22 +33,22 @@ export const main = handler(async (event: any) =>
     }
 
     //creates copy of current incoming_friend_request list
-    let new_list = recipient.incoming_friend_requests
+    let their_friend_requests = recipient.incoming_friend_requests
 
     //removes canceller from list by getting the index of name, and splicing list at that value
-    const ind = new_list.indexOf(canceller.username)
-    const real_list = new_list.splice(ind, 1)
+    const ind = their_friend_requests.indexOf(canceller.username)
+    const real_list = their_friend_requests.splice(ind, 1)
 
     const params=
     {
         TableName: Table.UserInfo.tableName,
         Key: {
-            user_id: canceller.user_id,
+            user_id: recipient.user_id,
         },
         UpdateExpression: "SET incoming_friend_requests = :incoming_friend_requests",
         ExpressionAttributeValues: {
             //make databse request to set incoming_friend_requests equal to real_list
-            ":incoming_friend_requests": real_list
+            ":incoming_friend_requests": their_friend_requests,
         },
         ReturnValues: "ALL_NEW",
     };
