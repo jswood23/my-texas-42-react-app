@@ -1,4 +1,4 @@
-import { CONNECTION_STATES, defaultGameState, SERVER_MESSAGE_TYPES } from '../../../../constants'
+import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../../constants'
 import type { GameState, GlobalObj, ServerMessage } from '../../../../types'
 import { CircularProgress } from '@mui/material'
 import LobbyWaitingScreen from '../lobby-waiting-screen'
@@ -35,10 +35,9 @@ const GameWindow = ({
   inviteCode,
   teamNumber
 }: Props) => {
-  const [gameState, setGameState] = React.useState(defaultGameState)
   const [isLoading, setIsLoading] = React.useState(true)
   const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
-  const isLobbyFull = gameState.team_1.length === 2 && gameState.team_2.length === 2
+  const isLobbyFull = globals.gameState.team_1.length === 2 && globals.gameState.team_2.length === 2
 
   React.useEffect(() => {
     if (globals.connection.connectionStatus === CONNECTION_STATES.open) {
@@ -51,7 +50,7 @@ const GameWindow = ({
       const messageData = (JSON.parse(globals.connection.lastMessage.data) as ServerMessage)
       if (messageData?.messageType === SERVER_MESSAGE_TYPES.gameUpdate) {
         const newGameState: GameState = (messageData.gameData as GameState)
-        setGameState(newGameState)
+        globals.setGameState(newGameState)
         setIsLoading(false)
       }
     }
@@ -66,7 +65,6 @@ const GameWindow = ({
       }
       {(isConnected && !isLobbyFull) &&
         <LobbyWaitingScreen
-          gameState={gameState}
           globals={globals}
         />
       }

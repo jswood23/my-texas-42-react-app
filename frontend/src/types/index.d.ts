@@ -91,6 +91,11 @@ export interface UserData {
 
 export interface GlobalObj {
   connection: WebSocketConnection
+
+  gameState: GameState
+  setGameState: (newGameState: GameState) => void
+
   openAlert: OpenAlert
+
   userData: UserData
 }
