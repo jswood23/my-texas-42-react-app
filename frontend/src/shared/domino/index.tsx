@@ -20,47 +20,48 @@ const defaultProps = {
 }
 
 interface StyledProps {
-  onClick: () => void
-  onMouseOver: () => void
-  onDrag: () => void
-  onMouseOut: () => void
-  centerX: number
-  centerY: number
+  duration: number
   multiplier: number
-  placement: DominoPlacement
-  squareSize: number
-  strokeWidth: number
+  rotation: number
+  squaresize: number
+  strokewidth: number
+  xpos: number
+  ypos: number
 }
 
-const StyledRoot = styled(Box)<StyledProps>(({
-  centerX,
-  centerY,
+const StyledRoot = styled.div<StyledProps>(({
+  duration,
   multiplier,
-  placement,
-  squareSize,
-  strokeWidth
-}) => ({
-  backgroundColor: '#FFFEF5',
-  border: `black ${strokeWidth}px solid`,
-  borderRadius: '10%',
-  height: `${squareSize * 2}`,
-  width: `${squareSize}`,
-  display: 'flex',
-  flexDirection: 'column',
+  rotation,
+  squaresize,
+  strokewidth,
+  xpos,
+  ypos
+}) => {
+  console.log(`${rotation}deg`)
+  return ({
+    '.domino-box': {
+      backgroundColor: '#FFFEF5',
+      border: `black ${strokewidth}px solid`,
+      borderRadius: '10%',
+      height: `${squaresize * 2}px`,
+      width: `${squaresize}px`,
+      display: 'flex',
+      flexDirection: 'column',
 
-  position: 'absolute',
-  left: `${centerX}px`,
-  top: `${centerY}px`,
-  rotate: `${placement.rotation}deg`,
-  scale: `${multiplier}`,
-  translate: `${placement.currentX}px ${placement.currentY}px`,
-  transition: '0.2s ease-in-out',
-
-  '.separator-line': {
-    position: 'absolute',
-    top: 0
-  }
-}))
+      position: 'absolute',
+      left: `${xpos}px`,
+      top: `${ypos}px`,
+      transition: `${duration}s ease-in-out`,
+      rotate: `${rotation}deg`,
+      scale: `${multiplier}`
+    },
+    '.separator-line': {
+      position: 'absolute',
+      top: 0
+    }
+  })
+})
 
 const Domino = ({
   onBlur,
@@ -76,13 +77,13 @@ const Domino = ({
   const squareSize = space * 6
   const dotSize = space * 0.6
 
-  const centerX = placement.startingX - 75
-  const centerY = placement.startingY - 150
+  const centerX = placement.startingX - 75 + placement.currentX
+  const centerY = placement.startingY - 150 + placement.currentY
 
   const SeparatorLine = (
     <div className="separator-line">
       <svg width={squareSize} height={squareSize * 2} stroke="black">
-        <line x1="0" y1={squareSize} x2={squareSize} y2={squareSize} strokeWidth={strokeWidth} />
+        <line x1="0" y1={squareSize} x2={squareSize - strokeWidth} y2={squareSize} strokeWidth={strokeWidth} />
       </svg>
     </div>
   )
@@ -163,20 +164,24 @@ const Domino = ({
 
   return (
     <StyledRoot
-      onMouseOut={onBlur}
-      onClick={onClick}
-      onDrag={onDrag}
-      onMouseOver={onHover}
-
-      centerX={centerX}
-      centerY={centerY}
+      duration={placement.duration}
       multiplier={multiplier}
-      placement={placement}
-      squareSize={squareSize}
-      strokeWidth={strokeWidth}
+      rotation={placement.rotation}
+      squaresize={squareSize}
+      strokewidth={strokeWidth}
+      xpos={centerX}
+      ypos={centerY}
     >
-      {SeparatorLine}
-      {returnDots(type)}
+      <Box
+        className="domino-box"
+        onMouseOut={onBlur}
+        onClick={onClick}
+        onDrag={onDrag}
+        onMouseOver={onHover}
+      >
+        {SeparatorLine}
+        {returnDots(type)}
+      </Box>
     </StyledRoot>
   )
 }
