@@ -104,7 +104,9 @@ const NewGame = ({ globals, onChangeStage }: Props) => {
       const validations = {
         matchName: [
           { type: 'Required' },
-          { type: 'GreaterThanChar', numValues: [5] }
+          { type: 'GreaterThanChar', numValues: [5] },
+          { type: 'LessThanChar', numValues: [40] },
+          { type: 'IsNonWhitespace' }
         ]
       }
       const validationResponse = validateField(

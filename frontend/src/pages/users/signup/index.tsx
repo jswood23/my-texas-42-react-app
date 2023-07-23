@@ -72,11 +72,20 @@ const SignupPage = ({ globals }: Props) => {
   const runValidationTasks = React.useCallback(
     (fieldName: string, currentValue: string) => {
       const validations = {
-        email: [{ type: 'Required' }, { type: 'Email' }],
-        username: [{ type: 'Required' }],
+        email: [
+          { type: 'Email' },
+          { type: 'LessThanChar', numValues: [30] },
+          { type: 'Required' }
+        ],
+        username: [
+          { type: 'IsNonWhitespace' },
+          { type: 'LessThanChar', numValues: [25] },
+          { type: 'Required' }
+        ],
         password: [
           { type: 'Required' },
           { type: 'GreaterThanChar', numValues: [8] },
+          { type: 'LessThanChar', numValues: [20] },
           {
             type: 'Contains',
             strValues: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],

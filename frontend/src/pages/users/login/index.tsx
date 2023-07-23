@@ -91,8 +91,14 @@ const LoginPage = ({ globals }: Props) => {
   const runValidationTasks = React.useCallback(
     (fieldName: string, currentValue: string) => {
       const validations = {
-        username: [{ type: 'Required' }],
-        password: [{ type: 'Required' }]
+        username: [
+          { type: 'LessThanChar', numValues: [25] },
+          { type: 'Required' }
+        ],
+        password: [
+          { type: 'LessThanChar', numValues: [20] },
+          { type: 'Required' }
+        ]
       }
       const validationResponse = validateField(
         currentValue,
