@@ -1,6 +1,6 @@
 import { getUserById, getUserByUsername } from "src/utils/user-utils";
-import handler from "@my-texas-42-react-app/core/handler";
-import dynamoDB from "@my-texas-42-react-app/core/dynamodb";
+import { dynamoDB, handler } from '@my-texas-42-react-app/core/aws-helpers';
+import { getCurrentUser } from 'src/utils/user-utils';
 import { Table } from "sst/node/table";
 
 //remove your own name from the recipient's incoming_friend_requests list
@@ -17,13 +17,19 @@ export const main = handler(async (event: any) =>
     const recipient = await getUserByUsername(you);
 
     //get yourself as string and user object
-    const me_fr_fr = event.requestContext.authorizer.iam.cognitoIdentity.amr[2].slice(-36);
-    const canceller = await getUserById(me_fr_fr)
+    const canceller = await getCurrentUser(event)
+    const me_fr_fr = canceller.username
 
     //error: cancel request when someone has already accepted it
     if (recipient.friends.includes(me_fr_fr))
     {
         throw new Error("The user has already accepted the friend request")
+    }
+
+    //ensure that ccanceller has sent a friend request to the recipient
+    if (!recipient.incoming_friend_requests.includes(me_fr_fr)) 
+    {
+        throw new Error("You have not sent a friend request to this user")
     }
 
     //creates copy of current incoming_friend_request list
