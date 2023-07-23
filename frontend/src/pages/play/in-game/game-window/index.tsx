@@ -1,4 +1,4 @@
-import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../../constants'
+import { CONNECTION_STATES, defaultGameState, SERVER_MESSAGE_TYPES } from '../../../../constants'
 import type { GameState, GlobalObj, ServerMessage } from '../../../../types'
 import { CircularProgress } from '@mui/material'
 import LobbyWaitingScreen from '../lobby-waiting-screen'
@@ -28,26 +28,6 @@ interface Props {
   globals: GlobalObj
   inviteCode: string
   teamNumber: number
-}
-
-const defaultGameState: GameState = {
-  match_name: '__default_match_name__',
-  match_invite_code: 'ABC123',
-  rules: [],
-  team_1: [],
-  team_2: [],
-  current_round: 0,
-  current_starting_bidder: 0,
-  current_is_bidding: true,
-  current_player_turn: 0,
-  current_round_rules: [],
-  player_dominoes: '',
-  current_team_1_round_score: 0,
-  current_team_2_round_score: 0,
-  current_team_1_total_score: 0,
-  current_team_2_total_score: 0,
-  current_round_history: [],
-  total_round_history: []
 }
 
 const GameWindow = ({

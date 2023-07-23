@@ -1,4 +1,4 @@
-import type { ProfileData, UserData } from '../types'
+import type { GameState, ProfileData, UserData } from '../types'
 
 export const apiContext = 'mytexas42api'
 
@@ -8,6 +8,26 @@ export const CONNECTION_STATES = {
   closing: 'Closing',
   closed: 'Closed',
   uninstantiated: 'Uninstantiated'
+}
+
+export const defaultGameState: GameState = {
+  match_name: '__default_match_name__',
+  match_invite_code: 'ABC123',
+  rules: [],
+  team_1: [],
+  team_2: [],
+  current_round: 0,
+  current_starting_bidder: 0,
+  current_is_bidding: true,
+  current_player_turn: 0,
+  current_round_rules: [],
+  player_dominoes: '',
+  current_team_1_round_score: 0,
+  current_team_2_round_score: 0,
+  current_team_1_total_score: 0,
+  current_team_2_total_score: 0,
+  current_round_history: [],
+  total_round_history: []
 }
 
 export const defaultProfileData: ProfileData = {
