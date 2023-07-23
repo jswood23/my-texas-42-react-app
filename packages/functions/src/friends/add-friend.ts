@@ -53,9 +53,8 @@ export const main = handler(async (event: any) =>
             },
             UpdateExpression: "SET friends = :friends, incoming_friend_requests = :incoming_friend_requests",
             ExpressionAttributeValues: {
-                //make database request to set friends equal to my_friend_list and incoming_friend_requests equal to my_new_friend_requests
                 ":friends": my_friend_list,
-                ":incoming_friend_requests": my_new_friend_requests,
+                ":incoming_friend_requests": my_friend_requests,
             },
             ReturnValues: "ALL_NEW",
         };
@@ -67,7 +66,6 @@ export const main = handler(async (event: any) =>
             },
             UpdateExpression: "SET friends = :friends",
             ExpressionAttributeValues: {
-                //make databse request to set friends equal to their_friends
                 ":friends": their_friend_list,
             },
             ReturnValues: "ALL_NEW",
