@@ -1,38 +1,83 @@
 import { type DominoPlacement } from '../../types'
 import styled from 'styled-components'
 import { THEME } from '../../constants/theme'
+import { Box } from '@mui/material'
 
 interface Props {
+  onClick: () => void
+  onHover: () => void
+  onDrag: () => void
+  onBlur: () => void
   placement: DominoPlacement
   type: string
 }
 
-const Domino = ({ placement, type }: Props) => {
-  const multiplier: string = (placement.size / 300).toString()
-  const strokeWidth = '2'
+const defaultProps = {
+  onBlur: () => {},
+  onClick: () => {},
+  onDrag: () => {},
+  onHover: () => {}
+}
+
+interface StyledProps {
+  onClick: () => void
+  onMouseOver: () => void
+  onDrag: () => void
+  onMouseOut: () => void
+  centerX: number
+  centerY: number
+  multiplier: number
+  placement: DominoPlacement
+  squareSize: number
+  strokeWidth: number
+}
+
+const StyledRoot = styled(Box)<StyledProps>(({
+  centerX,
+  centerY,
+  multiplier,
+  placement,
+  squareSize,
+  strokeWidth
+}) => ({
+  backgroundColor: '#FFFEF5',
+  border: `black ${strokeWidth}px solid`,
+  borderRadius: '10%',
+  height: `${squareSize * 2}`,
+  width: `${squareSize}`,
+  display: 'flex',
+  flexDirection: 'column',
+
+  position: 'absolute',
+  left: `${centerX}px`,
+  top: `${centerY}px`,
+  rotate: `${placement.rotation}deg`,
+  scale: `${multiplier}`,
+  translate: `${placement.currentX}px ${placement.currentY}px`,
+  transition: '0.2s ease-in-out',
+
+  '.separator-line': {
+    position: 'absolute',
+    top: 0
+  }
+}))
+
+const Domino = ({
+  onBlur,
+  onClick,
+  onDrag,
+  onHover,
+  placement,
+  type
+}: Props) => {
+  const multiplier = placement.size / 300
+  const strokeWidth = 2
   const space = 25
   const squareSize = space * 6
   const dotSize = space * 0.6
 
-  const StyledRoot = styled.div(({ theme }) => ({
-    backgroundColor: '#FFFEF5',
-    border: `black ${strokeWidth}px solid`,
-    borderRadius: '10%',
-    height: `${squareSize * 2}`,
-    width: `${squareSize}`,
-    display: 'flex',
-    flexDirection: 'column',
-    scale: multiplier,
-    transition: '0.2s ease-in-out',
-    position: 'absolute',
-    left: `${placement.xPos}`,
-    top: `${placement.yPos}`,
-
-    '.separator-line': {
-      position: 'absolute',
-      top: 0
-    }
-  }))
+  const centerX = placement.startingX - 75
+  const centerY = placement.startingY - 150
 
   const SeparatorLine = (
     <div className="separator-line">
@@ -117,11 +162,25 @@ const Domino = ({ placement, type }: Props) => {
   }
 
   return (
-    <StyledRoot>
+    <StyledRoot
+      onMouseOut={onBlur}
+      onClick={onClick}
+      onDrag={onDrag}
+      onMouseOver={onHover}
+
+      centerX={centerX}
+      centerY={centerY}
+      multiplier={multiplier}
+      placement={placement}
+      squareSize={squareSize}
+      strokeWidth={strokeWidth}
+    >
       {SeparatorLine}
       {returnDots(type)}
     </StyledRoot>
   )
 }
+
+Domino.defaultProps = defaultProps
 
 export default Domino
