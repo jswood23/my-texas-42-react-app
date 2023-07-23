@@ -152,10 +152,13 @@ const SignupPage = ({ globals }: Props) => {
     runValidationTasks('password', password)
     runValidationTasks('confirmPassword', confirmPassword)
 
+    const somethingIsAllWhitespace = !/\S/.test(username) || !/\S/.test(password)
+
     if (
       Object.values(errors).some((e: any) => e?.hasError) ||
       !(email && username && password && confirmPassword) ||
-      password !== confirmPassword
+      password !== confirmPassword ||
+      somethingIsAllWhitespace
     ) {
       return
     }
