@@ -13,6 +13,15 @@ export interface RoundRules {
   variant: string
 }
 
+export interface DominoPlacement {
+  startingX: number
+  startingY: number
+  currentX: number
+  currentY: number
+  size: number
+  rotation: number
+}
+
 export interface GameState {
   match_name: string
   match_invite_code: string
