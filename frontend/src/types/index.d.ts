@@ -95,6 +95,8 @@ export interface GlobalObj {
   gameState: GameState
   setGameState: (newGameState: GameState) => void
 
+  isMobile: boolean
+
   openAlert: OpenAlert
 
   userData: UserData

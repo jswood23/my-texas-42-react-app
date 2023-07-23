@@ -1,6 +1,7 @@
 import { Auth } from 'aws-amplify'
 import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { CONNECTION_STATES, defaultGameState, defaultUserData, requireLoginPages } from './constants'
+import { isMobile } from 'react-device-detect'
 import { type WebSocketConnection, type GlobalObj } from './types'
 import * as React from 'react'
 import Homepage from './pages/home'
@@ -107,6 +108,7 @@ const RouterElements = () => {
     connection,
     gameState,
     setGameState,
+    isMobile,
     openAlert: (message: string, severity: string) => { openAlert(message, severity) },
     userData
   }
