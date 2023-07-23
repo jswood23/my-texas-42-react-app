@@ -89,9 +89,13 @@ const RouterElements = () => {
     }
     prevConnectionStatus.current = connectionStatus
   }, [connectionStatus])
+  const disconnect = () => {
+    getWebSocket()?.close()
+    setGameState(defaultGameState)
+  }
   const connection: WebSocketConnection = {
     connectionStatus,
-    disconnect: () => getWebSocket()?.close(),
+    disconnect,
     lastMessage,
     queryParams,
     setQueryParams,

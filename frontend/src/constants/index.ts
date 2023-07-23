@@ -11,8 +11,8 @@ export const CONNECTION_STATES = {
 }
 
 export const defaultGameState: GameState = {
-  match_name: '__default_match_name__',
-  match_invite_code: 'ABC123',
+  match_name: '',
+  match_invite_code: '',
   rules: [],
   team_1: [],
   team_2: [],

@@ -40,9 +40,10 @@ const PlayPage = ({ globals }: Props) => {
   const isInLobby = stage.includes(GAME_STAGES.LOBBY_STAGE)
   const isNewGame = stage.includes(GAME_STAGES.NEW_GAME_STAGE)
   const isInGame = stage.includes(GAME_STAGES.IN_GAME_STAGE)
+  const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
   const isLoading = stage.includes(GAME_STAGES.LOADING_STATE)
-  const disableDisconnectButton = globals.connection.connectionStatus !== CONNECTION_STATES.open
-  const matchName = globals.gameState.match_name ?? 'undefined'
+  const disableDisconnectButton = !isConnected
+  const matchName = globals.gameState.match_name ? globals.gameState.match_name : 'Connecting to match...'
   const pageTitle = isInLobby
     ? 'Game Lobbies'
     : isNewGame
