@@ -79,7 +79,11 @@ const ConfirmUserForm = ({
   const runValidationTasks = React.useCallback(
     (fieldName: string, currentValue: string) => {
       const validations = {
-        verificationCode: [{ type: 'Required' }]
+        verificationCode: [
+          { type: 'GreaterThanChar', numValues: [6], validationMessage: 'The value must be 6 digits long.' },
+          { type: 'LessThanChar', numValues: [6], validationMessage: 'The value must be 6 digits long.' },
+          { type: 'Required' }
+        ]
       }
       const validationResponse = validateField(
         currentValue,
@@ -104,7 +108,7 @@ const ConfirmUserForm = ({
 
     runValidationTasks('verificationCode', verificationCode)
 
-    if (Object.values(errors).some((e: any) => e?.hasError) || !verificationCode) {
+    if (Object.values(errors).some((e: any) => e?.hasError) || verificationCode.length !== 6) {
       return
     }
 

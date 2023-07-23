@@ -1,7 +1,7 @@
-import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../constants'
-import type { GameState, GlobalObj, ServerMessage } from '../../../types'
+import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../../constants'
+import type { GameState, GlobalObj, ServerMessage } from '../../../../types'
 import { CircularProgress } from '@mui/material'
-import LobbyWaitingScreen from './lobby-waiting-screen'
+import LobbyWaitingScreen from '../lobby-waiting-screen'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -30,35 +30,14 @@ interface Props {
   teamNumber: number
 }
 
-const defaultGameState: GameState = {
-  match_name: '__default_match_name__',
-  match_invite_code: 'ABC123',
-  rules: [],
-  team_1: [],
-  team_2: [],
-  current_round: 0,
-  current_starting_bidder: 0,
-  current_is_bidding: true,
-  current_player_turn: 0,
-  current_round_rules: [],
-  player_dominoes: '',
-  current_team_1_round_score: 0,
-  current_team_2_round_score: 0,
-  current_team_1_total_score: 0,
-  current_team_2_total_score: 0,
-  current_round_history: [],
-  total_round_history: []
-}
-
 const GameWindow = ({
   globals,
   inviteCode,
   teamNumber
 }: Props) => {
-  const [gameState, setGameState] = React.useState(defaultGameState)
   const [isLoading, setIsLoading] = React.useState(true)
   const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
-  const isLobbyFull = gameState.team_1.length === 2 && gameState.team_2.length === 2
+  const isLobbyFull = globals.gameState.team_1.length === 2 && globals.gameState.team_2.length === 2
 
   React.useEffect(() => {
     if (globals.connection.connectionStatus === CONNECTION_STATES.open) {
@@ -71,7 +50,7 @@ const GameWindow = ({
       const messageData = (JSON.parse(globals.connection.lastMessage.data) as ServerMessage)
       if (messageData?.messageType === SERVER_MESSAGE_TYPES.gameUpdate) {
         const newGameState: GameState = (messageData.gameData as GameState)
-        setGameState(newGameState)
+        globals.setGameState(newGameState)
         setIsLoading(false)
       }
     }
@@ -86,7 +65,6 @@ const GameWindow = ({
       }
       {(isConnected && !isLobbyFull) &&
         <LobbyWaitingScreen
-          gameState={gameState}
           globals={globals}
         />
       }

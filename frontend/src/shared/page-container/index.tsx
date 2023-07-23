@@ -1,6 +1,7 @@
 import { CircularProgress, Container, Typography } from '@mui/material'
 import type { GlobalObj } from '../../types'
 import styled from 'styled-components'
+import { limitString } from '../../utils/string-utils'
 
 interface Props {
   action?: any
@@ -31,7 +32,7 @@ const StyledRoot = styled(Container)(({ theme }) => ({
     alignItems: 'center'
   },
   '.page-header': {
-    fontSize: theme.spacing(4),
+    fontSize: theme.isMobile ? theme.spacing(2.5) : theme.spacing(4),
     fontWeight: 'bold'
   },
   '.row-multiple-items': {
@@ -39,26 +40,29 @@ const StyledRoot = styled(Container)(({ theme }) => ({
     width: '100%'
   },
   '.item-align-left': {
+    alignItems: 'center',
     display: 'flex',
     justifyContent: 'flex-start',
-    flexBasis: '50%'
+    flexBasis: '80%'
   },
   '.item-align-right': {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    flexBasis: '50%'
+    flexBasis: '20%'
   }
 }))
 
 const PageContainer = ({ action, children, globals, isLoading = false, title }: Props) => {
+  const titleCharLimit = globals.isMobile ? 18 : 40
+  const limitedTitle = limitString(title, titleCharLimit)
   return (
     <StyledRoot>
       <Container fixed className='page-container'>
         <div className="row-multiple-items">
           <div className="item-align-left">
             <Typography className='page-header'>
-              {title}
+              {limitedTitle}
             </Typography>
           </div>
           <div className="item-align-right">

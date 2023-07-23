@@ -1,6 +1,6 @@
 import { Button, CircularProgress, Typography } from '@mui/material'
 import { EMPTY_MEMBER_TEXT } from '../../../constants'
-import type { GameState, GlobalObj } from '../../../types'
+import type { GlobalObj } from '../../../types'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -65,14 +65,13 @@ const StyledRoot = styled.div(({ theme }) => ({
 }))
 
 interface Props {
-  gameState: GameState
   globals: GlobalObj
 }
 
-const LobbyWaitingScreen = ({ gameState, globals }: Props) => {
+const LobbyWaitingScreen = ({ globals }: Props) => {
   const [switchingTeams, setSwitchingTeams] = React.useState(false)
-  const currentTeam = gameState.team_1.includes(globals.userData.username) ? 1 : 2
-  const isOtherTeamFull = (currentTeam === 1 && gameState.team_2.length === 2) || (currentTeam === 2 && gameState.team_1.length === 2)
+  const currentTeam = globals.gameState.team_1.includes(globals.userData.username) ? 1 : 2
+  const isOtherTeamFull = (currentTeam === 1 && globals.gameState.team_2.length === 2) || (currentTeam === 2 && globals.gameState.team_1.length === 2)
   const disableSwitchTeamsButton = switchingTeams || isOtherTeamFull
 
   const displayTeam = (teamMembers: string[]) => {
@@ -105,7 +104,7 @@ const LobbyWaitingScreen = ({ gameState, globals }: Props) => {
 
   React.useEffect(() => {
     setSwitchingTeams(false)
-  }, [gameState.team_1, gameState.team_2])
+  }, [globals.gameState.team_1, globals.gameState.team_2])
 
   return (
     <StyledRoot>
@@ -113,11 +112,11 @@ const LobbyWaitingScreen = ({ gameState, globals }: Props) => {
       <div className='teams-container'>
         <div className='single-team-container'>
           <Typography className='team-title-text'>Team 1</Typography>
-          {displayTeam(gameState.team_1)}
+          {displayTeam(globals.gameState.team_1)}
         </div>
         <div className='single-team-container'>
           <Typography className='team-title-text'>Team 2</Typography>
-          {displayTeam(gameState.team_2)}
+          {displayTeam(globals.gameState.team_2)}
         </div>
       </div>
       <Button

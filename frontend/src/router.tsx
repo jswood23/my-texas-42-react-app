@@ -1,6 +1,7 @@
 import { Auth } from 'aws-amplify'
 import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { CONNECTION_STATES, defaultUserData, requireLoginPages } from './constants'
+import { CONNECTION_STATES, defaultGameState, defaultUserData, requireLoginPages } from './constants'
+import { isMobile } from 'react-device-detect'
 import { type WebSocketConnection, type GlobalObj } from './types'
 import * as React from 'react'
 import Homepage from './pages/home'
@@ -88,9 +89,14 @@ const RouterElements = () => {
     }
     prevConnectionStatus.current = connectionStatus
   }, [connectionStatus])
+  const disconnect = () => {
+    getWebSocket()?.close()
+    setGameState(defaultGameState)
+    navigate('/')
+  }
   const connection: WebSocketConnection = {
     connectionStatus,
-    disconnect: () => getWebSocket()?.close(),
+    disconnect,
     lastMessage,
     queryParams,
     setQueryParams,
@@ -100,8 +106,14 @@ const RouterElements = () => {
     readyState
   }
 
+  // game state
+  const [gameState, setGameState] = React.useState(defaultGameState)
+
   const globals: GlobalObj = {
     connection,
+    gameState,
+    setGameState,
+    isMobile,
     openAlert: (message: string, severity: string) => { openAlert(message, severity) },
     userData
   }

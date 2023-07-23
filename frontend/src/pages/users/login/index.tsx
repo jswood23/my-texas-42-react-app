@@ -91,8 +91,16 @@ const LoginPage = ({ globals }: Props) => {
   const runValidationTasks = React.useCallback(
     (fieldName: string, currentValue: string) => {
       const validations = {
-        username: [{ type: 'Required' }],
-        password: [{ type: 'Required' }]
+        username: [
+          { type: 'IsNonWhitespace' },
+          { type: 'LessThanChar', numValues: [25] },
+          { type: 'Required' }
+        ],
+        password: [
+          { type: 'IsNonWhitespace' },
+          { type: 'LessThanChar', numValues: [20] },
+          { type: 'Required' }
+        ]
       }
       const validationResponse = validateField(
         currentValue,
@@ -127,9 +135,12 @@ const LoginPage = ({ globals }: Props) => {
     runValidationTasks('username', username)
     runValidationTasks('password', password)
 
+    const somethingIsAllWhitespace = !/\S/.test(username) || !/\S/.test(password)
+
     if (
       Object.values(errors).some((e: any) => e?.hasError) ||
-      !(username && password)
+      !(username && password) ||
+      somethingIsAllWhitespace
     ) {
       return
     }

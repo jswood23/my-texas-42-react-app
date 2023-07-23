@@ -49,7 +49,7 @@ export const validateField = (
             hasError: !(value.length <= validation.numValues[0]),
             errorMessage:
               validation.validationMessage ||
-              `The value must be shorter than ${validation.numValues[0]}`,
+              `The value must be shorter than ${validation.numValues[0]} characters`,
           };
         case 'GreaterThanChar':
           return {
@@ -187,6 +187,13 @@ export const validateField = (
           errorMessage:
             validation.validationMessage ||
             'The value must be a valid phone number',
+        };
+      case 'IsNonWhitespace':
+        return {
+          hasError: !(/\S/.test(value)),
+          errorMessage:
+            validation.validationMessage ||
+            'The value must have non-whitespace',
         };
       default:
     }
