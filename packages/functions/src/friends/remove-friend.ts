@@ -26,11 +26,16 @@ export const main = handler(async (event: any) =>
     }
 
     //get rejecter's friends list and splice enemy from that list
+    //aparrently splice() is really weird?
     let my_friend_list = rejecter.friends
     const ind = my_friend_list.indexOf(enemy.username)
-    let my_new_friends = my_friend_list.splice(ind, 1)
+    let temp = my_friend_list.splice(ind, 1)
+    //get enemy's friends list and splice rejecter's name from the list
+    let their_friend_list = enemy.friends
+    const index = their_friend_list.indexOf(rejecter.username)
+    let temp2 = their_friend_list.splice(index,1)
     
-    const params=
+    const my_params=
     {
         TableName: Table.UserInfo.tableName,
         Key: {
@@ -39,11 +44,24 @@ export const main = handler(async (event: any) =>
         UpdateExpression: "SET friends = :friends",
         ExpressionAttributeValues: {
             //make database request to set friends = my_new_friends
-            ":friends": my_new_friends,
+            ":friends": my_friend_list,
+        },
+        ReturnValues: "ALL_NEW",
+    };
+    const their_params=
+    {
+        TableName: Table.UserInfo.tableName,
+        Key: {
+            user_id: enemy.user_id,
+        },
+        UpdateExpression: "SET friends = :friends",
+        ExpressionAttributeValues: {
+            ":friends": their_friend_list,
         },
         ReturnValues: "ALL_NEW",
     };
 
-    await dynamoDB.update(params);
+    await dynamoDB.update(my_params);
+    await dynamoDB.update(their_params);
     return {status: true};
 })
