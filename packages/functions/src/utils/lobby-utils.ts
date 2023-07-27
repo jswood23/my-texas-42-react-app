@@ -28,12 +28,12 @@ export interface Lobby {
 }
 
 export interface GlobalGameState extends Lobby {
-  all_player_dominoes: string[]
+  all_player_dominoes: string[][]
   chat_log: string[]
 }
 
 export interface PlayerGameState extends Lobby {
-  player_dominoes: string
+  player_dominoes: string[]
 }
 
 export const addToGameChat = async (match_id: string, new_message: string) => {
@@ -106,7 +106,7 @@ export const getPlayerNumByConnId = (lobby: GlobalGameState, connectionId: strin
 };
 
 const getPlayerGSFromGlobalGS = (lobby: GlobalGameState, connectionId: string) => {
-  let player_dominoes = '';
+  let player_dominoes: string[] = [];
 
   if (lobby.all_player_dominoes.length) {
     const playerNum = getPlayerNumByConnId(lobby, connectionId);
