@@ -1,4 +1,16 @@
-import { GlobalGameState } from "./lobby-utils";
+import { GlobalGameState, getPlayerNumByConnId } from "./lobby-utils";
+
+export interface PlayerMove {
+  connectionId: string
+  move: string
+  moveType: string
+}
+
+const MOVE_TYPES = {
+  bid: 'bid',
+  call: 'call',
+  play: 'play'
+}
 
 export const assignPlayerDominoes = (lobby: GlobalGameState) => {
   // get list of all dominoes
@@ -52,4 +64,33 @@ export const startNextRound = (lobby: GlobalGameState) => {
   lobby = assignPlayerDominoes(lobby);
 
   return lobby;
+}
+
+export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) => {
+  interface ValidityResponse {
+    isValid: boolean
+    message: string
+  }
+
+  const isValidResponse: ValidityResponse = { isValid: true, message: '' };
+
+  // check if playing out of turn
+  if (lobby.current_player_turn !== getPlayerNumByConnId(lobby, playerMove.connectionId)) {
+    const invalidMoveResponse: ValidityResponse = {
+      isValid: false,
+      message: 'You are playing out of turn.'
+    }
+    return invalidMoveResponse;
+  }
+
+  // check if player should be bidding and is not
+  if (lobby.current_is_bidding && playerMove.moveType !== MOVE_TYPES.bid) {
+    const invalidMoveResponse: ValidityResponse = {
+      isValid: false,
+      message: 'You need to make a bid.'
+    }
+    return invalidMoveResponse;
+  }
+
+  return isValidResponse;
 }
