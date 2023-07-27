@@ -14,6 +14,7 @@ export interface Lobby {
   team_2: string[]
   current_round: number
   current_starting_bidder: number
+  current_starting_player: number
   current_is_bidding: boolean
   current_player_turn: number
   current_round_rules: string[]
@@ -104,6 +105,18 @@ export const getPlayerNumByConnId = (lobby: GlobalGameState, connectionId: strin
     return -1;
   }
 };
+
+export const getPlayerUsernameByConnId = (lobby: GlobalGameState, connectionId: string) => {
+  if (lobby.team_1_connections.includes(connectionId)) {
+    const index = lobby.team_1_connections.indexOf(connectionId);
+    return lobby.team_1[index];
+  } else if (lobby.team_2_connections.includes(connectionId)) {
+    const index = lobby.team_2_connections.indexOf(connectionId);
+    return lobby.team_2[index];
+  } else {
+    return '**username not found**';
+  }
+}
 
 const getPlayerGSFromGlobalGS = (lobby: GlobalGameState, connectionId: string) => {
   let player_dominoes: string[] = [];
