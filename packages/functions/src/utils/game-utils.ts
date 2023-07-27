@@ -12,10 +12,10 @@ const MOVE_TYPES = {
   play: 'play'
 }
 
-export const RULES = {
-  followMe: 'follow me',
-  nil: 'nil',
-  sevens: 'sevens',
+export interface RoundRules {
+  bid: number
+  biddingTeam: number
+  trump: number
 }
 
 export const assignPlayerDominoes = (lobby: GlobalGameState) => {
@@ -77,12 +77,15 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     return invalidMoveResponse;
   }
 
+  // TODO: add more validity checks
+
   return isValidResponse;
 }
 
-export const getDominoes = (trick: string[]) => 
+export const getDominoes = (trick: string[]) => {
   // the following returns 4 arrays of 2 numbers each (one for each side of each domino)
-  trick.map((move: string) => move.slice(-3).split('-').map((side) => parseInt(side)));
+  return trick.map((move: string) => move.slice(-3).split('-').map((side) => parseInt(side)));
+}
 
 export const getTrickScore = (lobby: GlobalGameState) => {
   const thisTrick = lobby.current_round_history.slice(-4);
@@ -96,22 +99,9 @@ export const getTrickScore = (lobby: GlobalGameState) => {
   return score;
 }
 
-export const getTrump = (lobby: GlobalGameState) => {
-  if (
-    lobby.rules.includes(RULES.followMe) ||
-    lobby.rules.includes(RULES.nil) ||
-    lobby.rules.includes(RULES.sevens)
-  ) {
-    return -1;
-  }
-  
-  for (let i = 0; i <= 6; i += 1) {
-    if (lobby.rules.includes(i.toString())) {
-      return i;
-    }
-  }
-
-  return -1;
+export const getRoundRules = (lobby: GlobalGameState) => {
+  const roundRules: RoundRules = JSON.parse(lobby.current_round_rules);
+  return roundRules;
 }
 
 export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
@@ -119,7 +109,7 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
   const dominoes: number[][] = getDominoes(thisTrick);
   let startingSuit = Math.max(dominoes[0][0], dominoes[0][1]);
   // if there is a trump
-  const trump = getTrump(lobby);
+  const trump = getRoundRules(lobby).trump;
   if (trump >= 0) {
     if (dominoes[0][0] === trump || dominoes[0][1] === trump) {
       startingSuit = trump;
@@ -185,6 +175,11 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
   return playerNum;
 }
 
+export const processRoundWinner = (lobby: GlobalGameState, winningTeam: number) => {
+  // TODO: add logic here
+  return lobby;
+}
+
 export const startNextRound = (lobby: GlobalGameState) => {
   if (lobby.current_round === 0) {
     lobby.current_starting_bidder = Math.floor(Math.random() * 4)
@@ -197,7 +192,7 @@ export const startNextRound = (lobby: GlobalGameState) => {
   lobby.current_is_bidding = true;
   lobby.current_player_turn = lobby.current_starting_bidder;
   lobby.current_round_history = [];
-  lobby.current_round_rules = [];
+  lobby.current_round_rules = '';
   lobby.current_team_1_round_score = 0;
   lobby.current_team_2_round_score = 0;
   
