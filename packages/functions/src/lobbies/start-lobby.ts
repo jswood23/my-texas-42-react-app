@@ -33,6 +33,7 @@ export const main = handler(async (event: any) => {
     team_2_connections: [],
     current_round: 0,
     current_starting_bidder: 0,
+    current_starting_player: 0,
     current_is_bidding: true,
     current_player_turn: 0,
     current_round_rules: data.rules ?? [],
