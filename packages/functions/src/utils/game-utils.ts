@@ -12,6 +12,12 @@ const MOVE_TYPES = {
   play: 'play'
 }
 
+export const RULES = {
+  followMe: 'follow me',
+  nil: 'nil',
+  sevens: 'sevens',
+}
+
 export const assignPlayerDominoes = (lobby: GlobalGameState) => {
   // get list of all dominoes
   const allDominoes: string[] = [];
@@ -45,27 +51,6 @@ export const assignPlayerDominoes = (lobby: GlobalGameState) => {
   return lobby;
 }
 
-export const startNextRound = (lobby: GlobalGameState) => {
-  if (lobby.current_round === 0) {
-    lobby.current_starting_bidder = Math.floor(Math.random() * 4)
-  } else {
-    lobby.current_starting_bidder += 1;
-    if (lobby.current_starting_bidder >= 4) lobby.current_starting_bidder = 0;
-  }
-
-  lobby.current_round += 1;
-  lobby.current_is_bidding = true;
-  lobby.current_player_turn = lobby.current_starting_bidder;
-  lobby.current_round_history = [];
-  lobby.current_round_rules = [];
-  lobby.current_team_1_round_score = 0;
-  lobby.current_team_2_round_score = 0;
-  
-  lobby = assignPlayerDominoes(lobby);
-
-  return lobby;
-}
-
 export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) => {
   interface ValidityResponse {
     isValid: boolean
@@ -93,4 +78,130 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
   }
 
   return isValidResponse;
+}
+
+export const getDominoes = (trick: string[]) => 
+  // the following returns 4 arrays of 2 numbers each (one for each side of each domino)
+  trick.map((move: string) => move.slice(-3).split('-').map((side) => parseInt(side)));
+
+export const getTrickScore = (lobby: GlobalGameState) => {
+  const thisTrick = lobby.current_round_history.slice(-4);
+  const dominoes: number[][] = getDominoes(thisTrick);
+  let score = 1;
+  dominoes.forEach((domino) => {
+    if ((domino[0] + domino[1]) % 5 === 0) {
+      score += domino[0] + domino[1];
+    }
+  });
+  return score;
+}
+
+export const getTrump = (lobby: GlobalGameState) => {
+  if (
+    lobby.rules.includes(RULES.followMe) ||
+    lobby.rules.includes(RULES.nil) ||
+    lobby.rules.includes(RULES.sevens)
+  ) {
+    return -1;
+  }
+  
+  for (let i = 0; i <= 6; i += 1) {
+    if (lobby.rules.includes(i.toString())) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
+  const thisTrick = lobby.current_round_history.slice(-4);
+  const dominoes: number[][] = getDominoes(thisTrick);
+  let startingSuit = Math.max(dominoes[0][0], dominoes[0][1]);
+  // if there is a trump
+  const trump = getTrump(lobby);
+  if (trump >= 0) {
+    if (dominoes[0][0] === trump || dominoes[0][1] === trump) {
+      startingSuit = trump;
+    }
+  }
+  let wd = { index: 0, sides: dominoes[0] }; // winning domino
+  for (let i = 1; i < 4; i++) {
+    const cd = dominoes[i]; // current domino sides
+
+    // check if there is a trump on the table
+    if (wd.sides[0] === trump || wd.sides[1] === trump) {
+      // continue if winning domino is the double
+      if (wd.sides[0] === wd.sides[1]) {
+        continue;
+      }
+
+      // continue if current domino is not a trump
+      if (!(cd[0] === trump || cd[1] === trump)) {
+        continue;
+      }
+
+      // get highest side of winning domino
+      const winningHighestSide = wd.sides[0] === trump ? wd.sides[1] : wd.sides[0];
+
+      // get current highest side
+      const currentHighestSide = cd[0] === trump ? cd[1] : cd[0];
+
+      // check if this domino is better than winning domino
+      if (currentHighestSide > winningHighestSide || cd[0] === cd[1]) {
+        // set the new winning domino
+        wd = { index: i, sides: cd };
+        continue;
+      }
+    } else {
+      // check if current domino is a trump
+      if (cd[0] === trump || cd[1] === trump) {
+        // set the new winning domino
+        wd = { index: i, sides: cd };
+        continue;
+      }
+
+      // continue if winning domino is the double
+      if (wd.sides[0] === wd.sides[1]) {
+        continue;
+      }
+
+      // get highest side of winning domino
+      const winningHighestSide = wd.sides[0] === startingSuit ? wd.sides[1] : wd.sides[0];
+
+      // get current highest side
+      const currentHighestSide = cd[0] === startingSuit ? cd[1] : cd[0];
+
+      // check if this domino is better than winning domino
+      if (currentHighestSide > winningHighestSide || cd[0] === cd[1]) {
+        // set the new winning domino
+        wd = { index: i, sides: cd };
+        continue;
+      }
+    }
+  }
+
+  const playerNum = (lobby.current_starting_player + wd.index) % 4;
+  return playerNum;
+}
+
+export const startNextRound = (lobby: GlobalGameState) => {
+  if (lobby.current_round === 0) {
+    lobby.current_starting_bidder = Math.floor(Math.random() * 4)
+  } else {
+    lobby.current_starting_bidder += 1;
+    if (lobby.current_starting_bidder >= 4) lobby.current_starting_bidder = 0;
+  }
+
+  lobby.current_round += 1;
+  lobby.current_is_bidding = true;
+  lobby.current_player_turn = lobby.current_starting_bidder;
+  lobby.current_round_history = [];
+  lobby.current_round_rules = [];
+  lobby.current_team_1_round_score = 0;
+  lobby.current_team_2_round_score = 0;
+  
+  lobby = assignPlayerDominoes(lobby);
+
+  return lobby;
 }
