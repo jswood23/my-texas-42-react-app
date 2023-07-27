@@ -11,9 +11,7 @@ export interface Lobby {
   allowed_players: string[]
   rules: string[]
   team_1: string[]
-  team_1_connections: string[]
   team_2: string[]
-  team_2_connections: string[]
   current_round: number
   current_starting_bidder: number
   current_is_bidding: boolean
@@ -30,6 +28,8 @@ export interface Lobby {
 export interface GlobalGameState extends Lobby {
   all_player_dominoes: string[][]
   chat_log: string[]
+  team_1_connections: string[]
+  team_2_connections: string[]
 }
 
 export interface PlayerGameState extends Lobby {
@@ -108,13 +108,13 @@ export const getPlayerNumByConnId = (lobby: GlobalGameState, connectionId: strin
 const getPlayerGSFromGlobalGS = (lobby: GlobalGameState, connectionId: string) => {
   let player_dominoes: string[] = [];
 
-  if (lobby.all_player_dominoes.length) {
-    const playerNum = getPlayerNumByConnId(lobby, connectionId);
-    player_dominoes = lobby.all_player_dominoes[playerNum];
-  }
+  // remove variables specific to the global game state so that the player only gets what they need to know
+  const { all_player_dominoes, chat_log, team_1_connections, team_2_connections, ...gameState } = lobby;
 
-  // remove all_player_dominoes so that we don't send this information to the frontend
-  const { all_player_dominoes, ...gameState } = lobby;
+  if (all_player_dominoes.length) {
+    const playerNum = getPlayerNumByConnId(lobby, connectionId);
+    player_dominoes = all_player_dominoes[playerNum];
+  }
   
   const playerGameState: PlayerGameState = {
     ...gameState,
