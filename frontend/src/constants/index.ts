@@ -21,7 +21,7 @@ export const defaultGameState: GameState = {
   current_is_bidding: true,
   current_player_turn: 0,
   current_round_rules: [],
-  player_dominoes: '',
+  player_dominoes: [],
   current_team_1_round_score: 0,
   current_team_2_round_score: 0,
   current_team_1_total_score: 0,
