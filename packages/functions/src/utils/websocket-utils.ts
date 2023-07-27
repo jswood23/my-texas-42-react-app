@@ -66,6 +66,9 @@ export const getConnectionsByMatchId = async (match_id: string) => {
   return conn_ids;
 };
 
+export const getMessageData = (event: APIGatewayProxyEvent) =>
+  JSON.parse(JSON.parse((event.body as string)).data as string);
+
 export const removeConnectionFromTable = async (conn_id: string) => {
   const params = {
     TableName: Table.SocketConnection.tableName,
