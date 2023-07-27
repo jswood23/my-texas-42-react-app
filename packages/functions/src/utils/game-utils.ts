@@ -32,3 +32,24 @@ export const assignPlayerDominoes = (lobby: GlobalGameState) => {
 
   return lobby;
 }
+
+export const startNextRound = (lobby: GlobalGameState) => {
+  if (lobby.current_round === 0) {
+    lobby.current_starting_bidder = Math.floor(Math.random() * 4)
+  } else {
+    lobby.current_starting_bidder += 1;
+    if (lobby.current_starting_bidder >= 4) lobby.current_starting_bidder = 0;
+  }
+
+  lobby.current_round += 1;
+  lobby.current_is_bidding = true;
+  lobby.current_player_turn = lobby.current_starting_bidder;
+  lobby.current_round_history = [];
+  lobby.current_round_rules = [];
+  lobby.current_team_1_round_score = 0;
+  lobby.current_team_2_round_score = 0;
+  
+  lobby = assignPlayerDominoes(lobby);
+
+  return lobby;
+}
