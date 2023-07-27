@@ -19,13 +19,13 @@ export const main: APIGatewayProxyHandler = async (event) => {
     match_invite_code.length !== 6 ||
     !(teamNumber === 1 || teamNumber === 2)
   ) {
-    return { statusCode: 500, body: 'Missing connection information.' };
+    return { statusCode: 400, body: 'Missing connection information.' };
   }
 
   let lobby = await getLobbyByInviteCode(match_invite_code);
 
   if (isLobbyFull(lobby)) {
-    return { statusCode: 500, body: 'Lobby is full.' };
+    return { statusCode: 400, body: 'Lobby is full.' };
   }
   
   if (teamNumber === 1) {
