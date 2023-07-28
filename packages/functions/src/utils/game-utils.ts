@@ -68,13 +68,16 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     return invalidMoveResponse;
   }
 
-  // check if player should be bidding and is not
-  if (lobby.current_is_bidding && playerMove.moveType !== MOVE_TYPES.bid) {
-    const invalidMoveResponse: ValidityResponse = {
-      isValid: false,
-      message: 'You need to make a bid.'
+  // bidding rules
+  if (lobby.current_is_bidding) {
+    // check if player is not bidding
+    if (playerMove.moveType !== MOVE_TYPES.bid) {
+      const invalidMoveResponse: ValidityResponse = {
+        isValid: false,
+        message: 'You need to make a bid.',
+      };
+      return invalidMoveResponse;
     }
-    return invalidMoveResponse;
   }
 
   // TODO: add more validity checks
@@ -176,6 +179,8 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
 }
 
 export const processBids = (lobby: GlobalGameState) => {
+  const allBids = lobby.current_round_history.slice(-4);
+
 
   return lobby;
 }
