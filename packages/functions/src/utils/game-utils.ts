@@ -1,7 +1,8 @@
 import { GlobalGameState, getPlayerNumByConnId } from "./lobby-utils";
 
 export interface PlayerMove {
-  connectionId: string
+  connectionId?: string
+  username?: string
   move: string
   moveType: string
 }
@@ -60,7 +61,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
   const isValidResponse: ValidityResponse = { isValid: true, message: '' };
 
   // check if playing out of turn
-  if (lobby.current_player_turn !== getPlayerNumByConnId(lobby, playerMove.connectionId)) {
+  if (lobby.current_player_turn !== getPlayerNumByConnId(lobby, playerMove.connectionId ?? '')) {
     const invalidMoveResponse: ValidityResponse = {
       isValid: false,
       message: 'You are playing out of turn.'
@@ -88,6 +89,16 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 export const getDominoes = (trick: string[]) => {
   // the following returns 4 arrays of 2 numbers each (one for each side of each domino)
   return trick.map((move: string) => move.slice(-3).split('-').map((side) => parseInt(side)));
+}
+
+export const getPlayerMove = (moveString: string) => {
+  const fields = moveString.split('\\');
+  const playerMove: PlayerMove = {
+    username: fields[0],
+    moveType: fields[1],
+    move: fields[2]
+  };
+  return playerMove;
 }
 
 export const getRoundRules = (lobby: GlobalGameState) => {
