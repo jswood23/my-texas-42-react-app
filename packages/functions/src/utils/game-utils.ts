@@ -87,6 +87,11 @@ export const getDominoes = (trick: string[]) => {
   return trick.map((move: string) => move.slice(-3).split('-').map((side) => parseInt(side)));
 }
 
+export const getRoundRules = (lobby: GlobalGameState) => {
+  const roundRules: RoundRules = JSON.parse(lobby.current_round_rules);
+  return roundRules;
+};
+
 export const getTrickScore = (lobby: GlobalGameState) => {
   const thisTrick = lobby.current_round_history.slice(-4);
   const dominoes: number[][] = getDominoes(thisTrick);
@@ -97,11 +102,6 @@ export const getTrickScore = (lobby: GlobalGameState) => {
     }
   });
   return score;
-}
-
-export const getRoundRules = (lobby: GlobalGameState) => {
-  const roundRules: RoundRules = JSON.parse(lobby.current_round_rules);
-  return roundRules;
 }
 
 export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
