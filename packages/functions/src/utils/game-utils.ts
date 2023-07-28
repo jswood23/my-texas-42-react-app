@@ -175,6 +175,11 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
   return playerNum;
 }
 
+export const processBids = (lobby: GlobalGameState) => {
+
+  return lobby;
+}
+
 export const processRoundWinner = (lobby: GlobalGameState, winningTeam: number) => {
   // TODO: add logic here
   return lobby;
