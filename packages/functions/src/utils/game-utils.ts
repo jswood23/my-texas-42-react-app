@@ -93,18 +93,18 @@ export const getDominoes = (trick: string[]) => {
 
 export const getPlayerMove = (moveString: string) => {
   const fields = moveString.split('\\');
-  const playerMove: PlayerMove = {
+  return {
     username: fields[0],
     moveType: fields[1],
     move: fields[2]
-  };
-  return playerMove;
+  } as PlayerMove;
 }
 
-export const getRoundRules = (lobby: GlobalGameState) => {
-  const roundRules: RoundRules = JSON.parse(lobby.current_round_rules);
-  return roundRules;
-};
+export const getPlayerMoveString = (playerMove: PlayerMove) =>
+  `${playerMove.username ?? 'undefined'}\\${playerMove.moveType}\\${playerMove.move}`;
+
+export const getRoundRules = (lobby: GlobalGameState) => 
+  JSON.parse(lobby.current_round_rules) as RoundRules;
 
 export const getTrickScore = (lobby: GlobalGameState) => {
   const thisTrick = lobby.current_round_history.slice(-4);

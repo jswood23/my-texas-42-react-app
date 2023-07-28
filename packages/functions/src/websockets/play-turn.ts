@@ -12,20 +12,18 @@ export const main: APIGatewayProxyHandler = async (event) => {
   const messageData = getMessageData(event);
   const playerMove: PlayerMove = {
     connectionId,
+    username: getPlayerUsernameByConnId(lobby, connectionId),
     move: messageData.move,
     moveType: messageData.moveType,
   };
 
-  const playerUsername = getPlayerUsernameByConnId(lobby, connectionId);
   const moveValidity = checkValidity(lobby, playerMove);
   if (!moveValidity.isValid) {
-    console.log(
-      `${playerUsername} made an invalid move: ${moveValidity.message}`
-    );
+    console.log(`${playerMove.username} made an invalid move: ${moveValidity.message}`);
     return { statusCode: 400, body: moveValidity.message };
   }
 
-  const playerMoveStr = `${playerUsername}\\${playerMove.moveType}\\${playerMove.move}`;
+  const playerMoveStr = `${playerMove.username}\\${playerMove.moveType}\\${playerMove.move}`;
   lobby.current_round_history.push(playerMoveStr);
 
   lobby.current_player_turn = (lobby.current_player_turn + 1) % 4;
