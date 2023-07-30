@@ -118,6 +118,14 @@ export const getPlayerUsernameByConnId = (lobby: GlobalGameState, connectionId: 
   }
 }
 
+export const getPlayerUsernameByPosition =  (lobby: GlobalGameState, position: number) => {
+  if (position % 2 === 0) {
+    return lobby.team_1[position / 2];
+  } else {
+    return lobby.team_2[(position - 1) / 2];
+  }
+};
+
 const getPlayerGSFromGlobalGS = (lobby: GlobalGameState, connectionId: string) => {
   let player_dominoes: string[] = [];
 
