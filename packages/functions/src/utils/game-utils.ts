@@ -1,4 +1,4 @@
-import { GlobalGameState, getPlayerNumByConnId } from "./lobby-utils";
+import { GlobalGameState, getPlayerNumByConnId, getPlayerUsernameByPosition } from "./lobby-utils";
 
 export interface PlayerMove {
   connectionId?: string
@@ -270,8 +270,25 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
 }
 
 export const processBids = (lobby: GlobalGameState) => {
-  const allBids = lobby.current_round_history.slice(-4);
+  const allBids = lobby.current_round_history.slice(-4).map(getPlayerMove);
 
+  let highestBid = 0;
+  let bidWinner = 0;
+  for (let i = 0; i < allBids.length; i++) {
+    const bidNumber = getBidNumber(allBids[i].move);      
+    if (bidNumber > highestBid) {
+      highestBid = bidNumber;
+      bidWinner = i;
+    }
+  }
+
+  const username = getPlayerUsernameByPosition(lobby, bidWinner);
+
+  const endOfBidMessage = `${username} has won the bid.`;
+
+  lobby.current_round_history.push(endOfBidMessage);
+  lobby.current_is_bidding = false;
+  lobby.current_player_turn = (lobby.current_starting_bidder + bidWinner) % 4;
 
   return lobby;
 }
