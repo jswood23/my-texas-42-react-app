@@ -13,6 +13,17 @@ const MOVE_TYPES = {
   play: 'play'
 }
 
+const RULES = {
+  NO_FORCED_BID: 'No forced bid',
+  FORCED_31_BID: 'Forced 31 bid',
+  FORCED_NIL: 'Forced Nil',
+  NIL_2_MARK: '2-mark Nil',
+  SPLASH_2_MARK: '2-mark Splash',
+  PLUNGE_2_MARK: '2-mark Plunge',
+  SEVENS_2_MARK: '2-mark Sevens',
+  DELVE: 'Delve'
+}
+
 export interface RoundRules {
   bid: number
   biddingTeam: number
@@ -52,43 +63,16 @@ export const assignPlayerDominoes = (lobby: GlobalGameState) => {
   return lobby;
 }
 
-export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) => {
-  interface ValidityResponse {
-    isValid: boolean
-    message: string
-  }
-
-  const isValidResponse: ValidityResponse = { isValid: true, message: '' };
-
-  // check if playing out of turn
-  if (lobby.current_player_turn !== getPlayerNumByConnId(lobby, playerMove.connectionId ?? '')) {
-    const invalidMoveResponse: ValidityResponse = {
-      isValid: false,
-      message: 'You are playing out of turn.'
+export const getBidNumber = (bidString: string) => {
+  try {
+    if (bidString.includes('-mark')) {
+      return parseInt(bidString.charAt(0)) * 42
+    } else {
+      return parseInt(bidString);
     }
-    return invalidMoveResponse;
+  } catch {
+    return 0;
   }
-
-  // bidding rules
-  if (lobby.current_is_bidding) {
-    // check if player is not bidding
-    if (playerMove.moveType !== MOVE_TYPES.bid) {
-      const invalidMoveResponse: ValidityResponse = {
-        isValid: false,
-        message: 'You need to make a bid.',
-      };
-      return invalidMoveResponse;
-    }
-  }
-
-  // TODO: add more validity checks
-
-  return isValidResponse;
-}
-
-export const getDominoes = (trick: string[]) => {
-  // the following returns 4 arrays of 2 numbers each (one for each side of each domino)
-  return trick.map((move: string) => move.slice(-3).split('-').map((side) => parseInt(side)));
 }
 
 export const getPlayerMove = (moveString: string) => {
@@ -98,6 +82,102 @@ export const getPlayerMove = (moveString: string) => {
     moveType: fields[1],
     move: fields[2]
   } as PlayerMove;
+}
+
+export const getPlayerPosition = (lobby: GlobalGameState) =>
+  (lobby.current_player_turn + 4 - lobby.current_starting_bidder) % 4
+
+export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) => {
+  interface ValidityResponse {
+    isValid: boolean
+    message: string
+  }
+
+  const validMoveResponse: ValidityResponse = { isValid: true, message: '' };
+
+  // check if playing out of turn
+  if (lobby.current_player_turn !== getPlayerNumByConnId(lobby, playerMove.connectionId ?? '')) {
+    return {
+      isValid: false,
+      message: 'You are playing out of turn.'
+    } as ValidityResponse;
+  }
+
+  // bidding rules
+  if (lobby.current_is_bidding) {
+    // check if player is not bidding
+    if (playerMove.moveType !== MOVE_TYPES.bid) {
+      return {
+        isValid: false,
+        message: 'You need to make a bid.',
+      } as ValidityResponse;
+    }
+
+    const playerPosition = getPlayerPosition(lobby); // returns 0 for first player to bid and 3 for last player to bid
+
+    // get highest bid so far
+    const previousBidStrings = playerPosition ? [] : lobby.current_round_history.slice(-playerPosition);
+    const previousBids = previousBidStrings.map(getPlayerMove);
+    let highestBid = 0;
+    previousBids.forEach((bid) => {
+      const bidNumber = getBidNumber(bid.move);      
+      if (bidNumber > highestBid) {
+        highestBid = bidNumber;
+      }
+    })
+
+    // get current bid number
+    const thisPlayerBid = getBidNumber(playerMove.move);
+
+    // force last player to bid
+    if (playerPosition === 3 && !lobby.rules.includes(RULES.NO_FORCED_BID) && highestBid === 0) {
+      if (lobby.rules.includes(RULES.FORCED_31_BID) && thisPlayerBid < 31) {
+        return {
+          isValid: false,
+          message: 'You must bid 31 or higher.',
+        } as ValidityResponse;
+      }
+
+      if (!lobby.rules.includes(RULES.FORCED_31_BID) && thisPlayerBid < 30) {
+        return {
+          isValid: false,
+          message: 'You must bid 30 or higher.',
+        } as ValidityResponse;
+      }
+    }
+
+    if (thisPlayerBid !== 0 && thisPlayerBid < Math.max(highestBid, 30)) {
+      return {
+        isValid: false,
+        message: 'The minimum bid is 30.',
+      } as ValidityResponse;
+    }
+
+    if (thisPlayerBid > 42 && thisPlayerBid % 42 !== 0) {
+      return {
+        isValid: false,
+        message: 'Invalid bid amount.',
+      } as ValidityResponse;
+    }
+
+    if (thisPlayerBid > 84 && thisPlayerBid / 42 !== highestBid / 42 + 1) {
+      return {
+        isValid: false,
+        message: 'You cannot bid more than 1 mark above the current bid.',
+      } as ValidityResponse;
+    }
+
+    return validMoveResponse;
+  }
+
+  // TODO: add more validity checks
+
+  return validMoveResponse;
+}
+
+export const getDominoes = (trick: string[]) => {
+  // the following returns 4 arrays of 2 numbers each (one for each side of each domino)
+  return trick.map((move: string) => move.slice(-3).split('-').map((side) => parseInt(side)));
 }
 
 export const getPlayerMoveString = (playerMove: PlayerMove) =>
