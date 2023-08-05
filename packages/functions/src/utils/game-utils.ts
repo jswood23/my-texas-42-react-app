@@ -21,7 +21,14 @@ const RULES = {
   SPLASH_2_MARK: '2-mark Splash',
   PLUNGE_2_MARK: '2-mark Plunge',
   SEVENS_2_MARK: '2-mark Sevens',
-  DELVE: 'Delve'
+  DELVE: 'Delve',
+  NIL: 'Nil',
+  SPLASH: 'Splash',
+  PLUNGE: 'Plunge',
+  SEVENS: 'Sevens',
+  DOUBLES_HIGH: 'Doubles-high',
+  DOUBLES_LOW: 'Doubles-low',
+  FOLLOW_ME: 'Follow-me'
 }
 
 export interface RoundRules {
@@ -170,6 +177,58 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     return validMoveResponse;
   }
 
+  const rules: string[] = lobby.current_round_rules.split('\\');
+
+  // calling rules
+  if (rules.length === 1) {
+    // check if player is not calling
+    if (playerMove.moveType !== MOVE_TYPES.call) {
+      return {
+        isValid: false,
+        message: 'You need to call the rules of the round.',
+      } as ValidityResponse;
+    }
+
+    const move = playerMove.move.split(' ')[0];
+    const bid = +rules[1];
+
+    const isForcedNil =
+      lobby.rules.includes(RULES.FORCED_NIL) &&
+      getPlayerMove(lobby.current_round_history[0]).move === "0" &&
+      getPlayerMove(lobby.current_round_history[1]).move === "0" &&
+      getPlayerMove(lobby.current_round_history[2]).move === "0" &&
+      getPlayerMove(lobby.current_round_history[3]).move === "42";
+
+    // check for 2-mark bids
+    const twoMarkBids = [RULES.NIL, RULES.SPLASH, RULES.PLUNGE, RULES.SEVENS];
+    if (twoMarkBids.includes(move) && bid < 84 && !(move === RULES.NIL && isForcedNil)) {
+      return {
+        isValid: false,
+        message: `${move} can only be called as a 2-mark bid.`,
+      } as ValidityResponse;
+    }
+
+    // check nil bids
+    if (move === RULES.NIL) {
+      const doublesCall = playerMove.move.split(' ')[1];
+      if (doublesCall !== RULES.DOUBLES_HIGH && doublesCall !== RULES.DOUBLES_LOW) {
+        return {
+          isValid: false,
+          message: 'You must call doubles high or low for nil.',
+        } as ValidityResponse;
+      }
+    }
+
+    // check everything else
+    const trumpCalls = ['0', '1', '2', '3', '4', '5', '6', RULES.FOLLOW_ME];
+    if (!twoMarkBids.includes(move) && !trumpCalls.includes(move)) {
+      return {
+        isValid: false,
+        message: 'You must call the trump for the round.',
+      } as ValidityResponse;
+    }
+  }
+
   // TODO: add more validity checks
 
   return validMoveResponse;
@@ -287,6 +346,7 @@ export const processBids = (lobby: GlobalGameState) => {
   const endOfBidMessage = `${username} has won the bid.`;
 
   lobby.current_round_history.push(endOfBidMessage);
+  lobby.current_round_rules = highestBid.toString();
   lobby.current_is_bidding = false;
   lobby.current_player_turn = (lobby.current_starting_bidder + bidWinner) % 4;
 
