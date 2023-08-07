@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { checkValidity, type PlayerMove, getWinningPlayerOfTrick, getTrickScore, getRoundRules, processRoundWinner, startNextRound, processBids, getIsCalling, setRoundRules, getIsPlaying, playDomino } from "src/utils/game-utils";
 import { getLobbyById, getPlayerUsernameByConnId, refreshPlayerGameStates, updateLobby } from "src/utils/lobby-utils";
-import { getConnectionById, getMessageData } from "src/utils/websocket-utils";
+import { getConnectionById, getMessageData, sendToSingleConnection } from "src/utils/websocket-utils";
 
 export const main: APIGatewayProxyHandler = async (event) => {
   const { connectionId = '' } = event?.requestContext;
@@ -20,6 +20,11 @@ export const main: APIGatewayProxyHandler = async (event) => {
   const moveValidity = checkValidity(lobby, playerMove);
   if (!moveValidity.isValid) {
     console.log(`${playerMove.username} made an invalid move: ${moveValidity.message}`);
+    const errorMessage = {
+      messageType: 'game-error',
+      message: moveValidity.message,
+    };
+    await sendToSingleConnection(event, lobby.match_id, errorMessage, connectionId);
     return { statusCode: 400, body: moveValidity.message };
   }
 
