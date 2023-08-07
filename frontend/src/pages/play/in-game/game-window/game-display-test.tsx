@@ -26,6 +26,19 @@ const GameDisplay = ({ globals }: Props) => {
     globals.connection.sendJsonMessage({ action: 'play_turn', data: JSON.stringify({ move, moveType }) })
   }
 
+  const showPastMoves = () => {
+    const pastMoves = gameState.current_round_history.slice(-5).reverse()
+    return pastMoves.map((pastMove) => {
+      return <Typography key={pastMove}>{pastMove}</Typography>
+    })
+  }
+
+  const showPlayerTurn = () => {
+    const listOfPlayers = [gameState.team_1[0], gameState.team_2[0], gameState.team_1[1], gameState.team_2[1]]
+    const playerTurn = listOfPlayers[gameState.current_player_turn]
+    return <Typography>Current player turn: {playerTurn}</Typography>
+  }
+
   return (
     <StyledRoot>
       <Select
@@ -48,6 +61,9 @@ const GameDisplay = ({ globals }: Props) => {
       <Button onClick={sendMove}>Send</Button>
       <br />
       <Typography>{gameState.player_dominoes.join(', ')}</Typography>
+      {showPlayerTurn()}
+      <br />
+      {showPastMoves()}
     </StyledRoot>
   )
 }
