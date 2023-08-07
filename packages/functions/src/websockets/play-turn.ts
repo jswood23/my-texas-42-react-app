@@ -29,7 +29,7 @@ export const main: APIGatewayProxyHandler = async (event) => {
   lobby.current_player_turn = (lobby.current_player_turn + 1) % 4;
 
   if (getIsCalling(lobby)) {
-    setRoundRules(lobby, playerMove);
+    lobby = setRoundRules(lobby, playerMove);
   } else if (lobby.current_player_turn === lobby.current_starting_player) {
     // end of trick or bidding phase
     if (lobby.current_is_bidding) {

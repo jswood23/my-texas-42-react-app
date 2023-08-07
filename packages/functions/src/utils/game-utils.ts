@@ -374,7 +374,13 @@ export const processBids = (lobby: GlobalGameState) => {
 }
 
 export const processRoundWinner = (lobby: GlobalGameState, winningTeam: number) => {
-  // TODO: add logic here
+  const roundRules = getRoundRules(lobby);
+  const roundMarks = Math.ceil((+roundRules.bid) / 42);
+  if (winningTeam === 1) {
+    lobby.current_team_1_total_score += roundMarks;
+  } else {
+    lobby.current_team_2_total_score += roundMarks;
+  }
   return lobby;
 }
 
@@ -385,6 +391,8 @@ export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 
   lobby.current_round_rules = JSON.stringify(currentRules);
   lobby.current_player_turn = lobby.current_starting_player;
+
+  return lobby;
 }
 
 export const startNextRound = (lobby: GlobalGameState) => {
