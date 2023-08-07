@@ -34,7 +34,7 @@ const RULES = {
 export interface RoundRules {
   bid: number
   biddingTeam: number
-  trump: number
+  trump: string
 }
 
 export const assignPlayerDominoes = (lobby: GlobalGameState) => {
@@ -84,7 +84,7 @@ export const getBidNumber = (bidString: string) => {
 
 export const getIsCalling = (lobby: GlobalGameState) =>
   !lobby.current_is_bidding &&
-  lobby.current_round_rules.split('\\').length === 1;
+  getRoundRules(lobby).trump === '';
 
 export const getPlayerMove = (moveString: string) => {
   const fields = moveString.split('\\');
@@ -181,7 +181,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     return validMoveResponse;
   }
 
-  const rules: string[] = lobby.current_round_rules.split('\\');
+  const rules: RoundRules = getRoundRules(lobby);
 
   // calling rules
   if (getIsCalling(lobby)) {
@@ -194,7 +194,6 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     }
 
     const move = playerMove.move.split(' ')[0];
-    const bid = +rules[0];
 
     const isForcedNil =
       lobby.rules.includes(RULES.FORCED_NIL) &&
@@ -207,7 +206,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     const twoMarkBids = [RULES.NIL, RULES.SPLASH, RULES.PLUNGE, RULES.SEVENS];
     if (
       twoMarkBids.includes(move) &&
-      bid < 84 &&
+      rules.bid < 84 &&
       !(move === RULES.NIL && isForcedNil)
     ) {
       return {
@@ -273,70 +272,75 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
   const dominoes: number[][] = getDominoes(thisTrick);
   let startingSuit = Math.max(dominoes[0][0], dominoes[0][1]);
   // if there is a trump
-  const trump = getRoundRules(lobby).trump;
-  if (trump >= 0) {
-    if (dominoes[0][0] === trump || dominoes[0][1] === trump) {
-      startingSuit = trump;
-    }
-  }
-  let wd = { index: 0, sides: dominoes[0] }; // winning domino
-  for (let i = 1; i < 4; i++) {
-    const cd = dominoes[i]; // current domino sides
-
-    // check if there is a trump on the table
-    if (wd.sides[0] === trump || wd.sides[1] === trump) {
-      // continue if winning domino is the double
-      if (wd.sides[0] === wd.sides[1]) {
-        continue;
-      }
-
-      // continue if current domino is not a trump
-      if (!(cd[0] === trump || cd[1] === trump)) {
-        continue;
-      }
-
-      // get highest side of winning domino
-      const winningHighestSide = wd.sides[0] === trump ? wd.sides[1] : wd.sides[0];
-
-      // get current highest side
-      const currentHighestSide = cd[0] === trump ? cd[1] : cd[0];
-
-      // check if this domino is better than winning domino
-      if (currentHighestSide > winningHighestSide || cd[0] === cd[1]) {
-        // set the new winning domino
-        wd = { index: i, sides: cd };
-        continue;
-      }
-    } else {
-      // check if current domino is a trump
-      if (cd[0] === trump || cd[1] === trump) {
-        // set the new winning domino
-        wd = { index: i, sides: cd };
-        continue;
-      }
-
-      // continue if winning domino is the double
-      if (wd.sides[0] === wd.sides[1]) {
-        continue;
-      }
-
-      // get highest side of winning domino
-      const winningHighestSide = wd.sides[0] === startingSuit ? wd.sides[1] : wd.sides[0];
-
-      // get current highest side
-      const currentHighestSide = cd[0] === startingSuit ? cd[1] : cd[0];
-
-      // check if this domino is better than winning domino
-      if (currentHighestSide > winningHighestSide || cd[0] === cd[1]) {
-        // set the new winning domino
-        wd = { index: i, sides: cd };
-        continue;
+  const trumpStr = getRoundRules(lobby).trump;
+  if (!isNaN(parseInt(trumpStr))) {
+    const trump = +trumpStr;
+    if (trump >= 0) {
+      if (dominoes[0][0] === trump || dominoes[0][1] === trump) {
+        startingSuit = trump;
       }
     }
+    let wd = { index: 0, sides: dominoes[0] }; // winning domino
+    for (let i = 1; i < 4; i++) {
+      const cd = dominoes[i]; // current domino sides
+
+      // check if there is a trump on the table
+      if (wd.sides[0] === trump || wd.sides[1] === trump) {
+        // continue if winning domino is the double
+        if (wd.sides[0] === wd.sides[1]) {
+          continue;
+        }
+
+        // continue if current domino is not a trump
+        if (!(cd[0] === trump || cd[1] === trump)) {
+          continue;
+        }
+
+        // get highest side of winning domino
+        const winningHighestSide = wd.sides[0] === trump ? wd.sides[1] : wd.sides[0];
+
+        // get current highest side
+        const currentHighestSide = cd[0] === trump ? cd[1] : cd[0];
+
+        // check if this domino is better than winning domino
+        if (currentHighestSide > winningHighestSide || cd[0] === cd[1]) {
+          // set the new winning domino
+          wd = { index: i, sides: cd };
+          continue;
+        }
+      } else {
+        // check if current domino is a trump
+        if (cd[0] === trump || cd[1] === trump) {
+          // set the new winning domino
+          wd = { index: i, sides: cd };
+          continue;
+        }
+
+        // continue if winning domino is the double
+        if (wd.sides[0] === wd.sides[1]) {
+          continue;
+        }
+
+        // get highest side of winning domino
+        const winningHighestSide = wd.sides[0] === startingSuit ? wd.sides[1] : wd.sides[0];
+
+        // get current highest side
+        const currentHighestSide = cd[0] === startingSuit ? cd[1] : cd[0];
+
+        // check if this domino is better than winning domino
+        if (currentHighestSide > winningHighestSide || cd[0] === cd[1]) {
+          // set the new winning domino
+          wd = { index: i, sides: cd };
+          continue;
+        }
+      }
+    }
+
+    const playerNum = (lobby.current_starting_player + wd.index) % 4;
+    return playerNum;
   }
 
-  const playerNum = (lobby.current_starting_player + wd.index) % 4;
-  return playerNum;
+  return -1;
 }
 
 export const processBids = (lobby: GlobalGameState) => {
@@ -357,7 +361,12 @@ export const processBids = (lobby: GlobalGameState) => {
   const endOfBidMessage = `${username} has won the bid.`;
 
   lobby.current_round_history.push(endOfBidMessage);
-  lobby.current_round_rules = highestBid.toString();
+  const roundRules: RoundRules = {
+    bid: highestBid,
+    biddingTeam: bidWinner % 2 === 0 ? 1 : 2,
+    trump: ''
+  };
+  lobby.current_round_rules = JSON.stringify(roundRules);
   lobby.current_is_bidding = false;
   lobby.current_player_turn = (lobby.current_starting_bidder + bidWinner) % 4;
 
@@ -370,7 +379,12 @@ export const processRoundWinner = (lobby: GlobalGameState, winningTeam: number) 
 }
 
 export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) => {
-  
+  let currentRules = getRoundRules(lobby);
+
+  currentRules.trump = playerMove.move;
+
+  lobby.current_round_rules = JSON.stringify(currentRules);
+  lobby.current_player_turn = lobby.current_starting_player;
 }
 
 export const startNextRound = (lobby: GlobalGameState) => {
