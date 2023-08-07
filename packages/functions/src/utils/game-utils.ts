@@ -82,6 +82,10 @@ export const getBidNumber = (bidString: string) => {
   }
 }
 
+export const getIsCalling = (lobby: GlobalGameState) =>
+  !lobby.current_is_bidding &&
+  lobby.current_round_rules.split('\\').length === 1;
+
 export const getPlayerMove = (moveString: string) => {
   const fields = moveString.split('\\');
   return {
@@ -180,7 +184,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
   const rules: string[] = lobby.current_round_rules.split('\\');
 
   // calling rules
-  if (rules.length === 1) {
+  if (getIsCalling(lobby)) {
     // check if player is not calling
     if (playerMove.moveType !== MOVE_TYPES.call) {
       return {
@@ -190,18 +194,22 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     }
 
     const move = playerMove.move.split(' ')[0];
-    const bid = +rules[1];
+    const bid = +rules[0];
 
     const isForcedNil =
       lobby.rules.includes(RULES.FORCED_NIL) &&
-      getPlayerMove(lobby.current_round_history[0]).move === "0" &&
-      getPlayerMove(lobby.current_round_history[1]).move === "0" &&
-      getPlayerMove(lobby.current_round_history[2]).move === "0" &&
-      getPlayerMove(lobby.current_round_history[3]).move === "42";
+      getPlayerMove(lobby.current_round_history[0]).move === '0' &&
+      getPlayerMove(lobby.current_round_history[1]).move === '0' &&
+      getPlayerMove(lobby.current_round_history[2]).move === '0' &&
+      getPlayerMove(lobby.current_round_history[3]).move === '42';
 
     // check for 2-mark bids
     const twoMarkBids = [RULES.NIL, RULES.SPLASH, RULES.PLUNGE, RULES.SEVENS];
-    if (twoMarkBids.includes(move) && bid < 84 && !(move === RULES.NIL && isForcedNil)) {
+    if (
+      twoMarkBids.includes(move) &&
+      bid < 84 &&
+      !(move === RULES.NIL && isForcedNil)
+    ) {
       return {
         isValid: false,
         message: `${move} can only be called as a 2-mark bid.`,
@@ -211,7 +219,10 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     // check nil bids
     if (move === RULES.NIL) {
       const doublesCall = playerMove.move.split(' ')[1];
-      if (doublesCall !== RULES.DOUBLES_HIGH && doublesCall !== RULES.DOUBLES_LOW) {
+      if (
+        doublesCall !== RULES.DOUBLES_HIGH &&
+        doublesCall !== RULES.DOUBLES_LOW
+      ) {
         return {
           isValid: false,
           message: 'You must call doubles high or low for nil.',
@@ -356,6 +367,10 @@ export const processBids = (lobby: GlobalGameState) => {
 export const processRoundWinner = (lobby: GlobalGameState, winningTeam: number) => {
   // TODO: add logic here
   return lobby;
+}
+
+export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) => {
+  
 }
 
 export const startNextRound = (lobby: GlobalGameState) => {
