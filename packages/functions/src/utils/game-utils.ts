@@ -35,6 +35,7 @@ export interface RoundRules {
   bid: number
   biddingTeam: number
   trump: string
+  variant: string
 }
 
 export const assignPlayerDominoes = (lobby: GlobalGameState) => {
@@ -100,17 +101,20 @@ export const getPlayerPosition = (lobby: GlobalGameState) =>
 
 export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) => {
   interface ValidityResponse {
-    isValid: boolean
-    message: string
+    isValid: boolean;
+    message: string;
   }
 
   const validMoveResponse: ValidityResponse = { isValid: true, message: '' };
 
   // check if playing out of turn
-  if (lobby.current_player_turn !== getPlayerNumByConnId(lobby, playerMove.connectionId ?? '')) {
+  if (
+    lobby.current_player_turn !==
+    getPlayerNumByConnId(lobby, playerMove.connectionId ?? '')
+  ) {
     return {
       isValid: false,
-      message: 'You are playing out of turn.'
+      message: 'You are playing out of turn.',
     } as ValidityResponse;
   }
 
@@ -127,21 +131,27 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     const playerPosition = getPlayerPosition(lobby); // returns 0 for first player to bid and 3 for last player to bid
 
     // get highest bid so far
-    const previousBidStrings = playerPosition ? [] : lobby.current_round_history.slice(-playerPosition);
+    const previousBidStrings = playerPosition
+      ? []
+      : lobby.current_round_history.slice(-playerPosition);
     const previousBids = previousBidStrings.map(getPlayerMove);
     let highestBid = 0;
     previousBids.forEach((bid) => {
-      const bidNumber = getBidNumber(bid.move);      
+      const bidNumber = getBidNumber(bid.move);
       if (bidNumber > highestBid) {
         highestBid = bidNumber;
       }
-    })
+    });
 
     // get current bid number
     const thisPlayerBid = getBidNumber(playerMove.move);
 
     // force last player to bid
-    if (playerPosition === 3 && !lobby.rules.includes(RULES.NO_FORCED_BID) && highestBid === 0) {
+    if (
+      playerPosition === 3 &&
+      !lobby.rules.includes(RULES.NO_FORCED_BID) &&
+      highestBid === 0
+    ) {
       if (lobby.rules.includes(RULES.FORCED_31_BID) && thisPlayerBid < 31) {
         return {
           isValid: false,
@@ -237,9 +247,55 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
         message: 'You must call the trump for the round.',
       } as ValidityResponse;
     }
+
+    return validMoveResponse;
   }
 
-  // TODO: add more validity checks
+  // everything else: domino playing rules
+  // TODO: add rules for sevens here
+
+  // check if player is not playing
+  if (playerMove.moveType !== MOVE_TYPES.play) {
+    return {
+      isValid: false,
+      message: 'You need to play a domino.',
+    } as ValidityResponse;
+  }
+
+  const playerPosition = getPlayerPosition(lobby); // returns 0 for first player to bid and 3 for last player to bid
+
+  // make sure starting suit matches if this is not the first player
+  if (playerPosition) {
+    const previousMoves =
+      lobby.current_round_history.slice(-playerPosition)
+      .map(getPlayerMove);
+    const trump = getRoundRules(lobby).trump;
+    const firstDominoSides = previousMoves[0].move.split('-');
+
+    // set starting suit to either trump or higher suit on starting domino
+    let startingSuit = trump;
+    if (!firstDominoSides.includes(trump)) {
+      startingSuit = firstDominoSides.filter(x => x == Math.max(...firstDominoSides.map(parseInt)).toString())[0]
+    }
+
+    if (!playerMove.move.split('-').includes(startingSuit)) {
+      // the player's domino must match the starting suit unless the player has no viable dominoes
+      const playerDominoes = lobby.all_player_dominoes[lobby.current_player_turn];
+      let playerHasViableDominoes = false;
+      for (let i = 0; i < playerDominoes.length; i++) {
+        if (playerDominoes[i].split('-').includes(startingSuit)) {
+          playerHasViableDominoes = true;
+          break;
+        }
+      }
+      if (playerHasViableDominoes) {
+        return {
+          isValid: false,
+          message: 'You need to play a domino that matches the starting suit.',
+        } as ValidityResponse;
+      }
+    }
+  }
 
   return validMoveResponse;
 }
@@ -364,7 +420,8 @@ export const processBids = (lobby: GlobalGameState) => {
   const roundRules: RoundRules = {
     bid: highestBid,
     biddingTeam: bidWinner % 2 === 0 ? 1 : 2,
-    trump: ''
+    trump: '',
+    variant: ''
   };
   lobby.current_round_rules = JSON.stringify(roundRules);
   lobby.current_is_bidding = false;
@@ -387,7 +444,14 @@ export const processRoundWinner = (lobby: GlobalGameState, winningTeam: number) 
 export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) => {
   let currentRules = getRoundRules(lobby);
 
-  currentRules.trump = playerMove.move;
+  if (!isNaN(parseInt(playerMove.move))) {
+    currentRules.trump = playerMove.move;
+  } else {
+    const variants = [RULES.NIL, RULES.NIL_2_MARK, RULES.SPLASH, RULES.PLUNGE, RULES.SEVENS];
+    if (variants.includes(playerMove.move)) {
+      currentRules.variant = playerMove.move;
+    }
+  }
 
   lobby.current_round_rules = JSON.stringify(currentRules);
   lobby.current_player_turn = lobby.current_starting_player;

@@ -72,8 +72,8 @@ export const main: APIGatewayProxyHandler = async (event) => {
         }
       }
 
-      // start next trick if round is not over
       if (!isEndOfRound) {
+        // start next trick if round is not over
         lobby.current_starting_player = winningPlayerOfTrick;
       }
     }
