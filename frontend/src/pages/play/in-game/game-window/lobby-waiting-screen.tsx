@@ -1,6 +1,6 @@
 import { Button, CircularProgress, Typography } from '@mui/material'
-import { EMPTY_MEMBER_TEXT } from '../../../constants'
-import type { GlobalObj } from '../../../types'
+import { EMPTY_MEMBER_TEXT } from '../../../../constants'
+import type { GlobalObj } from '../../../../types'
 import * as React from 'react'
 import styled from 'styled-components'
 

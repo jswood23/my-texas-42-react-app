@@ -1,7 +1,7 @@
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../../constants'
 import type { GameState, GlobalObj, ServerMessage } from '../../../../types'
 import { CircularProgress } from '@mui/material'
-import LobbyWaitingScreen from '../lobby-waiting-screen'
+import LobbyWaitingScreen from './lobby-waiting-screen'
 import * as React from 'react'
 import styled from 'styled-components'
 
