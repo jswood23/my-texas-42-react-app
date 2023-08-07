@@ -29,6 +29,7 @@ export interface GameState {
 export interface ServerMessage extends ChatMessage {
   gameData?: GameState
   messageType?: string
+  message?: string
 }
 
 export interface WebSocketConnection {

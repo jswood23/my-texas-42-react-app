@@ -48,10 +48,17 @@ const GameWindow = ({
   React.useEffect(() => {
     if (globals.connection.lastMessage !== null) {
       const messageData = (JSON.parse(globals.connection.lastMessage.data) as ServerMessage)
-      if (messageData?.messageType === SERVER_MESSAGE_TYPES.gameUpdate) {
-        const newGameState: GameState = (messageData.gameData as GameState)
-        globals.setGameState(newGameState)
-        setIsLoading(false)
+      const newGameState: GameState = messageData.gameData as GameState
+      const gameError: string =
+            messageData.message ?? 'An unknown error occurred.'
+      switch (messageData?.messageType) {
+        case SERVER_MESSAGE_TYPES.gameUpdate:
+          globals.setGameState(newGameState)
+          setIsLoading(false)
+          break
+        case SERVER_MESSAGE_TYPES.gameError:
+          globals.openAlert(gameError, 'error')
+          break
       }
     }
   }, [globals.connection.lastMessage])

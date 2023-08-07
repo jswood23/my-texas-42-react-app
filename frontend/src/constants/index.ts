@@ -74,5 +74,6 @@ export const requireLoginPages = ['/profile']
 
 export const SERVER_MESSAGE_TYPES = {
   chat: 'chat',
+  gameError: 'game-error',
   gameUpdate: 'game-update'
 }
