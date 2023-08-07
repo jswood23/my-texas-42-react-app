@@ -62,9 +62,9 @@ export const assignPlayerDominoes = (lobby: GlobalGameState) => {
   const p4: string[] = [];
   for (let i = 0; i <= 6; i += 1) {
     p1.push(allDominoes[i]);
-    p2.push(allDominoes[i] + 7);
-    p3.push(allDominoes[i] + 14);
-    p4.push(allDominoes[i] + 21);
+    p2.push(allDominoes[i + 7]);
+    p3.push(allDominoes[i + 14]);
+    p4.push(allDominoes[i + 21]);
   }
 
   lobby.all_player_dominoes = [p1, p2, p3, p4];
