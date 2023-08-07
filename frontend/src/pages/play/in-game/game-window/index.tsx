@@ -1,6 +1,7 @@
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../../constants'
 import type { GameState, GlobalObj, ServerMessage } from '../../../../types'
 import { CircularProgress } from '@mui/material'
+import GameDisplay from './game-display'
 import LobbyWaitingScreen from './lobby-waiting-screen'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -65,16 +66,17 @@ const GameWindow = ({
 
   return (
     <StyledRoot>
-      {isLoading &&
-        <div className='circular-progress-container'>
-          <CircularProgress size={50}/>
+      {isLoading && (
+        <div className="circular-progress-container">
+          <CircularProgress size={50} />
         </div>
-      }
-      {(isConnected && !isLobbyFull) &&
-        <LobbyWaitingScreen
-          globals={globals}
-        />
-      }
+      )}
+      {isConnected && !isLoading && !isLobbyFull && (
+        <LobbyWaitingScreen globals={globals} />
+      )}
+      {isConnected && !isLoading && isLobbyFull && (
+        <GameDisplay globals={globals} />
+      )}
     </StyledRoot>
   )
 }
