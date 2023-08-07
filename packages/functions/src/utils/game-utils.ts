@@ -28,7 +28,8 @@ const RULES = {
   SEVENS: 'Sevens',
   DOUBLES_HIGH: 'Doubles-high',
   DOUBLES_LOW: 'Doubles-low',
-  FOLLOW_ME: 'Follow-me'
+  FOLLOW_ME: 'Follow-me',
+  UNDECIDED: 'Undecided'
 }
 
 export interface RoundRules {
@@ -85,7 +86,11 @@ export const getBidNumber = (bidString: string) => {
 
 export const getIsCalling = (lobby: GlobalGameState) =>
   !lobby.current_is_bidding &&
-  getRoundRules(lobby).trump === '';
+  getRoundRules(lobby).trump === RULES.UNDECIDED;
+
+export const getIsPlaying = (lobby: GlobalGameState) =>
+  !lobby.current_is_bidding &&
+  getRoundRules(lobby).trump !== RULES.UNDECIDED;
 
 export const getPlayerMove = (moveString: string) => {
   const fields = moveString.split('\\');
@@ -399,6 +404,17 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
   return -1;
 }
 
+export const playDomino = (lobby: GlobalGameState, playerMove: PlayerMove) => {
+  const dominoIndex = lobby.all_player_dominoes[lobby.current_player_turn].indexOf(playerMove.move);
+  if (dominoIndex > -1) {
+    lobby.all_player_dominoes[lobby.current_player_turn].slice(dominoIndex, 1);
+  } else {
+    const username = getPlayerUsernameByPosition(lobby, lobby.current_player_turn);
+    console.log(`Player ${username} does not have domino ${playerMove.move}.`)
+  }
+  return lobby;
+}
+
 export const processBids = (lobby: GlobalGameState) => {
   const allBids = lobby.current_round_history.slice(-4).map(getPlayerMove);
 
@@ -467,11 +483,18 @@ export const startNextRound = (lobby: GlobalGameState) => {
     if (lobby.current_starting_bidder >= 4) lobby.current_starting_bidder = 0;
   }
 
+  const roundRules: RoundRules = {
+    bid: 0,
+    biddingTeam: 0,
+    trump: RULES.UNDECIDED,
+    variant: ''
+  }
+
   lobby.current_round += 1;
   lobby.current_is_bidding = true;
   lobby.current_player_turn = lobby.current_starting_bidder;
   lobby.current_round_history = [];
-  lobby.current_round_rules = '';
+  lobby.current_round_rules = JSON.stringify(roundRules);
   lobby.current_team_1_round_score = 0;
   lobby.current_team_2_round_score = 0;
   
