@@ -11,14 +11,13 @@ export interface Lobby {
   allowed_players: string[]
   rules: string[]
   team_1: string[]
-  team_1_connections: string[]
   team_2: string[]
-  team_2_connections: string[]
   current_round: number
   current_starting_bidder: number
+  current_starting_player: number
   current_is_bidding: boolean
   current_player_turn: number
-  current_round_rules: string[]
+  current_round_rules: string
   current_team_1_round_score: number
   current_team_2_round_score: number
   current_team_1_total_score: number
@@ -28,12 +27,14 @@ export interface Lobby {
 }
 
 export interface GlobalGameState extends Lobby {
-  all_player_dominoes: string[]
+  all_player_dominoes: string[][]
   chat_log: string[]
+  team_1_connections: string[]
+  team_2_connections: string[]
 }
 
 export interface PlayerGameState extends Lobby {
-  player_dominoes: string
+  player_dominoes: string[]
 }
 
 export const addToGameChat = async (match_id: string, new_message: string) => {
@@ -105,16 +106,36 @@ export const getPlayerNumByConnId = (lobby: GlobalGameState, connectionId: strin
   }
 };
 
-const getPlayerGSFromGlobalGS = (lobby: GlobalGameState, connectionId: string) => {
-  let player_dominoes = '';
-
-  if (lobby.all_player_dominoes.length) {
-    const playerNum = getPlayerNumByConnId(lobby, connectionId);
-    player_dominoes = lobby.all_player_dominoes[playerNum];
+export const getPlayerUsernameByConnId = (lobby: GlobalGameState, connectionId: string) => {
+  if (lobby.team_1_connections.includes(connectionId)) {
+    const index = lobby.team_1_connections.indexOf(connectionId);
+    return lobby.team_1[index];
+  } else if (lobby.team_2_connections.includes(connectionId)) {
+    const index = lobby.team_2_connections.indexOf(connectionId);
+    return lobby.team_2[index];
+  } else {
+    return '**username not found**';
   }
+}
 
-  // remove all_player_dominoes so that we don't send this information to the frontend
-  const { all_player_dominoes, ...gameState } = lobby;
+export const getPlayerUsernameByPosition =  (lobby: GlobalGameState, position: number) => {
+  if (position % 2 === 0) {
+    return lobby.team_1[position / 2];
+  } else {
+    return lobby.team_2[(position - 1) / 2];
+  }
+};
+
+const getPlayerGSFromGlobalGS = (lobby: GlobalGameState, connectionId: string) => {
+  let player_dominoes: string[] = [];
+
+  // remove variables specific to the global game state so that the player only gets what they need to know
+  const { all_player_dominoes, chat_log, team_1_connections, team_2_connections, ...gameState } = lobby;
+
+  if (all_player_dominoes.length) {
+    const playerNum = getPlayerNumByConnId(lobby, connectionId);
+    player_dominoes = all_player_dominoes[playerNum];
+  }
   
   const playerGameState: PlayerGameState = {
     ...gameState,

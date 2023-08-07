@@ -1,6 +1,7 @@
 import { addConnectionToTable, getConnectionsByMatchId, sendToConnections } from "src/utils/websocket-utils";
 import { APIGatewayProxyHandler } from "aws-lambda";
 import { getLobbyByInviteCode, isLobbyFull, updateLobby } from "src/utils/lobby-utils";
+import { startNextRound } from "src/utils/game-utils";
 
 export const main: APIGatewayProxyHandler = async (event) => {
   const { match_invite_code, user_id, username } =
@@ -19,13 +20,13 @@ export const main: APIGatewayProxyHandler = async (event) => {
     match_invite_code.length !== 6 ||
     !(teamNumber === 1 || teamNumber === 2)
   ) {
-    return { statusCode: 500, body: 'Missing connection information.' };
+    return { statusCode: 400, body: 'Missing connection information.' };
   }
 
   let lobby = await getLobbyByInviteCode(match_invite_code);
 
   if (isLobbyFull(lobby)) {
-    return { statusCode: 500, body: 'Lobby is full.' };
+    return { statusCode: 400, body: 'Lobby is full.' };
   }
   
   if (teamNumber === 1) {
@@ -44,6 +45,10 @@ export const main: APIGatewayProxyHandler = async (event) => {
       lobby.team_1.push(username);
       lobby.team_1_connections.push(conn_id);
     }
+  }
+
+  if (isLobbyFull(lobby)) {
+    lobby = startNextRound(lobby);
   }
 
   await updateLobby(lobby);
