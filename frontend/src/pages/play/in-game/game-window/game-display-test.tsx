@@ -10,7 +10,11 @@ const MOVE_TYPES = {
 }
 
 const StyledRoot = styled.div(({ theme }) => ({
-  padding: theme.spacing(2)
+  padding: theme.spacing(2),
+  '.player-move-box': {
+    border: '1px solid #000000',
+    padding: theme.spacing(1)
+  }
 }))
 
 interface Props {
@@ -36,8 +40,19 @@ const GameDisplay = ({ globals }: Props) => {
   const showPlayerTurn = () => {
     const listOfPlayers = [gameState.team_1[0], gameState.team_2[0], gameState.team_1[1], gameState.team_2[1]]
     const playerTurn = listOfPlayers[gameState.current_player_turn]
-    return <Typography>Current player turn: {playerTurn}</Typography>
+    const startingBidder = listOfPlayers[gameState.current_starting_bidder]
+    const startingPlayer = listOfPlayers[gameState.current_starting_player]
+    return (
+      <>
+        <Typography>Current starting bidder: {startingBidder}</Typography>
+        <Typography>Current starting player: {startingPlayer}</Typography>
+        <Typography>Current player turn: {playerTurn}</Typography>
+      </>
+    )
   }
+
+  const showTeamPlayers = (team: number) =>
+    (team === 1 ? gameState.team_1 : gameState.team_2).join(', ')
 
   return (
     <StyledRoot>
@@ -63,7 +78,10 @@ const GameDisplay = ({ globals }: Props) => {
       <Typography>{gameState.player_dominoes.join(', ')}</Typography>
       {showPlayerTurn()}
       <br />
-      {showPastMoves()}
+      <Typography>Team 1: {showTeamPlayers(1)}</Typography>
+      <Typography>Team 2: {showTeamPlayers(2)}</Typography>
+      <br />
+      <div className="player-move-box">{showPastMoves()}</div>
     </StyledRoot>
   )
 }
