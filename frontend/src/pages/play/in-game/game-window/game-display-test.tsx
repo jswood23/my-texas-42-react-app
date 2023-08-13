@@ -13,6 +13,8 @@ const StyledRoot = styled.div(({ theme }) => ({
   padding: theme.spacing(2),
   '.player-move-box': {
     border: '1px solid #000000',
+    height: theme.spacing(15),
+    overflowY: 'auto',
     padding: theme.spacing(1)
   }
 }))
@@ -27,11 +29,12 @@ const GameDisplay = ({ globals }: Props) => {
   const { gameState } = globals
 
   const sendMove = () => {
+    setMove('')
     globals.connection.sendJsonMessage({ action: 'play_turn', data: JSON.stringify({ move, moveType }) })
   }
 
   const showPastMoves = () => {
-    const pastMoves = gameState.current_round_history.slice(-5).reverse()
+    const pastMoves = gameState.current_round_history.slice().reverse()
     return pastMoves.map((pastMove) => {
       return <Typography key={pastMove}>{pastMove}</Typography>
     })
