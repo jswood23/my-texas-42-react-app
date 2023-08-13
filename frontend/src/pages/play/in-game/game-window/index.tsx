@@ -1,5 +1,5 @@
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../../constants'
-import type { GameState, GlobalObj, ServerMessage } from '../../../../types'
+import type { GameState, GlobalObj, RoundRules, ServerMessage } from '../../../../types'
 import { CircularProgress } from '@mui/material'
 import GameDisplay from './game-display-test'
 import LobbyWaitingScreen from './lobby-waiting-screen'
@@ -54,6 +54,11 @@ const GameWindow = ({
             messageData.message ?? 'An unknown error occurred.'
       switch (messageData?.messageType) {
         case SERVER_MESSAGE_TYPES.gameUpdate:
+          if (typeof newGameState.current_round_rules === 'string') {
+            newGameState.current_round_rules = JSON.parse(
+              newGameState.current_round_rules
+            ) as RoundRules
+          }
           globals.setGameState(newGameState)
           setIsLoading(false)
           break
