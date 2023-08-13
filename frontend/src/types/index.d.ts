@@ -6,6 +6,13 @@ export interface ChatMessage {
   username: string
 }
 
+export interface RoundRules {
+  bid: number
+  biddingTeam: number
+  trump: string
+  variant: string
+}
+
 export interface GameState {
   match_name: string
   match_invite_code: string
@@ -14,16 +21,18 @@ export interface GameState {
   team_2: string[]
   current_round: number
   current_starting_bidder: number
+  current_starting_player: number
   current_is_bidding: boolean
   current_player_turn: number
-  current_round_rules: string[]
-  player_dominoes: string[]
+  current_round_rules: string | RoundRules
   current_team_1_round_score: number
   current_team_2_round_score: number
   current_team_1_total_score: number
   current_team_2_total_score: number
   current_round_history: string[]
-  total_round_history: string[][]
+  total_round_history: string[]
+
+  player_dominoes: string[]
 }
 
 export interface ServerMessage extends ChatMessage {
