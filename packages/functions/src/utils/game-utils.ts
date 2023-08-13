@@ -28,6 +28,7 @@ const RULES = {
   SEVENS: 'Sevens',
   DOUBLES_HIGH: 'Doubles-high',
   DOUBLES_LOW: 'Doubles-low',
+  DOUBLES_TRUMP: 'Doubles-trump',
   FOLLOW_ME: 'Follow-me',
   UNDECIDED: 'Undecided'
 }
@@ -90,7 +91,7 @@ export const getPlayerMove = (moveString: string) => {
 }
 
 export const getPlayerPosition = (lobby: GlobalGameState) =>
-  (lobby.current_player_turn + 4 - lobby.current_starting_bidder) % 4
+  (lobby.current_player_turn + 4 - lobby.current_starting_player) % 4
 
 export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) => {
   interface ValidityResponse {
@@ -200,8 +201,10 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 
   const rules: RoundRules = getRoundRules(lobby);
 
+  const isCalling = getIsCalling(lobby);
+
   // calling rules
-  if (getIsCalling(lobby)) {
+  if (isCalling) {
     // check if player is not calling
     if (playerMove.moveType !== MOVE_TYPES.call) {
       return {
@@ -247,7 +250,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     }
 
     // check everything else
-    const trumpCalls = ['0', '1', '2', '3', '4', '5', '6', RULES.FOLLOW_ME];
+    const trumpCalls = ['0', '1', '2', '3', '4', '5', '6', RULES.FOLLOW_ME, RULES.DOUBLES_TRUMP];
     if (!twoMarkBids.includes(move) && !trumpCalls.includes(move)) {
       return {
         isValid: false,
@@ -272,26 +275,47 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 
   const playerPosition = getPlayerPosition(lobby); // returns 0 for first player to bid and 3 for last player to bid
 
+  // make sure player has this domino
+  if (!lobby.all_player_dominoes[lobby.current_player_turn].includes(playerMove.move)) {
+    return {
+      isValid: false,
+      message: 'You do not have this domino.',
+    } as ValidityResponse;
+  }
+
   // make sure starting suit matches if this is not the first player
   if (playerPosition) {
+    const roundRules = getRoundRules(lobby)
     const previousMoves =
       lobby.current_round_history.slice(-playerPosition)
       .map(getPlayerMove);
-    const trump = getRoundRules(lobby).trump;
+    const isDoublesTrump = roundRules.trump === RULES.DOUBLES_TRUMP;
+    const trump = roundRules.trump;
     const firstDominoSides = previousMoves[0].move.split('-');
+    const thisDominoSides = playerMove.move.split('-');
+    const isStartingDominoDouble = firstDominoSides[0] === firstDominoSides[1]
 
     // set starting suit to either trump or higher suit on starting domino
     let startingSuit = trump;
-    if (!firstDominoSides.includes(trump)) {
+    if (!isDoublesTrump && !firstDominoSides.includes(trump)) {
       startingSuit = firstDominoSides.filter(x => x == Math.max(...firstDominoSides.map(parseInt)).toString())[0]
     }
 
-    if (!playerMove.move.split('-').includes(startingSuit)) {
+    let isDominoNotStartingSuit = !thisDominoSides.includes(startingSuit);
+    if (isDoublesTrump && isStartingDominoDouble) {
+      isDominoNotStartingSuit = thisDominoSides[0] !== thisDominoSides[1]
+    }
+
+    if (isDominoNotStartingSuit) {
       // the player's domino must match the starting suit unless the player has no viable dominoes
-      const playerDominoes = lobby.all_player_dominoes[lobby.current_player_turn];
+      const playerDominoes =
+        lobby.all_player_dominoes[lobby.current_player_turn];
       let playerHasViableDominoes = false;
       for (let i = 0; i < playerDominoes.length; i++) {
-        if (playerDominoes[i].split('-').includes(startingSuit)) {
+        const playerDominoSides = playerDominoes[i].split('-')
+        const playerHasNormalStartingSuit = playerDominoSides.includes(startingSuit)
+        const playerHasStartingSuitDouble = isDoublesTrump && isStartingDominoDouble && playerDominoSides[0] === playerDominoSides[1]
+        if (playerHasNormalStartingSuit || playerHasStartingSuitDouble) {
           playerHasViableDominoes = true;
           break;
         }
@@ -428,6 +452,65 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
 
     const playerNum = (lobby.current_starting_player + wd.index) % 4;
     return playerNum;
+  } else if (trumpStr === RULES.DOUBLES_TRUMP) {
+    let isStartingSuitTrump = false;
+    if (dominoes[0][0] === dominoes[0][1]) {
+      isStartingSuitTrump = true;
+    }
+    let wd = { index: 0, sides: dominoes[0] }; // winning domino
+    for (let i = 1; i < 4; i++) {
+      const cd = dominoes[i]; // current domino sides
+
+      // check if there is a trump on the table
+      if (wd.sides[0] === wd.sides[1]) {
+        // continue if winning domino is the double six
+        if (wd.sides[0] === 6) {
+          continue;
+        }
+
+        // continue if current domino is not a double
+        if (!(cd[0] === cd[1])) {
+          continue;
+        }
+
+        // get highest side of winning domino (in this case, the number on the double)
+        const winningHighestSide = wd.sides[0];
+
+        // get current highest side (in this case, both are fine so we take the first)
+        const currentHighestSide = cd[0];
+
+        // check if this domino is better than winning domino
+        if (currentHighestSide > winningHighestSide) {
+          // set the new winning domino
+          wd = { index: i, sides: cd };
+          continue;
+        }
+      } else {
+        // check if current domino is a trump (in this case, a double)
+        if (cd[0] === cd[1]) {
+          // set the new winning domino
+          wd = { index: i, sides: cd };
+          continue;
+        }
+
+        // get higher side of winning domino
+        const winningHighestSide =
+          wd.sides[0] === startingSuit ? wd.sides[1] : wd.sides[0];
+
+        // get current highest side
+        const currentHighestSide = cd[0] === startingSuit ? cd[1] : cd[0];
+
+        // check if this domino is better than winning domino
+        if (currentHighestSide > winningHighestSide) {
+          // set the new winning domino
+          wd = { index: i, sides: cd };
+          continue;
+        }
+      }
+    }
+
+    const playerNum = (lobby.current_starting_player + wd.index) % 4;
+    return playerNum;
   }
 
   return -1;
@@ -436,7 +519,7 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
 export const playDomino = (lobby: GlobalGameState, playerMove: PlayerMove) => {
   const dominoIndex = lobby.all_player_dominoes[lobby.current_player_turn].indexOf(playerMove.move);
   if (dominoIndex > -1) {
-    lobby.all_player_dominoes[lobby.current_player_turn].slice(dominoIndex, 1);
+    lobby.all_player_dominoes[lobby.current_player_turn].splice(dominoIndex, 1);
   } else {
     const username = getPlayerUsernameByPosition(lobby, lobby.current_player_turn);
     console.log(`Player ${username} does not have domino ${playerMove.move}.`)
@@ -465,12 +548,13 @@ export const processBids = (lobby: GlobalGameState) => {
   const roundRules: RoundRules = {
     bid: highestBid,
     biddingTeam: bidWinner % 2 === 0 ? 1 : 2,
-    trump: '',
+    trump: RULES.UNDECIDED,
     variant: ''
   };
   lobby.current_round_rules = JSON.stringify(roundRules);
   lobby.current_is_bidding = false;
-  lobby.current_player_turn = (lobby.current_starting_bidder + bidWinner) % 4;
+  lobby.current_starting_player = bidWinner;
+  lobby.current_player_turn = bidWinner;
 
   return lobby;
 }
@@ -493,9 +577,18 @@ export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     currentRules.trump = playerMove.move;
   } else {
     const variants = [RULES.NIL, RULES.NIL_2_MARK, RULES.SPLASH, RULES.PLUNGE, RULES.SEVENS];
-    if (variants.includes(playerMove.move)) {
-      currentRules.variant = playerMove.move;
-    }
+    variants.forEach((variant) => {
+      if (playerMove.move.includes(variant)) {
+        currentRules.variant = variant;
+      }
+    })
+    
+    const otherTrumps = [RULES.FOLLOW_ME, RULES.DOUBLES_TRUMP];
+    otherTrumps.forEach((otherTrump) => {
+      if (playerMove.move.includes(otherTrump)) {
+        currentRules.trump = otherTrump;
+      }
+    });
   }
 
   lobby.current_round_rules = JSON.stringify(currentRules);

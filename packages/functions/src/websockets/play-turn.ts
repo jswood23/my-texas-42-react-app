@@ -31,11 +31,11 @@ export const main: APIGatewayProxyHandler = async (event) => {
   const playerMoveStr = `${playerMove.username}\\${playerMove.moveType}\\${playerMove.move}`;
   lobby.current_round_history.push(playerMoveStr);
 
-  lobby.current_player_turn = (lobby.current_player_turn + 1) % 4;
-
   if (getIsPlaying(lobby)) {
     lobby = playDomino(lobby, playerMove);
   }
+
+  lobby.current_player_turn = (lobby.current_player_turn + 1) % 4;
 
   if (getIsCalling(lobby)) {
     lobby = setRoundRules(lobby, playerMove);
@@ -84,6 +84,7 @@ export const main: APIGatewayProxyHandler = async (event) => {
       if (!isEndOfRound) {
         // start next trick if round is not over
         lobby.current_starting_player = winningPlayerOfTrick;
+        lobby.current_player_turn = winningPlayerOfTrick;
       }
     }
   }
