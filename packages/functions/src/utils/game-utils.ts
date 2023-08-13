@@ -72,18 +72,6 @@ export const assignPlayerDominoes = (lobby: GlobalGameState) => {
   return lobby;
 }
 
-export const getBidNumber = (bidString: string) => {
-  try {
-    if (bidString.includes('-mark')) {
-      return parseInt(bidString.charAt(0)) * 42
-    } else {
-      return parseInt(bidString);
-    }
-  } catch {
-    return 0;
-  }
-}
-
 export const getIsCalling = (lobby: GlobalGameState) =>
   !lobby.current_is_bidding &&
   getRoundRules(lobby).trump === RULES.UNDECIDED;
@@ -137,19 +125,54 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 
     // get highest bid so far
     const previousBidStrings = playerPosition
-      ? []
-      : lobby.current_round_history.slice(-playerPosition);
+      ? lobby.current_round_history.slice(-playerPosition)
+      : [];
     const previousBids = previousBidStrings.map(getPlayerMove);
     let highestBid = 0;
     previousBids.forEach((bid) => {
-      const bidNumber = getBidNumber(bid.move);
+      const bidNumber = parseInt(bid.move);
       if (bidNumber > highestBid) {
         highestBid = bidNumber;
       }
     });
 
     // get current bid number
-    const thisPlayerBid = getBidNumber(playerMove.move);
+    const thisPlayerBid = parseInt(playerMove.move);
+
+    if (isNaN(thisPlayerBid)) {
+      return {
+        isValid: false,
+        message: 'Invalid bid input.',
+      } as ValidityResponse;
+    }
+
+    if (thisPlayerBid !== 0 && thisPlayerBid < 30) {
+      return {
+        isValid: false,
+        message: 'The minimum bid is 30.',
+      } as ValidityResponse;
+    }
+
+    if (thisPlayerBid > 42 && thisPlayerBid % 42 !== 0) {
+      return {
+        isValid: false,
+        message: 'Invalid bid amount.',
+      } as ValidityResponse;
+    }
+
+    if (thisPlayerBid > 84 && thisPlayerBid / 42 !== highestBid / 42 + 1) {
+      return {
+        isValid: false,
+        message: 'You cannot bid more than 1 mark above the current bid.',
+      } as ValidityResponse;
+    }
+
+    if (thisPlayerBid !== 0 && thisPlayerBid <= highestBid) {
+      return {
+        isValid: false,
+        message: `You must either bid higher than the current highest bid (${highestBid}) or pass.`,
+      } as ValidityResponse;
+    }
 
     // force last player to bid
     if (
@@ -170,27 +193,6 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
           message: 'You must bid 30 or higher.',
         } as ValidityResponse;
       }
-    }
-
-    if (thisPlayerBid !== 0 && thisPlayerBid < Math.max(highestBid, 30)) {
-      return {
-        isValid: false,
-        message: 'The minimum bid is 30.',
-      } as ValidityResponse;
-    }
-
-    if (thisPlayerBid > 42 && thisPlayerBid % 42 !== 0) {
-      return {
-        isValid: false,
-        message: 'Invalid bid amount.',
-      } as ValidityResponse;
-    }
-
-    if (thisPlayerBid > 84 && thisPlayerBid / 42 !== highestBid / 42 + 1) {
-      return {
-        isValid: false,
-        message: 'You cannot bid more than 1 mark above the current bid.',
-      } as ValidityResponse;
     }
 
     return validMoveResponse;
@@ -257,6 +259,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
   }
 
   // everything else: domino playing rules
+
   // TODO: add rules for sevens here
 
   // check if player is not playing
@@ -421,10 +424,10 @@ export const processBids = (lobby: GlobalGameState) => {
   let highestBid = 0;
   let bidWinner = 0;
   for (let i = 0; i < allBids.length; i++) {
-    const bidNumber = getBidNumber(allBids[i].move);      
+    const bidNumber = parseInt(allBids[i].move);      
     if (bidNumber > highestBid) {
       highestBid = bidNumber;
-      bidWinner = i;
+      bidWinner = (lobby.current_starting_bidder + i) % 4;
     }
   }
 
@@ -476,12 +479,9 @@ export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 }
 
 export const startNextRound = (lobby: GlobalGameState) => {
-  if (lobby.current_round === 0) {
-    lobby.current_starting_bidder = Math.floor(Math.random() * 4)
-  } else {
-    lobby.current_starting_bidder += 1;
-    if (lobby.current_starting_bidder >= 4) lobby.current_starting_bidder = 0;
-  }
+  const new_starting_player = (lobby.current_starting_bidder + 1) % 4;
+
+  lobby.current_starting_bidder = lobby.current_round === 0 ? Math.floor(Math.random() * 4) : new_starting_player;
 
   const roundRules: RoundRules = {
     bid: 0,
@@ -492,7 +492,8 @@ export const startNextRound = (lobby: GlobalGameState) => {
 
   lobby.current_round += 1;
   lobby.current_is_bidding = true;
-  lobby.current_player_turn = lobby.current_starting_bidder;
+  lobby.current_player_turn = new_starting_player;
+  lobby.current_starting_player = new_starting_player;
   lobby.current_round_history = [];
   lobby.current_round_rules = JSON.stringify(roundRules);
   lobby.current_team_1_round_score = 0;
