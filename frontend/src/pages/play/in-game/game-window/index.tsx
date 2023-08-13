@@ -32,9 +32,7 @@ interface Props {
 }
 
 const GameWindow = ({
-  globals,
-  inviteCode,
-  teamNumber
+  globals
 }: Props) => {
   const [isLoading, setIsLoading] = React.useState(true)
   const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open

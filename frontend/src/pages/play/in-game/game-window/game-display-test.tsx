@@ -48,6 +48,10 @@ const GameDisplay = ({ globals }: Props) => {
     const playerTurn = listOfPlayers[gameState.current_player_turn]
     const startingBidder = listOfPlayers[gameState.current_starting_bidder]
     const startingPlayer = listOfPlayers[gameState.current_starting_player]
+    const ruleStr: string =
+      typeof gameState.current_round_rules === 'string'
+        ? gameState.current_round_rules
+        : Object.values(gameState.current_round_rules).join(', ')
     return (
       <>
         <Typography>Current starting bidder: {startingBidder}</Typography>
@@ -62,6 +66,7 @@ const GameDisplay = ({ globals }: Props) => {
           {gameState.current_team_2_total_score}
         </Typography>
         <Typography>Current round: {gameState.current_round}</Typography>
+        <Typography>Round rules: {ruleStr}</Typography>
         <br />
         <Typography>Team 1: {showTeamPlayers(1)}</Typography>
         <Typography>Team 2: {showTeamPlayers(2)}</Typography>
