@@ -402,6 +402,32 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
 
     const playerNum = (lobby.current_starting_player + wd.index) % 4;
     return playerNum;
+  } else if (trumpStr === RULES.FOLLOW_ME) {
+    let wd = { index: 0, sides: dominoes[0] }; // winning domino
+    for (let i = 1; i < 4; i++) {
+      const cd = dominoes[i]; // current domino sides
+
+      // continue if winning domino is the double
+      if (wd.sides[0] === wd.sides[1]) {
+        continue;
+      }
+
+      // get highest side of winning domino
+      const winningHighestSide =
+        wd.sides[0] === startingSuit ? wd.sides[1] : wd.sides[0];
+
+      // get current highest side
+      const currentHighestSide = cd[0] === startingSuit ? cd[1] : cd[0];
+
+      // check if this domino is better than winning domino
+      if (currentHighestSide > winningHighestSide || cd[0] === cd[1]) {
+        // set the new winning domino
+        wd = { index: i, sides: cd };
+      }
+    }
+
+    const playerNum = (lobby.current_starting_player + wd.index) % 4;
+    return playerNum;
   }
 
   return -1;
