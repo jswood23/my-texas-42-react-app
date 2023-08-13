@@ -40,7 +40,10 @@ const GameDisplay = ({ globals }: Props) => {
     })
   }
 
-  const showPlayerTurn = () => {
+  const showTeamPlayers = (team: number) =>
+    (team === 1 ? gameState.team_1 : gameState.team_2).join(', ')
+
+  const showRoundInfo = () => {
     const listOfPlayers = [gameState.team_1[0], gameState.team_2[0], gameState.team_1[1], gameState.team_2[1]]
     const playerTurn = listOfPlayers[gameState.current_player_turn]
     const startingBidder = listOfPlayers[gameState.current_starting_bidder]
@@ -50,12 +53,21 @@ const GameDisplay = ({ globals }: Props) => {
         <Typography>Current starting bidder: {startingBidder}</Typography>
         <Typography>Current starting player: {startingPlayer}</Typography>
         <Typography>Current player turn: {playerTurn}</Typography>
+        <Typography>
+          Team 1 score: {gameState.current_team_1_round_score},{' '}
+          {gameState.current_team_1_total_score}
+        </Typography>
+        <Typography>
+          Team 2 score: {gameState.current_team_2_round_score},{' '}
+          {gameState.current_team_2_total_score}
+        </Typography>
+        <Typography>Current round: {gameState.current_round}</Typography>
+        <br />
+        <Typography>Team 1: {showTeamPlayers(1)}</Typography>
+        <Typography>Team 2: {showTeamPlayers(2)}</Typography>
       </>
     )
   }
-
-  const showTeamPlayers = (team: number) =>
-    (team === 1 ? gameState.team_1 : gameState.team_2).join(', ')
 
   return (
     <StyledRoot>
@@ -79,10 +91,7 @@ const GameDisplay = ({ globals }: Props) => {
       <Button onClick={sendMove}>Send</Button>
       <br />
       <Typography>{gameState.player_dominoes.join(', ')}</Typography>
-      {showPlayerTurn()}
-      <br />
-      <Typography>Team 1: {showTeamPlayers(1)}</Typography>
-      <Typography>Team 2: {showTeamPlayers(2)}</Typography>
+      {showRoundInfo()}
       <br />
       <div className="player-move-box">{showPastMoves()}</div>
     </StyledRoot>
