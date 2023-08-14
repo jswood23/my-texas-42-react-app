@@ -268,9 +268,9 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
           isValid: false,
           message: 'You must have 4 or more doubles to bid plunge.',
         } as ValidityResponse;
+      }
     }
 
-    // check nil bids
     if (move === RULES.NIL) {
       // check nil bids
       const doublesCall = playerMove.move.split(' ')[1];
@@ -334,13 +334,15 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     // set starting suit to either trump or higher suit on starting domino
     let startingSuit = trump;
     let isDominoNotStartingSuit = false;
-    if (!firstDominoSides.includes(trump) && !(isDoublesTrump && isStartingDominoDouble)) {
-      startingSuit = firstDominoSides[0]; // this works before the larger number is always first
-      isDominoNotStartingSuit = !thisDominoSides.includes(startingSuit);
-    }
-
     if (isDoublesTrump && isStartingDominoDouble) {
-      isDominoNotStartingSuit = thisDominoSides[0] !== thisDominoSides[1]
+      isDominoNotStartingSuit = thisDominoSides[0] !== thisDominoSides[1];
+    } else {
+      if (!firstDominoSides.includes(trump)) {
+        startingSuit = firstDominoSides[0]; // this works before the larger number is always first
+      }
+      isDominoNotStartingSuit =
+        !thisDominoSides.includes(startingSuit) ||
+        (startingSuit !== trump && thisDominoSides.includes(startingSuit) && thisDominoSides.includes(trump));
     }
 
     if (isDominoNotStartingSuit) {
@@ -350,7 +352,14 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
       let playerHasViableDominoes = false;
       for (let i = 0; i < playerDominoes.length; i++) {
         const playerDominoSides = playerDominoes[i].split('-')
-        const playerHasNormalStartingSuit = playerDominoSides.includes(startingSuit)
+        const playerHasNormalStartingSuit =
+          !isDoublesTrump &&
+          playerDominoSides.includes(startingSuit) &&
+          !(
+            startingSuit !== trump &&
+            playerDominoSides.includes(startingSuit) &&
+            playerDominoSides.includes(trump)
+          );
         const playerHasStartingSuitDouble = isDoublesTrump && isStartingDominoDouble && playerDominoSides[0] === playerDominoSides[1]
         if (playerHasNormalStartingSuit || playerHasStartingSuitDouble) {
           playerHasViableDominoes = true;
