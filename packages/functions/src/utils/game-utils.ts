@@ -285,13 +285,11 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     if (move === RULES.NIL) {
       // check nil bids
       const doublesCall = playerMove.move.split(' ')[1];
-      if (
-        doublesCall !== RULES.DOUBLES_HIGH &&
-        doublesCall !== RULES.DOUBLES_LOW
-      ) {
+      const allDoublesCalls = [RULES.DOUBLES_HIGH, RULES.DOUBLES_LOW, RULES.DOUBLES_OWN_SUIT];
+      if (!allDoublesCalls.includes(doublesCall)) {
         return {
           isValid: false,
-          message: 'You must call doubles high or low for nil.',
+          message: 'You must call doubles high, low, or a suit of their own for nil.',
         } as ValidityResponse;
       }
     }
