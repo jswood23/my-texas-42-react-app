@@ -250,11 +250,12 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     if (splashBids.includes(move)) {
       // count doubles in player's hand
       let doublesInHand = 0;
-      const playerDominoes = lobby.all_player_dominoes[lobby.current_player_turn];
+      const playerDominoes =
+        lobby.all_player_dominoes[lobby.current_player_turn];
       playerDominoes.forEach((domino) => {
-        const sides = domino.split('-')
-        if (sides[0] === sides[1]) doublesInHand += 1
-      })
+        const sides = domino.split('-');
+        if (sides[0] === sides[1]) doublesInHand += 1;
+      });
 
       if (move === RULES.SPLASH && doublesInHand < 3) {
         return {
@@ -286,7 +287,17 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     }
 
     // check everything else
-    const trumpCalls = ['0', '1', '2', '3', '4', '5', '6', RULES.FOLLOW_ME, RULES.DOUBLES_TRUMP];
+    const trumpCalls = [
+      '0',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      RULES.FOLLOW_ME,
+      RULES.DOUBLES_TRUMP,
+    ];
     if (!twoMarkBids.includes(move) && !trumpCalls.includes(move)) {
       return {
         isValid: false,
@@ -306,7 +317,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     const dom = playerMove.move;
     if (dom.length !== 3) return invalidDominoResponse;
     if (dom.charAt(1) !== '-') return invalidDominoResponse;
-    
+
     const side1 = parseInt(dom[0]);
     const side2 = parseInt(dom[2]);
 
@@ -316,8 +327,6 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     if (side2 < 0 || side2 > 6) return invalidDominoResponse;
   }
 
-  // TODO: add rules for sevens here
-
   // check if player is not playing
   if (playerMove.moveType !== MOVE_TYPES.play) {
     return {
@@ -326,27 +335,57 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     } as ValidityResponse;
   }
 
-  const playerPosition = getPlayerPosition(lobby); // returns 0 for first player to bid and 3 for last player to bid
-
   // make sure player has this domino
-  if (!lobby.all_player_dominoes[lobby.current_player_turn].includes(playerMove.move)) {
+  if (
+    !lobby.all_player_dominoes[lobby.current_player_turn].includes(
+      playerMove.move
+    )
+  ) {
     return {
       isValid: false,
       message: 'You do not have this domino.',
     } as ValidityResponse;
   }
 
+  // sevens rules
+  if (rules.variant === RULES.SEVENS) {
+    const playerDominoes = lobby.all_player_dominoes[lobby.current_player_turn];
+    const thisDomino = playerMove.move;
+    const thisDominoIndex = playerDominoes.indexOf(thisDomino);
+
+    const differencesFromSeven: number[] = [];
+    playerDominoes.forEach((domino) => {
+      const sideSum = parseInt(domino[0]) + parseInt(domino[2]);
+      const differenceFromSeven = Math.abs(7 - sideSum);
+      differencesFromSeven.push(differenceFromSeven);
+    });
+
+    const smallestDifference = Math.min(...differencesFromSeven);
+
+    if (differencesFromSeven[thisDominoIndex] > smallestDifference) {
+      // the player has a domino that is closer to seven that they can play
+      return {
+        isValid: false,
+        message:
+          'You must play the domino in your hand that is closest to seven.',
+      } as ValidityResponse;
+    }
+
+    return validMoveResponse;
+  }
+
   // make sure starting suit matches if this is not the first player
+  const playerPosition = getPlayerPosition(lobby); // returns 0 for first player to bid and 3 for last player to bid
   if (playerPosition) {
-    const roundRules = getRoundRules(lobby)
-    const previousMoves =
-      lobby.current_round_history.slice(-playerPosition)
+    const roundRules = getRoundRules(lobby);
+    const previousMoves = lobby.current_round_history
+      .slice(-playerPosition)
       .map(getPlayerMove);
     const trump = roundRules.trump;
     const isDoublesTrump = trump === RULES.DOUBLES_TRUMP;
     const firstDominoSides = previousMoves[0].move.split('-');
     const thisDominoSides = playerMove.move.split('-');
-    const isStartingDominoDouble = firstDominoSides[0] === firstDominoSides[1]
+    const isStartingDominoDouble = firstDominoSides[0] === firstDominoSides[1];
 
     // set starting suit to either trump or higher suit on starting domino
     let startingSuit = trump;
@@ -359,7 +398,9 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
       }
       isDominoNotStartingSuit =
         !thisDominoSides.includes(startingSuit) ||
-        (startingSuit !== trump && thisDominoSides.includes(startingSuit) && thisDominoSides.includes(trump));
+        (startingSuit !== trump &&
+          thisDominoSides.includes(startingSuit) &&
+          thisDominoSides.includes(trump));
     }
 
     if (isDominoNotStartingSuit) {
@@ -368,7 +409,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
         lobby.all_player_dominoes[lobby.current_player_turn];
       let playerHasViableDominoes = false;
       for (let i = 0; i < playerDominoes.length; i++) {
-        const playerDominoSides = playerDominoes[i].split('-')
+        const playerDominoSides = playerDominoes[i].split('-');
         const playerHasNormalStartingSuit =
           !isDoublesTrump &&
           playerDominoSides.includes(startingSuit) &&
@@ -377,7 +418,10 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
             playerDominoSides.includes(startingSuit) &&
             playerDominoSides.includes(trump)
           );
-        const playerHasStartingSuitDouble = isDoublesTrump && isStartingDominoDouble && playerDominoSides[0] === playerDominoSides[1]
+        const playerHasStartingSuitDouble =
+          isDoublesTrump &&
+          isStartingDominoDouble &&
+          playerDominoSides[0] === playerDominoSides[1];
         if (playerHasNormalStartingSuit || playerHasStartingSuitDouble) {
           playerHasViableDominoes = true;
           break;
