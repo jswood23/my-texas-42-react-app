@@ -608,11 +608,16 @@ export const processBids = (lobby: GlobalGameState) => {
 export const processRoundWinner = (lobby: GlobalGameState, winningTeam: number) => {
   const roundRules = getRoundRules(lobby);
   const roundMarks = Math.ceil((+roundRules.bid) / 42);
+  
   if (winningTeam === 1) {
     lobby.current_team_1_total_score += roundMarks;
   } else {
     lobby.current_team_2_total_score += roundMarks;
   }
+
+  const endOfRoundMessage = `Team ${winningTeam} wins round worth ${roundMarks} marks.`;
+  lobby.current_round_history.push(endOfRoundMessage);
+  lobby.total_round_history.push(lobby.current_round_history);
   return lobby;
 }
 

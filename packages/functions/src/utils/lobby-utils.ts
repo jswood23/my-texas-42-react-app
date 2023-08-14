@@ -23,7 +23,7 @@ export interface Lobby {
   current_team_1_total_score: number
   current_team_2_total_score: number
   current_round_history: string[]
-  total_round_history: string[]
+  total_round_history: string[][]
 }
 
 export interface GlobalGameState extends Lobby {
