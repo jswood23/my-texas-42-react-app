@@ -297,7 +297,24 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     return validMoveResponse;
   }
 
-  // everything else: domino playing rules
+  // verify that the player is playing a correctly formatted domino
+  if (!lobby.current_is_bidding && !isCalling) {
+    const invalidDominoResponse = {
+      isValid: false,
+      message: 'Invalid domino input.',
+    } as ValidityResponse;
+    const dom = playerMove.move;
+    if (dom.length !== 3) return invalidDominoResponse;
+    if (dom.charAt(1) !== '-') return invalidDominoResponse;
+    
+    const side1 = parseInt(dom[0]);
+    const side2 = parseInt(dom[2]);
+
+    if (isNaN(side1)) return invalidDominoResponse;
+    if (side1 < 0 || side1 > 6) return invalidDominoResponse;
+    if (isNaN(side2)) return invalidDominoResponse;
+    if (side2 < 0 || side2 > 6) return invalidDominoResponse;
+  }
 
   // TODO: add rules for sevens here
 
