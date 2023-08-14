@@ -28,6 +28,7 @@ const RULES = {
   SEVENS: 'Sevens',
   DOUBLES_HIGH: 'Doubles-high',
   DOUBLES_LOW: 'Doubles-low',
+  DOUBLES_OWN_SUIT: 'Doubles-own-suit',
   DOUBLES_TRUMP: 'Doubles-trump',
   FOLLOW_ME: 'Follow-me',
   UNDECIDED: 'Undecided'
@@ -713,16 +714,16 @@ export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 
       return lobby;
     }
-
-    const otherVariants = [RULES.NIL, RULES.NIL_2_MARK, RULES.SEVENS];
-    otherVariants.forEach((variant) => {
-      if (playerMove.move.includes(variant)) {
-        currentRules.variant = variant;
-      }
-      if (playerMove.move === RULES.SEVENS) {
-        currentRules.trump = '';
-      }
-    });
+    
+    if (playerMove.move === RULES.SEVENS) {
+      currentRules.variant = RULES.SEVENS;
+      currentRules.trump = '';
+    }
+    
+    if (playerMove.move.includes(RULES.NIL)) {
+      currentRules.variant = RULES.NIL;
+      currentRules.trump = playerMove.move.split(' ')[1];
+    }
     
     const otherTrumps = [RULES.FOLLOW_ME, RULES.DOUBLES_TRUMP];
     otherTrumps.forEach((otherTrump) => {
