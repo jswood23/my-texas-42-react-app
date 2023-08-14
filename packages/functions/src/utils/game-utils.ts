@@ -284,9 +284,9 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 
     if (move === RULES.NIL) {
       // check nil bids
-      const doublesCall = playerMove.move.split(' ')[1];
+      const nilCalls = playerMove.move.split(' ');
       const allDoublesCalls = [RULES.DOUBLES_HIGH, RULES.DOUBLES_LOW, RULES.DOUBLES_OWN_SUIT];
-      if (!allDoublesCalls.includes(doublesCall)) {
+      if (nilCalls.length < 2 || !allDoublesCalls.includes(nilCalls[1])) {
         return {
           isValid: false,
           message: 'You must call doubles high, low, or a suit of their own for nil.',
@@ -390,7 +390,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
       .slice(-playerPosition)
       .map(getPlayerMove);
     const trump = roundRules.trump;
-    const isDoublesTrump = trump === RULES.DOUBLES_TRUMP;
+    const isDoublesTrump = trump === RULES.DOUBLES_TRUMP || trump === RULES.DOUBLES_OWN_SUIT;
     const firstDominoSides = previousMoves[0].move.split('-');
     const thisDominoSides = playerMove.move.split('-');
     const isStartingDominoDouble = firstDominoSides[0] === firstDominoSides[1];
