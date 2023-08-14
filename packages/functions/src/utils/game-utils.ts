@@ -222,9 +222,18 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
       getPlayerMove(lobby.current_round_history[1]).move === '0' &&
       getPlayerMove(lobby.current_round_history[2]).move === '0' &&
       getPlayerMove(lobby.current_round_history[3]).move === '42';
-
-    // check for 2-mark bids
+      
     const twoMarkBids = [RULES.NIL, RULES.SPLASH, RULES.PLUNGE, RULES.SEVENS];
+
+    // check that 2-mark bids are allowed by match rules
+    if (twoMarkBids.includes(move) && !lobby.rules.includes(move)) {
+      return {
+        isValid: false,
+        message: `${move} is not allowed by the current match rules.`,
+      } as ValidityResponse;
+    }
+
+    // check that 2-mark bids are 2 marks or higher
     if (
       twoMarkBids.includes(move) &&
       rules.bid < 84 &&
