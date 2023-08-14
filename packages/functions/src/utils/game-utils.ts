@@ -45,7 +45,7 @@ export const assignPlayerDominoes = (lobby: GlobalGameState) => {
   const allDominoes: string[] = [];
   for (let i = 0; i <= 6; i += 1) {
     for (let j = i; j <= 6; j += 1) {
-      allDominoes.push(`${i}-${j}`);
+      allDominoes.push(`${j}-${i}`);
     }
   }
 
@@ -289,19 +289,20 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     const previousMoves =
       lobby.current_round_history.slice(-playerPosition)
       .map(getPlayerMove);
-    const isDoublesTrump = roundRules.trump === RULES.DOUBLES_TRUMP;
     const trump = roundRules.trump;
+    const isDoublesTrump = trump === RULES.DOUBLES_TRUMP;
     const firstDominoSides = previousMoves[0].move.split('-');
     const thisDominoSides = playerMove.move.split('-');
     const isStartingDominoDouble = firstDominoSides[0] === firstDominoSides[1]
 
     // set starting suit to either trump or higher suit on starting domino
     let startingSuit = trump;
-    if (!isDoublesTrump && !firstDominoSides.includes(trump)) {
-      startingSuit = firstDominoSides.filter(x => x == Math.max(...firstDominoSides.map(parseInt)).toString())[0]
+    let isDominoNotStartingSuit = false;
+    if (!firstDominoSides.includes(trump) && !(isDoublesTrump && isStartingDominoDouble)) {
+      startingSuit = firstDominoSides[0]; // this works before the larger number is always first
+      isDominoNotStartingSuit = !thisDominoSides.includes(startingSuit);
     }
 
-    let isDominoNotStartingSuit = !thisDominoSides.includes(startingSuit);
     if (isDoublesTrump && isStartingDominoDouble) {
       isDominoNotStartingSuit = thisDominoSides[0] !== thisDominoSides[1]
     }
@@ -598,9 +599,12 @@ export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 }
 
 export const startNextRound = (lobby: GlobalGameState) => {
-  const new_starting_player = (lobby.current_starting_bidder + 1) % 4;
+  const new_starting_player =
+    lobby.current_round === 0
+      ? Math.floor(Math.random() * 4)
+      : (lobby.current_starting_bidder + 1) % 4;
 
-  lobby.current_starting_bidder = lobby.current_round === 0 ? Math.floor(Math.random() * 4) : new_starting_player;
+  lobby.current_starting_bidder = new_starting_player;
 
   const roundRules: RoundRules = {
     bid: 0,
