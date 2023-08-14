@@ -1,7 +1,8 @@
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../../constants'
-import type { GameState, GlobalObj, ServerMessage } from '../../../../types'
+import type { GameState, GlobalObj, RoundRules, ServerMessage } from '../../../../types'
 import { CircularProgress } from '@mui/material'
-import LobbyWaitingScreen from '../lobby-waiting-screen'
+import GameDisplay from './game-display-test'
+import LobbyWaitingScreen from './lobby-waiting-screen'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -31,9 +32,7 @@ interface Props {
 }
 
 const GameWindow = ({
-  globals,
-  inviteCode,
-  teamNumber
+  globals
 }: Props) => {
   const [isLoading, setIsLoading] = React.useState(true)
   const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
@@ -48,26 +47,39 @@ const GameWindow = ({
   React.useEffect(() => {
     if (globals.connection.lastMessage !== null) {
       const messageData = (JSON.parse(globals.connection.lastMessage.data) as ServerMessage)
-      if (messageData?.messageType === SERVER_MESSAGE_TYPES.gameUpdate) {
-        const newGameState: GameState = (messageData.gameData as GameState)
-        globals.setGameState(newGameState)
-        setIsLoading(false)
+      const newGameState: GameState = messageData.gameData as GameState
+      const gameError: string =
+            messageData.message ?? 'An unknown error occurred.'
+      switch (messageData?.messageType) {
+        case SERVER_MESSAGE_TYPES.gameUpdate:
+          if (typeof newGameState.current_round_rules === 'string') {
+            newGameState.current_round_rules = JSON.parse(
+              newGameState.current_round_rules
+            ) as RoundRules
+          }
+          globals.setGameState(newGameState)
+          setIsLoading(false)
+          break
+        case SERVER_MESSAGE_TYPES.gameError:
+          globals.openAlert(gameError, 'error')
+          break
       }
     }
   }, [globals.connection.lastMessage])
 
   return (
     <StyledRoot>
-      {isLoading &&
-        <div className='circular-progress-container'>
-          <CircularProgress size={50}/>
+      {isLoading && (
+        <div className="circular-progress-container">
+          <CircularProgress size={50} />
         </div>
-      }
-      {(isConnected && !isLobbyFull) &&
-        <LobbyWaitingScreen
-          globals={globals}
-        />
-      }
+      )}
+      {isConnected && !isLoading && !isLobbyFull && (
+        <LobbyWaitingScreen globals={globals} />
+      )}
+      {isConnected && !isLoading && isLobbyFull && (
+        <GameDisplay globals={globals} />
+      )}
     </StyledRoot>
   )
 }

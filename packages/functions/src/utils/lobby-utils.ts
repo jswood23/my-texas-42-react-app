@@ -157,24 +157,8 @@ export const isLobbyFull = (lobby: GlobalGameState) => {
 };
 
 export const updateLobby = async (lobby: GlobalGameState) => {
-  const attributesToChange = [
-    'team_1',
-    'team_1_connections',
-    'team_2',
-    'team_2_connections',
-    'current_round',
-    'current_starting_bidder',
-    'current_is_bidding',
-    'current_player_turn',
-    'current_round_rules',
-    'all_player_dominoes',
-    'current_team_1_round_score',
-    'current_team_2_round_score',
-    'current_team_1_total_score',
-    'current_team_2_total_score',
-    'current_round_history',
-    'total_round_history',
-  ];
+  const { match_id, rules, ...everythingElse } = lobby
+  const attributesToChange = Object.keys(everythingElse);
   let UpdateExpression = 'SET ';
   let ExpressionAttributeValues = {};
   for (let i = 0; i < attributesToChange.length; i++) {
