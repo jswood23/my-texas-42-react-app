@@ -669,7 +669,7 @@ export const processBids = (lobby: GlobalGameState) => {
 export const processRoundWinner = (lobby: GlobalGameState, winningTeam: number) => {
   const roundRules = getRoundRules(lobby);
   const roundMarks = Math.ceil((+roundRules.bid) / 42);
-  
+
   if (winningTeam === 1) {
     lobby.current_team_1_total_score += roundMarks;
   } else {
@@ -751,6 +751,58 @@ export const startNextRound = (lobby: GlobalGameState) => {
   lobby.current_team_2_round_score = 0;
   
   lobby = assignPlayerDominoes(lobby);
+
+  return lobby;
+}
+
+export const processEndOfTrick = (lobby: GlobalGameState) => {
+  // end of trick or bidding phase
+  if (lobby.current_is_bidding) {
+    lobby = processBids(lobby);
+  } else {
+    const roundRules = getRoundRules(lobby);
+
+    // decide who won this trick and how many points they won
+    const winningPlayerOfTrick = getWinningPlayerOfTrick(lobby);
+    const winningTeamOfTrick = winningPlayerOfTrick % 2 === 0 ? 1 : 2;
+    const trickScore = getTrickScore(lobby);
+
+    // update lobby
+    let isEndOfRound = false;
+    const endOfTrickMessage = `Team ${winningTeamOfTrick} wins trick worth ${trickScore} points.`;
+    lobby.current_round_history.push(endOfTrickMessage);
+    if (winningTeamOfTrick === 1) {
+      lobby.current_team_1_round_score += trickScore;
+      if (
+        (roundRules.biddingTeam === 1 &&
+          lobby.current_team_1_round_score >= roundRules.bid) ||
+        (roundRules.biddingTeam === 2 &&
+          lobby.current_team_1_round_score >= 42 - roundRules.bid)
+      ) {
+        isEndOfRound = true;
+        lobby = processRoundWinner(lobby, 1);
+        lobby = startNextRound(lobby);
+      }
+    } else {
+      lobby.current_team_2_round_score += trickScore;
+      if (
+        (roundRules.biddingTeam === 2 &&
+          lobby.current_team_2_round_score >= roundRules.bid) ||
+        (roundRules.biddingTeam === 1 &&
+          lobby.current_team_2_round_score >= 42 - roundRules.bid)
+      ) {
+        isEndOfRound = true;
+        lobby = processRoundWinner(lobby, 2);
+        lobby = startNextRound(lobby);
+      }
+    }
+
+    if (!isEndOfRound) {
+      // start next trick if round is not over
+      lobby.current_starting_player = winningPlayerOfTrick;
+      lobby.current_player_turn = winningPlayerOfTrick;
+    }
+  }
 
   return lobby;
 }
