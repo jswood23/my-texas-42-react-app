@@ -237,16 +237,42 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
 
     // don't allow 2-mark bids if the variant is splash or plunge
     // this applies when the teammate of the splashing player is choosing a trump
-    const splashBids = [RULES.SPLASH, RULES.PLUNGE]
+    const splashBids = [RULES.SPLASH, RULES.PLUNGE];
     if (twoMarkBids.includes(move) && splashBids.includes(rules.variant)) {
+      return {
+        isValid: false,
+        message:
+          'You cannot make this call for splash or plunge. Please choose a trump.',
+      } as ValidityResponse;
+    }
+
+    // only allow splash if player has 3+ doubles and plunge if 4+
+    if (splashBids.includes(move)) {
+      // count doubles in player's hand
+      let doublesInHand = 0;
+      const playerDominoes = lobby.all_player_dominoes[lobby.current_player_turn];
+      playerDominoes.forEach((domino) => {
+        const sides = domino.split('-')
+        if (sides[0] === sides[1]) doublesInHand += 1
+      })
+
+      if (move === RULES.SPLASH && doublesInHand < 3) {
         return {
           isValid: false,
-          message: 'You cannot make this call for splash or plunge. Please choose a trump.',
+          message: 'You must have 3 or more doubles to bid splash.',
+        } as ValidityResponse;
+      }
+
+      if (move === RULES.PLUNGE && doublesInHand < 4) {
+        return {
+          isValid: false,
+          message: 'You must have 4 or more doubles to bid plunge.',
         } as ValidityResponse;
     }
 
     // check nil bids
     if (move === RULES.NIL) {
+      // check nil bids
       const doublesCall = playerMove.move.split(' ')[1];
       if (
         doublesCall !== RULES.DOUBLES_HIGH &&
@@ -587,12 +613,29 @@ export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) =>
   if (!isNaN(parseInt(playerMove.move))) {
     currentRules.trump = playerMove.move;
   } else {
-    const variants = [RULES.NIL, RULES.NIL_2_MARK, RULES.SPLASH, RULES.PLUNGE, RULES.SEVENS];
-    variants.forEach((variant) => {
+    const splashBids = [RULES.SPLASH, RULES.PLUNGE];
+    if (splashBids.includes(playerMove.move)) {
+      currentRules.variant = playerMove.move;
+
+      if (playerMove.move === RULES.PLUNGE) {
+        // add a mark to the bid for plunge
+        currentRules.bid += 42;
+      }
+
+      lobby.current_round_rules = JSON.stringify(currentRules);
+      // set the new calling/starting player to the current calling player's teammate
+      lobby.current_starting_player = (lobby.current_starting_player + 2) % 4;
+      lobby.current_player_turn = lobby.current_starting_player;
+
+      return lobby;
+    }
+
+    const otherVariants = [RULES.NIL, RULES.NIL_2_MARK, RULES.SEVENS];
+    otherVariants.forEach((variant) => {
       if (playerMove.move.includes(variant)) {
         currentRules.variant = variant;
       }
-    })
+    });
     
     const otherTrumps = [RULES.FOLLOW_ME, RULES.DOUBLES_TRUMP];
     otherTrumps.forEach((otherTrump) => {
