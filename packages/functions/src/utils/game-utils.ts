@@ -463,13 +463,22 @@ export const getTrickScore = (lobby: GlobalGameState) => {
 }
 
 export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
+  const rules = getRoundRules(lobby)
   const thisTrick = lobby.current_round_history.slice(-4);
   const dominoes: number[][] = getDominoes(thisTrick);
   let startingSuit = Math.max(dominoes[0][0], dominoes[0][1]);
-  // if there is a trump
-  const trumpStr = getRoundRules(lobby).trump;
-  if (!isNaN(parseInt(trumpStr))) {
-    const trump = +trumpStr;
+  if (rules.variant === RULES.SEVENS) {
+    const differencesFromSeven = dominoes.map((domino) => Math.abs(7 - (domino[0] + domino[1])));
+    const smallestDifference = Math.min(...differencesFromSeven);
+    const isSmallestDifference = differencesFromSeven.map((x) => x === smallestDifference);
+    const isBiddingTeamWinning = isSmallestDifference[0] || isSmallestDifference[2];
+    const winner = isBiddingTeamWinning ? 0 : 1;
+    
+    const playerNum = (lobby.current_starting_player + winner) % 4;
+    return playerNum;
+  } else if (!isNaN(parseInt(rules.trump))) {
+    // the trump is a number
+    const trump = +rules.trump;
     if (trump >= 0) {
       if (dominoes[0][0] === trump || dominoes[0][1] === trump) {
         startingSuit = trump;
@@ -533,7 +542,7 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
 
     const playerNum = (lobby.current_starting_player + wd.index) % 4;
     return playerNum;
-  } else if (trumpStr === RULES.FOLLOW_ME) {
+  } else if (rules.trump === RULES.FOLLOW_ME) {
     let wd = { index: 0, sides: dominoes[0] }; // winning domino
     for (let i = 1; i < 4; i++) {
       const cd = dominoes[i]; // current domino sides
@@ -559,7 +568,7 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
 
     const playerNum = (lobby.current_starting_player + wd.index) % 4;
     return playerNum;
-  } else if (trumpStr === RULES.DOUBLES_TRUMP) {
+  } else if (rules.trump === RULES.DOUBLES_TRUMP) {
     let isStartingSuitTrump = false;
     if (dominoes[0][0] === dominoes[0][1]) {
       isStartingSuitTrump = true;
@@ -709,6 +718,9 @@ export const setRoundRules = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     otherVariants.forEach((variant) => {
       if (playerMove.move.includes(variant)) {
         currentRules.variant = variant;
+      }
+      if (playerMove.move === RULES.SEVENS) {
+        currentRules.trump = '';
       }
     });
     
