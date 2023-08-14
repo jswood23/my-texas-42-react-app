@@ -235,6 +235,16 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
       } as ValidityResponse;
     }
 
+    // don't allow 2-mark bids if the variant is splash or plunge
+    // this applies when the teammate of the splashing player is choosing a trump
+    const splashBids = [RULES.SPLASH, RULES.PLUNGE]
+    if (twoMarkBids.includes(move) && splashBids.includes(rules.variant)) {
+        return {
+          isValid: false,
+          message: 'You cannot make this call for splash or plunge. Please choose a trump.',
+        } as ValidityResponse;
+    }
+
     // check nil bids
     if (move === RULES.NIL) {
       const doublesCall = playerMove.move.split(' ')[1];
