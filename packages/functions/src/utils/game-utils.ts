@@ -784,12 +784,13 @@ export const processEndOfTrick = (lobby: GlobalGameState) => {
 
     // decide who won this trick and how many points they won
     const winningPlayerOfTrick = getWinningPlayerOfTrick(lobby);
+    const winningPlayerUsername = getPlayerUsernameByPosition(lobby, winningPlayerOfTrick);
     const winningTeamOfTrick = winningPlayerOfTrick % 2 === 0 ? 1 : 2;
     const trickScore = getTrickScore(lobby);
 
     // update lobby
     let isEndOfRound = false;
-    const endOfTrickMessage = `Team ${winningTeamOfTrick} wins trick worth ${trickScore} points.`;
+    const endOfTrickMessage = `Team ${winningTeamOfTrick} (${winningPlayerUsername}) wins trick worth ${trickScore} points.`;
     lobby.current_round_history.push(endOfTrickMessage);
     if (winningTeamOfTrick === 1) {
       lobby.current_team_1_round_score += trickScore;
