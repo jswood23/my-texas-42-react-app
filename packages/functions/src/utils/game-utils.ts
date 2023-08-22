@@ -466,6 +466,13 @@ export const getPlayerNumByUsername = (lobby: GlobalGameState, username: string)
   }
 }
 
+export const getNilBiddingPlayer = (lobby: GlobalGameState) => {
+  const currentRoundCallMessage = lobby.current_round_history[6];
+  const nilBiddingPlayerUsername = currentRoundCallMessage.split('\\')[0];
+  const nilBiddingPlayer = getPlayerNumByUsername(lobby, nilBiddingPlayerUsername);
+  return nilBiddingPlayer;
+}
+
 export const getRoundRules = (lobby: GlobalGameState) => 
   JSON.parse(lobby.current_round_rules) as RoundRules;
 
@@ -479,6 +486,26 @@ export const getTrickScore = (lobby: GlobalGameState) => {
     }
   });
   return score;
+}
+
+export const adjustWinningPlayerOfTrick = (lobby: GlobalGameState, winningPlayer: number) => {
+  // adjusts the winning player number if the rules include nil
+  if (getRoundRules(lobby).variant !== RULES.NIL) {
+    return winningPlayer;
+  }
+
+  const nilBiddingPlayer = getNilBiddingPlayer(lobby);
+  const skippedPlayer = (nilBiddingPlayer + 2) % 4;
+
+  let newWinningPlayer = 0;
+  for (let i = 0; i < winningPlayer; i += 1) {
+    newWinningPlayer += 1;
+    if ((lobby.current_starting_player + i) % 4 === skippedPlayer) {
+      newWinningPlayer += 1;
+    }
+  }
+
+  return newWinningPlayer;
 }
 
 export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
@@ -800,9 +827,7 @@ export const skipPlayerTurnIfNil = (lobby: GlobalGameState) => {
     return lobby;
   }
   
-  const currentRoundCallMessage = lobby.current_round_history[6];
-  const nilBiddingPlayerUsername = currentRoundCallMessage.split('\\')[0];
-  const nilBiddingPlayer = getPlayerNumByUsername(lobby, nilBiddingPlayerUsername);
+  const nilBiddingPlayer = getNilBiddingPlayer(lobby);
   const isNilBiddingPlayerTeammateTurn = (lobby.current_player_turn + 2) % 4 === nilBiddingPlayer;
 
   if (isNilBiddingPlayerTeammateTurn) {
@@ -896,7 +921,7 @@ export const processEndOfTrick = (lobby: GlobalGameState) => {
     const roundRules = getRoundRules(lobby);
 
     // decide who won this trick and how many points they won
-    const winningPlayerOfTrick = getWinningPlayerOfTrick(lobby);
+    const winningPlayerOfTrick = adjustWinningPlayerOfTrick(lobby, getWinningPlayerOfTrick(lobby));
     const winningPlayerUsername = getPlayerUsernameByPosition(lobby, winningPlayerOfTrick);
     const winningTeamOfTrick = winningPlayerOfTrick % 2 === 0 ? 1 : 2;
     const trickScore = getTrickScore(lobby);
@@ -907,7 +932,18 @@ export const processEndOfTrick = (lobby: GlobalGameState) => {
     lobby.current_round_history.push(endOfTrickMessage);
     if (winningTeamOfTrick === 1) {
       lobby.current_team_1_round_score += trickScore;
-      if (
+      if (roundRules.variant === RULES.NIL) {
+        if (roundRules.biddingTeam === 2 &&
+          lobby.current_team_1_round_score === 42) {
+          isEndOfRound = true;
+          lobby = processRoundWinner(lobby, 2);
+          lobby = startNextRound(lobby);
+        } else if (roundRules.biddingTeam === 1) {
+          isEndOfRound = true;
+          lobby = processRoundWinner(lobby, 2);
+          lobby = startNextRound(lobby);
+        }
+      } else if (
         (roundRules.biddingTeam === 1 &&
           lobby.current_team_1_round_score >= roundRules.bid) ||
         (roundRules.biddingTeam === 2 &&
@@ -919,7 +955,18 @@ export const processEndOfTrick = (lobby: GlobalGameState) => {
       }
     } else {
       lobby.current_team_2_round_score += trickScore;
-      if (
+      if (roundRules.variant === RULES.NIL) {
+        if (roundRules.biddingTeam === 1 &&
+          lobby.current_team_2_round_score === 42) {
+          isEndOfRound = true;
+          lobby = processRoundWinner(lobby, 1);
+          lobby = startNextRound(lobby);
+        } else if (roundRules.biddingTeam === 2) {
+          isEndOfRound = true;
+          lobby = processRoundWinner(lobby, 1);
+          lobby = startNextRound(lobby);
+        }
+      } else if (
         (roundRules.biddingTeam === 2 &&
           lobby.current_team_2_round_score >= roundRules.bid) ||
         (roundRules.biddingTeam === 1 &&
