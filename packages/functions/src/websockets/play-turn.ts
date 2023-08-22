@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
-import { checkValidity, type PlayerMove, getIsCalling, setRoundRules, getIsPlaying, playDomino, processEndOfTrick } from "src/utils/game-utils";
+import { checkValidity, type PlayerMove, getIsCalling, setRoundRules, getIsPlaying, playDomino, processEndOfTrick, skipPlayerTurnIfNil } from "src/utils/game-utils";
 import { getLobbyById, getPlayerUsernameByConnId, refreshPlayerGameStates, updateLobby } from "src/utils/lobby-utils";
 import { getConnectionById, getMessageData, sendToSingleConnection } from "src/utils/websocket-utils";
 
@@ -36,6 +36,8 @@ export const main: APIGatewayProxyHandler = async (event) => {
   }
 
   lobby.current_player_turn = (lobby.current_player_turn + 1) % 4;
+
+  lobby = skipPlayerTurnIfNil(lobby);
 
   if (getIsCalling(lobby)) {
     lobby = setRoundRules(lobby, playerMove);

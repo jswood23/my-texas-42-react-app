@@ -455,6 +455,17 @@ export const getDominoes = (trick: string[]) => {
 export const getPlayerMoveString = (playerMove: PlayerMove) =>
   `${playerMove.username ?? 'undefined'}\\${playerMove.moveType}\\${playerMove.move}`;
 
+export const getPlayerNumByUsername = (lobby: GlobalGameState, username: string) => {
+  if (lobby.team_1.includes(username)) {
+    return lobby.team_1.indexOf(username) * 2;
+  } else if (lobby.team_2.includes(username)) {
+    return lobby.team_2.indexOf(username) * 2 * 1;
+  } else {
+    console.log('Player username not found in lobby.');
+    return -1;
+  }
+}
+
 export const getRoundRules = (lobby: GlobalGameState) => 
   JSON.parse(lobby.current_round_rules) as RoundRules;
 
@@ -781,6 +792,23 @@ export const processRoundWinner = (lobby: GlobalGameState, winningTeam: number) 
   const endOfRoundMessage = `Team ${winningTeam} wins round worth ${roundMarks} marks.`;
   lobby.current_round_history.push(endOfRoundMessage);
   lobby.total_round_history.push(lobby.current_round_history);
+  return lobby;
+}
+
+export const skipPlayerTurnIfNil = (lobby: GlobalGameState) => {
+  if (getRoundRules(lobby).variant !== RULES.NIL) {
+    return lobby;
+  }
+  
+  const currentRoundCallMessage = lobby.current_round_history[6];
+  const nilBiddingPlayerUsername = currentRoundCallMessage.split('\\')[0];
+  const nilBiddingPlayer = getPlayerNumByUsername(lobby, nilBiddingPlayerUsername);
+  const isNilBiddingPlayerTeammateTurn = (lobby.current_player_turn + 2) % 4 === nilBiddingPlayer;
+
+  if (isNilBiddingPlayerTeammateTurn) {
+    lobby.current_player_turn = (lobby.current_player_turn + 1) % 4;
+  }
+
   return lobby;
 }
 
