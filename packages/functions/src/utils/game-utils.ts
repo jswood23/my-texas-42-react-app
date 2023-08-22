@@ -471,10 +471,14 @@ export const getTrickScore = (lobby: GlobalGameState) => {
 }
 
 export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
-  const rules = getRoundRules(lobby)
-  const thisTrick = lobby.current_round_history.slice(-4);
+  const rules = getRoundRules(lobby);
+  const playersInRound = rules.variant === RULES.NIL ? 3 : 4;
+  const thisTrick = lobby.current_round_history.slice(-playersInRound);
   const dominoes: number[][] = getDominoes(thisTrick);
   let startingSuit = Math.max(dominoes[0][0], dominoes[0][1]);
+  const isNilDoublesHigh = rules.variant === RULES.NIL && rules.trump === RULES.DOUBLES_HIGH;
+  const isNilDoublesLow = rules.variant === RULES.NIL && rules.trump === RULES.DOUBLES_LOW;
+  const isNilDoublesOwnSuit = rules.variant === RULES.NIL && rules.trump === RULES.DOUBLES_OWN_SUIT;
   if (rules.variant === RULES.SEVENS) {
     const differencesFromSeven = dominoes.map((domino) => Math.abs(7 - (domino[0] + domino[1])));
     const smallestDifference = Math.min(...differencesFromSeven);
@@ -484,6 +488,76 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
     
     const playerNum = (lobby.current_starting_player + winner) % 4;
     return playerNum;
+  } else if (isNilDoublesLow) {
+    let wd = { index: 0, sides: dominoes[0] }; // winning domino
+    for (let i = 1; i < playersInRound; i++) {
+      const cd = dominoes[i]; // current domino sides
+
+      const isOutOfSuit = !cd.includes(startingSuit);
+
+      // continue if current domino is the double (it cannot win the trick if it was not started because doubles are low)
+      if (cd[0] === cd[1] || isOutOfSuit) {
+        continue;
+      }
+
+      // get highest side of winning domino
+      const winningHighestSide =
+        wd.sides[0] === startingSuit ? wd.sides[1] : wd.sides[0];
+
+      // get current domino highest side
+      const currentHighestSide = cd[0] === startingSuit ? cd[1] : cd[0];
+
+      // check if this domino is better than winning domino
+      if (currentHighestSide > winningHighestSide || wd.sides[0] === wd.sides[1]) {
+        // set the new winning domino
+        wd = { index: i, sides: cd };
+      }
+    }
+
+    const playerNum = (lobby.current_starting_player + wd.index) % 4;
+    return playerNum;
+  } else if (isNilDoublesOwnSuit) {
+    let wd = { index: 0, sides: dominoes[0] }; // winning domino
+    const isStartingDominoDouble = wd.sides[0] === wd.sides[1];
+    for (let i = 1; i < playersInRound; i++) {
+      const cd = dominoes[i]; // current domino sides
+
+      let isOutOfSuit = !cd.includes(startingSuit);
+      if (isStartingDominoDouble) {
+        isOutOfSuit = cd[0] !== cd[1];
+      }
+
+      if (isOutOfSuit) {
+        continue;
+      }
+
+      if (isStartingDominoDouble) {
+        // get highest side of winning domino
+        const winningHighestSide = wd.sides[0];
+
+        // get current domino highest side
+        const currentHighestSide = cd[0];
+
+        // check if this domino is better than winning domino
+        if (currentHighestSide > winningHighestSide) {
+          // set the new winning domino
+          wd = { index: i, sides: cd };
+        }
+      } else {
+        // get highest side of winning domino
+        const winningHighestSide =
+          wd.sides[0] === startingSuit ? wd.sides[1] : wd.sides[0];
+
+        // get current domino highest side
+        const currentHighestSide = cd[0] === startingSuit ? cd[1] : cd[0];
+
+        // check if this domino is better than winning domino
+        if (currentHighestSide > winningHighestSide) {
+          // set the new winning domino
+          wd = { index: i, sides: cd };
+        }
+      }
+    }
   } else if (!isNaN(parseInt(rules.trump))) {
     // the trump is a number
     const trump = +rules.trump;
@@ -496,10 +570,17 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
     for (let i = 1; i < 4; i++) {
       const cd = dominoes[i]; // current domino sides
 
+      const isOutOfSuit = !cd.includes(startingSuit) &&
+        !(cd.includes(trump));
+
+      if (isOutOfSuit) {
+        continue;
+      }
+
       // check if there is a trump on the table
       if (wd.sides[0] === trump || wd.sides[1] === trump) {
         // continue if winning domino is the double
-        if (wd.sides[0] === wd.sides[1]) {
+        if (wd.sides[0] === wd.sides[1] || isOutOfSuit) {
           continue;
         }
 
@@ -550,13 +631,15 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
 
     const playerNum = (lobby.current_starting_player + wd.index) % 4;
     return playerNum;
-  } else if (rules.trump === RULES.FOLLOW_ME) {
+  } else if (rules.trump === RULES.FOLLOW_ME || isNilDoublesHigh) {
     let wd = { index: 0, sides: dominoes[0] }; // winning domino
-    for (let i = 1; i < 4; i++) {
+    for (let i = 1; i < playersInRound; i++) {
       const cd = dominoes[i]; // current domino sides
 
+      const isOutOfSuit = !cd.includes(startingSuit);
+
       // continue if winning domino is the double
-      if (wd.sides[0] === wd.sides[1]) {
+      if (wd.sides[0] === wd.sides[1] || isOutOfSuit) {
         continue;
       }
 
@@ -617,6 +700,8 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
           continue;
         }
 
+        const isOutOfSuit = !cd.includes(startingSuit);
+
         // get higher side of winning domino
         const winningHighestSide =
           wd.sides[0] === startingSuit ? wd.sides[1] : wd.sides[0];
@@ -625,7 +710,7 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
         const currentHighestSide = cd[0] === startingSuit ? cd[1] : cd[0];
 
         // check if this domino is better than winning domino
-        if (currentHighestSide > winningHighestSide) {
+        if (currentHighestSide > winningHighestSide && !isOutOfSuit) {
           // set the new winning domino
           wd = { index: i, sides: cd };
           continue;
