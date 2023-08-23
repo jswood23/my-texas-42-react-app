@@ -947,7 +947,7 @@ export const processEndOfTrick = (lobby: GlobalGameState) => {
         (roundRules.biddingTeam === 1 &&
           lobby.current_team_1_round_score >= roundRules.bid) ||
         (roundRules.biddingTeam === 2 &&
-          lobby.current_team_1_round_score >= 42 - roundRules.bid)
+          lobby.current_team_1_round_score > 42 - roundRules.bid)
       ) {
         isEndOfRound = true;
         lobby = processRoundWinner(lobby, 1);
@@ -970,7 +970,7 @@ export const processEndOfTrick = (lobby: GlobalGameState) => {
         (roundRules.biddingTeam === 2 &&
           lobby.current_team_2_round_score >= roundRules.bid) ||
         (roundRules.biddingTeam === 1 &&
-          lobby.current_team_2_round_score >= 42 - roundRules.bid)
+          lobby.current_team_2_round_score > 42 - roundRules.bid)
       ) {
         isEndOfRound = true;
         lobby = processRoundWinner(lobby, 2);
