@@ -217,7 +217,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     return validMoveResponse;
   }
 
-  const rules: RoundRules = getRoundRules(lobby);
+  const rules = getRoundRules(lobby);
 
   const isCalling = getIsCalling(lobby);
 
@@ -400,13 +400,12 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
   }
 
   // make sure starting suit matches if this is not the first player
-  const playerPosition = getPlayerPosition(lobby); // returns 0 for first player to bid and 3 for last player to bid
+  const playerPosition = getPlayerPosition(lobby); // returns 0 for first player to play and 3 for last player to play
   if (playerPosition) {
-    const roundRules = getRoundRules(lobby);
     const previousMoves = lobby.current_round_history
       .slice(-playerPosition)
       .map(getPlayerMove);
-    const trump = roundRules.trump;
+    const trump = rules.trump;
     const isDoublesTrump = trump === RULES.DOUBLES_TRUMP || trump === RULES.DOUBLES_OWN_SUIT;
     const firstDominoSides = previousMoves[0].move.split('-');
     const thisDominoSides = playerMove.move.split('-');
@@ -476,7 +475,7 @@ export const getPlayerNumByUsername = (lobby: GlobalGameState, username: string)
   if (lobby.team_1.includes(username)) {
     return lobby.team_1.indexOf(username) * 2;
   } else if (lobby.team_2.includes(username)) {
-    return lobby.team_2.indexOf(username) * 2 * 1;
+    return lobby.team_2.indexOf(username) * 2 + 1;
   } else {
     console.log('Player username not found in lobby.');
     return -1;
@@ -484,7 +483,14 @@ export const getPlayerNumByUsername = (lobby: GlobalGameState, username: string)
 }
 
 export const getNilBiddingPlayer = (lobby: GlobalGameState) => {
-  const currentRoundCallMessage = lobby.current_round_history[6];
+  if (lobby.current_round_history.length < 6) {
+    return 0;
+  }
+
+  let currentRoundCallMessage = lobby.current_round_history[5];
+  if ([RULES.SPLASH, RULES.PLUNGE].includes(currentRoundCallMessage.split('\\')[2])) {
+    currentRoundCallMessage = lobby.current_round_history[6];
+  }
   const nilBiddingPlayerUsername = currentRoundCallMessage.split('\\')[0];
   const nilBiddingPlayer = getPlayerNumByUsername(lobby, nilBiddingPlayerUsername);
   return nilBiddingPlayer;
@@ -511,14 +517,14 @@ export const adjustWinningPlayerOfTrick = (lobby: GlobalGameState, winningPlayer
     return winningPlayer;
   }
 
-  const nilBiddingPlayer = getNilBiddingPlayer(lobby);
-  const skippedPlayer = (nilBiddingPlayer + 2) % 4;
+  const nilBiddingPlayerPosition = (getNilBiddingPlayer(lobby) + lobby.current_starting_bidder) % 4;
+  const skippedPlayer = (nilBiddingPlayerPosition + 2) % 4;
 
-  let newWinningPlayer = 0;
+  let newWinningPlayer = lobby.current_starting_player;
   for (let i = 0; i < winningPlayer; i += 1) {
-    newWinningPlayer += 1;
-    if ((lobby.current_starting_player + i) % 4 === skippedPlayer) {
-      newWinningPlayer += 1;
+    newWinningPlayer = (newWinningPlayer + 1) % 4;
+    if (newWinningPlayer === skippedPlayer) {
+      newWinningPlayer = (newWinningPlayer + 1) % 4;
     }
   }
 
@@ -534,6 +540,7 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
   const isNilDoublesHigh = rules.variant === RULES.NIL && rules.trump === RULES.DOUBLES_HIGH;
   const isNilDoublesLow = rules.variant === RULES.NIL && rules.trump === RULES.DOUBLES_LOW;
   const isNilDoublesOwnSuit = rules.variant === RULES.NIL && rules.trump === RULES.DOUBLES_OWN_SUIT;
+
   if (rules.variant === RULES.SEVENS) {
     const differencesFromSeven = dominoes.map((domino) => Math.abs(7 - (domino[0] + domino[1])));
     const smallestDifference = Math.min(...differencesFromSeven);
@@ -569,7 +576,7 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
       }
     }
 
-    const playerNum = (lobby.current_starting_player + wd.index) % 4;
+    const playerNum = adjustWinningPlayerOfTrick(lobby, wd.index);
     return playerNum;
   } else if (isNilDoublesOwnSuit) {
     let wd = { index: 0, sides: dominoes[0] }; // winning domino
@@ -613,6 +620,9 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
         }
       }
     }
+
+    const playerNum = adjustWinningPlayerOfTrick(lobby, wd.index);
+    return playerNum;
   } else if (!isNaN(parseInt(rules.trump))) {
     // the trump is a number
     const trump = +rules.trump;
@@ -712,7 +722,10 @@ export const getWinningPlayerOfTrick = (lobby: GlobalGameState) => {
       }
     }
 
-    const playerNum = (lobby.current_starting_player + wd.index) % 4;
+    let playerNum = (lobby.current_starting_player + wd.index) % 4;
+    if (isNilDoublesHigh) {
+      playerNum = adjustWinningPlayerOfTrick(lobby, wd.index);
+    }
     return playerNum;
   } else if (rules.trump === RULES.DOUBLES_TRUMP) {
     let isStartingSuitTrump = false;
@@ -938,7 +951,7 @@ export const processEndOfTrick = (lobby: GlobalGameState) => {
     const roundRules = getRoundRules(lobby);
 
     // decide who won this trick and how many points they won
-    const winningPlayerOfTrick = adjustWinningPlayerOfTrick(lobby, getWinningPlayerOfTrick(lobby));
+    const winningPlayerOfTrick = getWinningPlayerOfTrick(lobby);
     const winningPlayerUsername = getPlayerUsernameByPosition(lobby, winningPlayerOfTrick);
     const winningTeamOfTrick = winningPlayerOfTrick % 2 === 0 ? 1 : 2;
     const trickScore = getTrickScore(lobby);
