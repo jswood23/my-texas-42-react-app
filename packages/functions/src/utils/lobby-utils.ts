@@ -28,9 +28,13 @@ export interface Lobby {
 
 export interface GlobalGameState extends Lobby {
   all_player_dominoes: string[][]
-  chat_log: string[]
   team_1_connections: string[]
   team_2_connections: string[]
+}
+
+export interface ChatLog {
+  match_id: string
+  messages: string[]
 }
 
 export interface PlayerGameState extends Lobby {
@@ -39,13 +43,13 @@ export interface PlayerGameState extends Lobby {
 
 export const addToGameChat = async (match_id: string, new_message: string) => {
   const params = {
-    TableName: Table.CurrentMatch.tableName,
+    TableName: Table.ChatLog.tableName,
     Key: {
       match_id,
     },
     UpdateExpression: 'SET #cl = list_append(#cl, :new_message)',
     ExpressionAttributeNames: {
-      '#cl': 'chat_log',
+      '#cl': 'messages',
     },
     ExpressionAttributeValues: {
       ':new_message': [new_message],
@@ -130,7 +134,7 @@ const getPlayerGSFromGlobalGS = (lobby: GlobalGameState, connectionId: string) =
   let player_dominoes: string[] = [];
 
   // remove variables specific to the global game state so that the player only gets what they need to know
-  const { all_player_dominoes, chat_log, team_1_connections, team_2_connections, ...gameState } = lobby;
+  const { all_player_dominoes, team_1_connections, team_2_connections, ...gameState } = lobby;
 
   if (all_player_dominoes.length) {
     const playerNum = getPlayerNumByConnId(lobby, connectionId);

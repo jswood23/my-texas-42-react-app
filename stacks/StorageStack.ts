@@ -75,6 +75,19 @@ export function StorageStack({ stack }: StackContext) {
       },
     });
 
+    const chatLogTable = new Table(stack, 'ChatLog', {
+      fields: {
+        match_id: 'string',
+        messages: 'string',
+      },
+      primaryIndex: { partitionKey: 'match_id' },
+      cdk: {
+        table: {
+          pointInTimeRecovery: false,
+        },
+      },
+    });
+
     const currentMatchTable = new Table(stack, 'CurrentMatch', {
       fields: {
         match_id: 'string',
@@ -139,6 +152,7 @@ export function StorageStack({ stack }: StackContext) {
     });
 
     return {
+      chatLogTable,
       currentMatchTable,
       matchHistoryTable,
       notesTable,

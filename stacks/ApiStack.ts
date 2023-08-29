@@ -3,6 +3,7 @@ import { StorageStack } from "./StorageStack";
 
 export function ApiStack({ stack, app }: StackContext) {
     const {
+      chatLogTable,
       currentMatchTable,
       matchHistoryTable,
       notesTable,
@@ -18,6 +19,7 @@ export function ApiStack({ stack, app }: StackContext) {
         authorizer: 'iam',
         function: {
           bind: [
+            chatLogTable,
             currentMatchTable,
             matchHistoryTable,
             notesTable,
