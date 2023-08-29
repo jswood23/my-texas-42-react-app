@@ -962,8 +962,8 @@ export const processEndOfTrick = (lobby: GlobalGameState) => {
     if (winningTeamOfTrick === 1) {
       lobby.current_team_1_round_score += trickScore;
       if (roundRules.variant === RULES.NIL) {
-        if (roundRules.biddingTeam === 2 &&
-          lobby.current_team_1_round_score === 42) {
+        const isRoundOver = lobby.all_player_dominoes[0].length === 0;
+        if (roundRules.biddingTeam === 2 && isRoundOver) {
           isEndOfRound = true;
           lobby = processRoundWinner(lobby, 2);
           lobby = startNextRound(lobby);
@@ -985,8 +985,8 @@ export const processEndOfTrick = (lobby: GlobalGameState) => {
     } else {
       lobby.current_team_2_round_score += trickScore;
       if (roundRules.variant === RULES.NIL) {
-        if (roundRules.biddingTeam === 1 &&
-          lobby.current_team_2_round_score === 42) {
+        const isRoundOver = lobby.all_player_dominoes[1].length === 0;
+        if (roundRules.biddingTeam === 1 && isRoundOver) {
           isEndOfRound = true;
           lobby = processRoundWinner(lobby, 1);
           lobby = startNextRound(lobby);
