@@ -100,12 +100,11 @@ export const getPlayerPosition = (lobby: GlobalGameState) => {
   const skippedPlayer = (nilBiddingPlayerPosition + 2) % 4;
 
   let newPosition = 0;
-  if (lobby.current_player_turn !== lobby.current_player_turn) {
-    for (let i = lobby.current_starting_player; i !== lobby.current_player_turn; i += 1) {
+  if (lobby.current_starting_player !== lobby.current_player_turn) {
+    let i = lobby.current_starting_player;
+    while (i !== lobby.current_player_turn) {
       newPosition += i !== skippedPlayer ? 1 : 0;
-      if (i >= 4) {
-        i = 0;
-      }
+      i = (i + 1) % 4;
     }
   }
   return newPosition;
