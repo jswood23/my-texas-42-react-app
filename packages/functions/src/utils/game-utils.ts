@@ -96,16 +96,16 @@ export const getPlayerPosition = (lobby: GlobalGameState) => {
     return (lobby.current_player_turn + 4 - lobby.current_starting_player) % 4;
   }
 
-  const nilBiddingPlayerPosition = (getNilBiddingPlayer(lobby) + lobby.current_starting_bidder) % 4;
+  const nilBiddingPlayerPosition = getNilBiddingPlayer(lobby);
   const skippedPlayer = (nilBiddingPlayerPosition + 2) % 4;
 
   let newPosition = 0;
-  if (lobby.current_starting_player !== lobby.current_player_turn) {
-    let i = lobby.current_starting_player;
-    while (i !== lobby.current_player_turn) {
-      newPosition += i !== skippedPlayer ? 1 : 0;
-      i = (i + 1) % 4;
+  let i = lobby.current_starting_player;
+  while (i !== lobby.current_player_turn) {
+    if (i !== skippedPlayer) {
+      newPosition += 1;
     }
+    i = (i + 1) % 4;
   }
   return newPosition;
 }
@@ -405,7 +405,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
       .slice(-playerPosition)
       .map(getPlayerMove);
     const trump = rules.trump;
-    const isDoublesTrump = trump === RULES.DOUBLES_TRUMP || trump === RULES.DOUBLES_OWN_SUIT;
+    const isDoublesOwnSuit = trump === RULES.DOUBLES_TRUMP || trump === RULES.DOUBLES_OWN_SUIT;
     const firstDominoSides = previousMoves[0].move.split('-');
     const thisDominoSides = playerMove.move.split('-');
     const isStartingDominoDouble = firstDominoSides[0] === firstDominoSides[1];
@@ -413,8 +413,15 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
     // set starting suit to either trump or higher suit on starting domino
     let startingSuit = trump;
     let isDominoNotStartingSuit = false;
-    if (isDoublesTrump && isStartingDominoDouble) {
+    if (isDoublesOwnSuit && isStartingDominoDouble) {
       isDominoNotStartingSuit = thisDominoSides[0] !== thisDominoSides[1];
+    } else if (isDoublesOwnSuit && !isStartingDominoDouble) {
+      startingSuit = firstDominoSides[0];
+      if (thisDominoSides[0] === thisDominoSides[1]) {
+        isDominoNotStartingSuit = true;
+      } else {
+        isDominoNotStartingSuit = !thisDominoSides.includes(startingSuit);
+      }
     } else {
       if (!firstDominoSides.includes(trump)) {
         startingSuit = firstDominoSides[0]; // this works before the larger number is always first
@@ -434,7 +441,7 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
       for (let i = 0; i < playerDominoes.length; i++) {
         const playerDominoSides = playerDominoes[i].split('-');
         const playerHasNormalStartingSuit =
-          !isDoublesTrump &&
+          !isDoublesOwnSuit &&
           playerDominoSides.includes(startingSuit) &&
           !(
             startingSuit !== trump &&
@@ -442,10 +449,15 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
             playerDominoSides.includes(trump)
           );
         const playerHasStartingSuitDouble =
-          isDoublesTrump &&
+          isDoublesOwnSuit &&
           isStartingDominoDouble &&
           playerDominoSides[0] === playerDominoSides[1];
-        if (playerHasNormalStartingSuit || playerHasStartingSuitDouble) {
+        const playerHasStartingSuitNotDouble =
+          isDoublesOwnSuit &&
+          !isStartingDominoDouble &&
+          playerDominoSides.includes(startingSuit)
+
+        if (playerHasNormalStartingSuit || playerHasStartingSuitDouble || playerHasStartingSuitNotDouble) {
           playerHasViableDominoes = true;
           break;
         }
@@ -516,7 +528,7 @@ export const adjustWinningPlayerOfTrick = (lobby: GlobalGameState, winningPlayer
     return winningPlayer;
   }
 
-  const nilBiddingPlayerPosition = (getNilBiddingPlayer(lobby) + lobby.current_starting_bidder) % 4;
+  const nilBiddingPlayerPosition = getNilBiddingPlayer(lobby);
   const skippedPlayer = (nilBiddingPlayerPosition + 2) % 4;
 
   let newWinningPlayer = lobby.current_starting_player;
