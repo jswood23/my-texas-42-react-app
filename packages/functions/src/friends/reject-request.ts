@@ -1,4 +1,4 @@
-import { getUserById, getUserByUsername } from "src/utils/user-utils";
+import { getUserByUsername } from "src/utils/user-utils";
 import { dynamoDB, handler } from '@my-texas-42-react-app/core/aws-helpers';
 import { getCurrentUser } from 'src/utils/user-utils';
 import { Table } from "sst/node/table";
@@ -45,7 +45,6 @@ export const main = handler(async (event: any) =>
         ReturnValues: "ALL_NEW",
     };
     
-    console.log('here')
 
     await dynamoDB.update(params);
     return {status: true};

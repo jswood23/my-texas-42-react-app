@@ -1,4 +1,4 @@
-import { getUserById, getUserByUsername } from "src/utils/user-utils";
+import { getUserByUsername } from "src/utils/user-utils";
 import { dynamoDB, handler } from '@my-texas-42-react-app/core/aws-helpers';
 import { getCurrentUser } from 'src/utils/user-utils';
 import { Table } from "sst/node/table";
