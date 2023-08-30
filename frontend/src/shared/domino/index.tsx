@@ -4,6 +4,7 @@ import { THEME } from '../../constants/theme'
 import { Box } from '@mui/material'
 
 interface Props {
+  clickable: boolean
   onClick: () => void
   onHover: () => void
   onDrag: () => void
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const defaultProps = {
+  clickable: false,
   onBlur: () => {},
   onClick: () => {},
   onDrag: () => {},
@@ -40,6 +42,9 @@ const StyledRoot = styled.div<StyledProps>(({
 }) => {
   console.log(`${rotation}deg`)
   return ({
+    '.clickable': {
+      cursor: 'pointer'
+    },
     '.domino-box': {
       backgroundColor: '#FFFEF5',
       border: `black ${strokewidth}px solid`,
@@ -64,6 +69,7 @@ const StyledRoot = styled.div<StyledProps>(({
 })
 
 const Domino = ({
+  clickable,
   onBlur,
   onClick,
   onDrag,
@@ -79,6 +85,8 @@ const Domino = ({
 
   const centerX = placement.startingX - 75 + placement.currentX
   const centerY = placement.startingY - 150 + placement.currentY
+
+  const clickableClassName = clickable ? 'clickable' : ''
 
   const SeparatorLine = (
     <div className="separator-line">
@@ -173,7 +181,7 @@ const Domino = ({
       ypos={centerY}
     >
       <Box
-        className="domino-box"
+        className={`domino-box ${clickableClassName}`}
         onMouseOut={onBlur}
         onClick={onClick}
         onDrag={onDrag}
