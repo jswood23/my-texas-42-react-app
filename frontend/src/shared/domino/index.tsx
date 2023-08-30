@@ -5,6 +5,7 @@ import { Box } from '@mui/material'
 
 interface Props {
   clickable: boolean
+  disabled: boolean
   onClick: () => void
   onHover: () => void
   onDrag: () => void
@@ -15,6 +16,7 @@ interface Props {
 
 const defaultProps = {
   clickable: false,
+  disabled: false,
   onBlur: () => {},
   onClick: () => {},
   onDrag: () => {},
@@ -45,6 +47,13 @@ const StyledRoot = styled.div<StyledProps>(({
     '.clickable': {
       cursor: 'pointer'
     },
+    '.disabled-box': {
+      borderRadius: '10%',
+      position: 'absolute',
+      height: '100%',
+      width: '100%',
+      backgroundColor: 'rgba(0, 0, 0, .2)'
+    },
     '.domino-box': {
       backgroundColor: '#FFFEF5',
       border: `black ${strokewidth}px solid`,
@@ -70,6 +79,7 @@ const StyledRoot = styled.div<StyledProps>(({
 
 const Domino = ({
   clickable,
+  disabled,
   onBlur,
   onClick,
   onDrag,
@@ -86,7 +96,7 @@ const Domino = ({
   const centerX = placement.startingX - 75 + placement.currentX
   const centerY = placement.startingY - 150 + placement.currentY
 
-  const clickableClassName = clickable ? 'clickable' : ''
+  const clickableClassName = (clickable && !disabled) ? 'clickable' : ''
 
   const SeparatorLine = (
     <div className="separator-line">
@@ -189,6 +199,11 @@ const Domino = ({
       >
         {SeparatorLine}
         {returnDots(type)}
+        {disabled &&
+          <div
+            className='disabled-box'
+          />
+        }
       </Box>
     </StyledRoot>
   )
