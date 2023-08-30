@@ -27,13 +27,9 @@ const StyledRoot = styled.div(({ theme }) => ({
 
 interface Props {
   globals: GlobalObj
-  inviteCode: string
-  teamNumber: number
 }
 
-const GameWindow = ({
-  globals
-}: Props) => {
+const GameWindow = ({ globals }: Props) => {
   const [isLoading, setIsLoading] = React.useState(true)
   const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
   const isLobbyFull = globals.gameState.team_1.length === 2 && globals.gameState.team_2.length === 2

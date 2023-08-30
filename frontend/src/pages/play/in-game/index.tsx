@@ -36,8 +36,6 @@ const InGame = ({ globals, inviteCode, onChangeStage, teamNumber }: Props) => {
     <StyledRoot>
       <GameWindow
         globals={globals}
-        inviteCode={inviteCode}
-        teamNumber={teamNumber}
       />
       <ChatBox
         globals={globals}
