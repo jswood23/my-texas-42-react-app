@@ -155,7 +155,6 @@ export function StorageStack({ stack }: StackContext) {
       chatLogTable,
       currentMatchTable,
       matchHistoryTable,
-      notesTable,
       rulesetTable,
       socketConnectionTable,
       userInfoTable,
