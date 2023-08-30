@@ -1,6 +1,6 @@
 import { dynamoDB, handler } from '@my-texas-42-react-app/core/aws-helpers';
 import { getCurrentUser } from 'src/utils/user-utils';
-import type { GlobalGameState } from 'src/utils/lobby-utils';
+import type { ChatLog, GlobalGameState } from 'src/utils/lobby-utils';
 import { Table } from 'sst/node/table';
 import * as uuid from "uuid";
 
@@ -44,7 +44,6 @@ export const main = handler(async (event: any) => {
     current_team_2_total_score: 0,
     current_round_history: [],
     total_round_history: [],
-    chat_log: []
   };
   
   const params = {
@@ -53,6 +52,18 @@ export const main = handler(async (event: any) => {
   };
 
   await dynamoDB.put(params);
+
+  const newChatLog: ChatLog = {
+    match_id: newLobby.match_id,
+    messages: [],
+  };
+
+  const chatLogParams = {
+    TableName: Table.ChatLog.tableName,
+    Item: newChatLog
+  }
+
+  await dynamoDB.put(chatLogParams);
 
   return { match_invite_code: params.Item.match_invite_code };
 });

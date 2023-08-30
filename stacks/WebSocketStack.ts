@@ -3,6 +3,7 @@ import { StorageStack } from "./StorageStack"
 
 export function WebSocketStack({stack, app}: StackContext) {
   const {
+    chatLogTable,
     currentMatchTable,
     matchHistoryTable,
     socketConnectionTable,
@@ -13,6 +14,7 @@ export function WebSocketStack({stack, app}: StackContext) {
     defaults: {
       function: {
         bind: [
+          chatLogTable,
           currentMatchTable,
           matchHistoryTable,
           socketConnectionTable,

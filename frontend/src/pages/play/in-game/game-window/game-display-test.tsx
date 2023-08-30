@@ -35,8 +35,9 @@ const GameDisplay = ({ globals }: Props) => {
 
   const showPastMoves = () => {
     const pastMoves = gameState.current_round_history.slice().reverse()
+    let i = 0
     return pastMoves.map((pastMove) => {
-      return <Typography key={pastMove}>{pastMove}</Typography>
+      return <Typography key={`move-history-${i++}`}>{pastMove}</Typography>
     })
   }
 
