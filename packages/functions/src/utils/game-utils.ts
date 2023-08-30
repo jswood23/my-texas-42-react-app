@@ -455,7 +455,8 @@ export const checkValidity = (lobby: GlobalGameState, playerMove: PlayerMove) =>
         const playerHasStartingSuitNotDouble =
           isDoublesOwnSuit &&
           !isStartingDominoDouble &&
-          playerDominoSides.includes(startingSuit)
+          playerDominoSides.includes(startingSuit) &&
+          playerDominoSides[0] !== playerDominoSides[1];
 
         if (playerHasNormalStartingSuit || playerHasStartingSuitDouble || playerHasStartingSuitNotDouble) {
           playerHasViableDominoes = true;
