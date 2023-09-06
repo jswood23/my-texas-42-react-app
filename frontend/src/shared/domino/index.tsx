@@ -28,7 +28,7 @@ interface StyledProps {
   multiplier: number
   rotation: number
   squaresize: number
-  strokewidth: number
+  strokeWidth: number
   xpos: number
   ypos: number
 }
@@ -38,11 +38,10 @@ const StyledRoot = styled.div<StyledProps>(({
   multiplier,
   rotation,
   squaresize,
-  strokewidth,
+  strokeWidth,
   xpos,
   ypos
 }) => {
-  console.log(`${rotation}deg`)
   return ({
     '.clickable': {
       cursor: 'pointer'
@@ -56,7 +55,7 @@ const StyledRoot = styled.div<StyledProps>(({
     },
     '.domino-box': {
       backgroundColor: '#FFFEF5',
-      border: `black ${strokewidth}px solid`,
+      border: `black ${strokeWidth}px solid`,
       borderRadius: '10%',
       height: `${squaresize * 2}px`,
       width: `${squaresize}px`,
@@ -184,9 +183,9 @@ const Domino = ({
     <StyledRoot
       duration={placement.duration}
       multiplier={multiplier}
-      rotation={placement.rotation}
+      rotation={-placement.rotation}
       squaresize={squareSize}
-      strokewidth={strokeWidth}
+      strokeWidth={strokeWidth}
       xpos={centerX}
       ypos={centerY}
     >
@@ -197,7 +196,7 @@ const Domino = ({
         onDrag={onDrag}
         onMouseOver={onHover}
       >
-        {SeparatorLine}
+        {Boolean(type) && SeparatorLine}
         {returnDots(type)}
         {disabled &&
           <div
