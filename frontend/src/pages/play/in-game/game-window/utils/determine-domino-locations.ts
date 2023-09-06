@@ -51,7 +51,7 @@ export const getShuffledDominoes = (windowWidth: number, windowHeight: number) =
         currentY: 0,
         size: size / 100 * windowWidth,
         rotation: 0,
-        duration: 0.75
+        duration: 0.5
       }
     }
     allDominoes.push(newDomino)
@@ -111,7 +111,7 @@ export const getStartingDominoes = (windowWidth: number, windowHeight: number) =
         currentY: 0,
         size: size / 100 * windowWidth,
         rotation: r,
-        duration: 0.75
+        duration: 0.5
       }
     }
     allDominoes.push(newDomino)
