@@ -24,7 +24,12 @@ export interface DominoPlacement {
 }
 
 export interface DominoObj {
+  belongsToTrick: number
+  isInPlayerHand: boolean
+  isDisabled: boolean
+  isPlayable: boolean
   placement: DominoPlacement
+  trickWinningTeam: number
 }
 
 export interface GameState {
