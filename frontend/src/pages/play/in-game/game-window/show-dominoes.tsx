@@ -1,7 +1,7 @@
 import { type DominoPlacement, type DominoObj, type GlobalObj } from '../../../../types'
 import * as React from 'react'
 import Domino from '../../../../shared/domino'
-import { defaultDominoObj, getShuffledDominoes, getStartingDominoes } from './utils/determine-domino-locations'
+import { defaultDominoObj, getShuffledDominoes, getStartingDominoes, placePlayerHand } from './utils/determine-domino-locations'
 
 interface Props {
   globals: GlobalObj
@@ -14,11 +14,14 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
   const [dominoes, setDominoes] = React.useState([] as DominoObj[])
   const [hoveredDomino, setHoveredDomino] = React.useState(-1)
   const [playerHand, setPlayerHand] = React.useState([] as DominoObj[])
-  const [stagedDomino, setStagedDomino] = React.useState<DominoObj | null>(null)
+  const [stagedDomino, setStagedDomino] = React.useState<DominoObj | null | undefined>()
+
+  const playerDominoSize = 10
+  const otherDominoSize = 8
 
   const startNewRound = React.useCallback(() => {
     setTimeout(() => {
-      const newDominoes = getStartingDominoes(windowWidth, windowHeight)
+      const newDominoes = getStartingDominoes(windowWidth, windowHeight, playerDominoSize, otherDominoSize)
 
       // show the player's dominoes
       let i = 0
@@ -62,7 +65,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
         }
       }
 
-      if (stagedDomino !== null) {
+      if (stagedDomino) {
         if (stagedDomino.type === domino.type) {
           newStagedDomino = null
           newPlayerHand.push(domino)
@@ -93,7 +96,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
 
   React.useEffect(() => {
     if (globals.gameState.current_round_history.length === 0) {
-      setDominoes(getShuffledDominoes(windowWidth, windowHeight))
+      setDominoes(getShuffledDominoes(windowWidth, windowHeight, otherDominoSize))
       setDealingDominoes(true)
     }
   }, [globals.gameState.current_round_history.length])
@@ -104,6 +107,10 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
       setDealingDominoes(false)
     }
   }, [dealingDominoes, setDealingDominoes])
+
+  React.useEffect(() => {
+    if (stagedDomino !== undefined) { placePlayerHand(windowWidth, windowHeight, playerDominoSize, otherDominoSize, playerHand, stagedDomino, dominoes, setDominoes) }
+  }, [stagedDomino])
 
   const displayDominoes = () => {
     const hoverSizeMultiplier = 1.2

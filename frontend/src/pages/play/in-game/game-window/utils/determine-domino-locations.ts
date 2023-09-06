@@ -29,11 +29,13 @@ const shuffleList = (oldList: any[]) => {
   return newList
 }
 
-export const getShuffledDominoes = (windowWidth: number, windowHeight: number) => {
+const pos = (x: number, windowWidth: number) => x / 100 * windowWidth
+
+export const getShuffledDominoes = (windowWidth: number, windowHeight: number, dominoSize: number) => {
   const allDominoes: DominoObj[] = []
 
   for (let i = 0; i < 28; i += 1) {
-    const size = 8
+    const size = dominoSize
     const column = i % 7
     const row = (i - column) / 7
     const spacingX = (size / 2) + (size / 6)
@@ -45,11 +47,11 @@ export const getShuffledDominoes = (windowWidth: number, windowHeight: number) =
       ...defaultDominoObj,
       index: i,
       placement: {
-        startingX: x / 100 * windowWidth,
-        startingY: y / 100 * windowHeight,
+        startingX: pos(x, windowWidth),
+        startingY: pos(y, windowHeight),
         currentX: 0,
         currentY: 0,
-        size: size / 100 * windowWidth,
+        size: pos(size, windowWidth),
         rotation: 0,
         duration: 0.5
       }
@@ -60,12 +62,12 @@ export const getShuffledDominoes = (windowWidth: number, windowHeight: number) =
   return shuffleList(allDominoes)
 }
 
-export const getStartingDominoes = (windowWidth: number, windowHeight: number) => {
+export const getStartingDominoes = (windowWidth: number, windowHeight: number, playerDominoSize: number, otherDominoSize: number) => {
   const allDominoes: DominoObj[] = []
 
   for (let i = 0; i < 28; i += 1) {
     const thisPlayerPosition = (i - i % 7) / 7
-    let size = 8
+    let size = otherDominoSize
     const j = i % 7
 
     let x = 0
@@ -74,7 +76,7 @@ export const getStartingDominoes = (windowWidth: number, windowHeight: number) =
 
     switch (thisPlayerPosition) {
       case 0:
-        size = 10
+        size = playerDominoSize
         if (j < 4) {
           x = 50 + (size / 5 * 6) * j - (size / 5 * 6) * 1.5
           y = 75
@@ -105,11 +107,11 @@ export const getStartingDominoes = (windowWidth: number, windowHeight: number) =
       ...defaultDominoObj,
       index: i,
       placement: {
-        startingX: x / 100 * windowWidth,
-        startingY: y / 100 * windowHeight,
+        startingX: pos(x, windowWidth),
+        startingY: pos(y, windowHeight),
         currentX: 0,
         currentY: 0,
-        size: size / 100 * windowWidth,
+        size: pos(size, windowWidth),
         rotation: r,
         duration: 0.5
       }
@@ -118,4 +120,38 @@ export const getStartingDominoes = (windowWidth: number, windowHeight: number) =
   }
 
   return allDominoes
+}
+
+export const placePlayerHand = (windowWidth: number, windowHeight: number, playerDominoSize: number, otherDominoSize: number, playerHand: DominoObj[], stagedDomino: DominoObj | null | undefined, dominoes: DominoObj[], setDominoes: (d: DominoObj[]) => void) => {
+  const newDominoes = dominoes.map(a => ({ ...a }))
+
+  if (stagedDomino) {
+    const d = newDominoes[stagedDomino.index]
+    d.placement.startingX = pos(50, windowWidth)
+    d.placement.startingY = pos(50 + otherDominoSize * 1.1, windowHeight)
+    d.placement.size = pos(otherDominoSize, windowWidth)
+    d.placement.rotation = 0
+  }
+
+  const dominoesInHand = playerHand.length
+  for (let i = 0; i < dominoesInHand; i++) {
+    const d = newDominoes[playerHand[i].index]
+    const startY = dominoesInHand <= 4 ? 80 : 75
+    if (i < 4) {
+      const domsOnRow = Math.min(4, dominoesInHand)
+      const x = 50 + (playerDominoSize / 5 * 6) * i - (playerDominoSize / 5 * 6) * (domsOnRow - 1) / 2
+      d.placement.startingX = pos(x, windowWidth)
+      d.placement.startingY = pos(startY, windowHeight)
+    } else {
+      const domsOnRow = dominoesInHand - 4
+      const x = 50 + (playerDominoSize / 5 * 6) * (i - 4) - (playerDominoSize / 5 * 6) * (domsOnRow - 1) / 2
+      const y = startY + playerDominoSize
+      d.placement.startingX = pos(x, windowWidth)
+      d.placement.startingY = pos(y, windowHeight)
+    }
+    d.placement.size = pos(playerDominoSize, windowWidth)
+    d.placement.rotation = 90
+  }
+
+  setDominoes(newDominoes)
 }
