@@ -1,4 +1,4 @@
-import { type DominoPlacement, type GlobalObj } from '../../../../types'
+import { type DominoObj, type GlobalObj } from '../../../../types'
 import * as React from 'react'
 import Domino from '../../../../shared/domino'
 import { getShuffledDominoes, getStartingDominoes } from './utils/determine-domino-locations'
@@ -12,7 +12,7 @@ interface Props {
 
 const ShowDominoes = ({ globals, newRound = false, windowHeight, windowWidth }: Props) => {
   const [dealDominoes, setDealDominoes] = React.useState(false)
-  const [dominoes, setDominoes] = React.useState([] as DominoPlacement[])
+  const [dominoes, setDominoes] = React.useState([] as DominoObj[])
 
   React.useEffect(() => {
     if (newRound) {
@@ -35,8 +35,8 @@ const ShowDominoes = ({ globals, newRound = false, windowHeight, windowWidth }: 
       return (
       <Domino
         key={`domino-${i}`}
-        placement={domino}
-        type='6-1'
+        placement={domino.placement}
+        type=''
       />
       )
     })

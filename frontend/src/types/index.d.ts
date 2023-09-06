@@ -23,6 +23,10 @@ export interface DominoPlacement {
   duration: number
 }
 
+export interface DominoObj {
+  placement: DominoPlacement
+}
+
 export interface GameState {
   match_name: string
   match_invite_code: string

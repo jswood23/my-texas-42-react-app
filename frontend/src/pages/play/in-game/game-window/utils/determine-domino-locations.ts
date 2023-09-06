@@ -1,7 +1,7 @@
-import { type DominoPlacement } from '../../../../../types'
+import { type DominoObj } from '../../../../../types'
 
 export const getStartingDominoes = (windowWidth: number, windowHeight: number) => {
-  const allDominoes: DominoPlacement[] = []
+  const allDominoes: DominoObj[] = []
 
   for (let i = 0; i < 28; i += 1) {
     const thisPlayerPosition = (i - i % 7) / 7
@@ -41,14 +41,16 @@ export const getStartingDominoes = (windowWidth: number, windowHeight: number) =
         break
     }
 
-    const newDomino: DominoPlacement = {
-      startingX: x / 100 * windowWidth,
-      startingY: y / 100 * windowHeight,
-      currentX: 0,
-      currentY: 0,
-      size: size / 100 * windowWidth,
-      rotation: r,
-      duration: 0.75
+    const newDomino: DominoObj = {
+      placement: {
+        startingX: x / 100 * windowWidth,
+        startingY: y / 100 * windowHeight,
+        currentX: 0,
+        currentY: 0,
+        size: size / 100 * windowWidth,
+        rotation: r,
+        duration: 0.75
+      }
     }
     allDominoes.push(newDomino)
   }
@@ -57,7 +59,7 @@ export const getStartingDominoes = (windowWidth: number, windowHeight: number) =
 }
 
 export const getShuffledDominoes = (windowWidth: number, windowHeight: number) => {
-  const allDominoes: DominoPlacement[] = []
+  const allDominoes: DominoObj[] = []
 
   for (let i = 0; i < 28; i += 1) {
     const size = 8
@@ -68,14 +70,16 @@ export const getShuffledDominoes = (windowWidth: number, windowHeight: number) =
     const x = 50 + (column * spacingX) - (spacingX * 3)
     const y = 50 + (row * spacingY) - (spacingY * 3 / 2)
 
-    const newDomino: DominoPlacement = {
-      startingX: x / 100 * windowWidth,
-      startingY: y / 100 * windowHeight,
-      currentX: 0,
-      currentY: 0,
-      size: size / 100 * windowWidth,
-      rotation: 0,
-      duration: 0.75
+    const newDomino: DominoObj = {
+      placement: {
+        startingX: x / 100 * windowWidth,
+        startingY: y / 100 * windowHeight,
+        currentX: 0,
+        currentY: 0,
+        size: size / 100 * windowWidth,
+        rotation: 0,
+        duration: 0.75
+      }
     }
     allDominoes.push(newDomino)
   }
