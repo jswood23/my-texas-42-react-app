@@ -46,7 +46,7 @@ const GameDisplay = ({ globals }: Props) => {
   return (
     <StyledRoot>
       {showGrid && displayGrid()}
-      <ShowDominoes globals={globals} newRound={true} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
+      <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
     </StyledRoot>
   )
 }

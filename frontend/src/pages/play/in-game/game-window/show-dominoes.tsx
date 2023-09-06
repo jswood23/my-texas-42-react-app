@@ -5,21 +5,20 @@ import { getShuffledDominoes, getStartingDominoes } from './utils/determine-domi
 
 interface Props {
   globals: GlobalObj
-  newRound: boolean
   windowHeight: number
   windowWidth: number
 }
 
-const ShowDominoes = ({ globals, newRound = false, windowHeight, windowWidth }: Props) => {
+const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
   const [dealDominoes, setDealDominoes] = React.useState(false)
   const [dominoes, setDominoes] = React.useState([] as DominoObj[])
 
   React.useEffect(() => {
-    if (newRound) {
+    if (globals.gameState.current_round_history.length === 0) {
       setDominoes(getShuffledDominoes(windowWidth, windowHeight))
       setDealDominoes(true)
     }
-  }, [newRound])
+  }, [globals.gameState.current_round_history.length])
 
   React.useEffect(() => {
     if (dealDominoes) {
