@@ -1,7 +1,8 @@
 import { type DominoObj } from '../../../../../types'
 
-const defaultDominoObj: DominoObj = {
+export const defaultDominoObj: DominoObj = {
   belongsToTrick: -1,
+  index: -1,
   isInPlayerHand: false,
   isDisabled: false,
   isPlayable: false,
@@ -42,6 +43,7 @@ export const getShuffledDominoes = (windowWidth: number, windowHeight: number) =
 
     const newDomino: DominoObj = {
       ...defaultDominoObj,
+      index: i,
       placement: {
         startingX: x / 100 * windowWidth,
         startingY: y / 100 * windowHeight,
@@ -101,6 +103,7 @@ export const getStartingDominoes = (windowWidth: number, windowHeight: number) =
 
     const newDomino: DominoObj = {
       ...defaultDominoObj,
+      index: i,
       placement: {
         startingX: x / 100 * windowWidth,
         startingY: y / 100 * windowHeight,

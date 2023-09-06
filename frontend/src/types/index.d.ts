@@ -25,6 +25,7 @@ export interface DominoPlacement {
 
 export interface DominoObj {
   belongsToTrick: number
+  index: number
   isInPlayerHand: boolean
   isDisabled: boolean
   isPlayable: boolean
