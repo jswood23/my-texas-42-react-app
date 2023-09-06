@@ -13,6 +13,27 @@ export interface RoundRules {
   variant: string
 }
 
+export interface DominoPlacement {
+  startingX: number
+  startingY: number
+  currentX: number
+  currentY: number
+  size: number
+  rotation: number
+  duration: number
+}
+
+export interface DominoObj {
+  belongsToTrick: number
+  index: number
+  isInPlayerHand: boolean
+  isDisabled: boolean
+  isPlayable: boolean
+  placement: DominoPlacement
+  trickWinningTeam: number
+  type: string
+}
+
 export interface GameState {
   match_name: string
   match_invite_code: string

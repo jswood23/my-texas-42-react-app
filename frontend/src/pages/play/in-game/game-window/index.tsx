@@ -1,7 +1,7 @@
 import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../../constants'
 import type { GameState, GlobalObj, RoundRules, ServerMessage } from '../../../../types'
 import { CircularProgress } from '@mui/material'
-import GameDisplay from './game-display-test'
+import GameDisplay from './game-display'
 import LobbyWaitingScreen from './lobby-waiting-screen'
 import * as React from 'react'
 import styled from 'styled-components'
@@ -27,16 +27,15 @@ const StyledRoot = styled.div(({ theme }) => ({
 
 interface Props {
   globals: GlobalObj
-  inviteCode: string
-  teamNumber: number
 }
 
-const GameWindow = ({
-  globals
-}: Props) => {
-  const [isLoading, setIsLoading] = React.useState(true)
-  const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
-  const isLobbyFull = globals.gameState.team_1.length === 2 && globals.gameState.team_2.length === 2
+const GameWindow = ({ globals }: Props) => {
+  // TODO: change these back
+  const [isLoading, setIsLoading] = React.useState(false) // should be true
+  // const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
+  // const isLobbyFull = globals.gameState.team_1.length === 2 && globals.gameState.team_2.length === 2
+  const isConnected = true
+  const isLobbyFull = true
 
   React.useEffect(() => {
     if (globals.connection.connectionStatus === CONNECTION_STATES.open) {

@@ -1,6 +1,7 @@
 import { Auth } from 'aws-amplify'
 import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
-import { CONNECTION_STATES, defaultGameState, defaultUserData, requireLoginPages } from './constants'
+import { CONNECTION_STATES, defaultUserData, requireLoginPages } from './constants'
+import { defaultGameState } from './constants/game-constants'
 import { isMobile } from 'react-device-detect'
 import { type WebSocketConnection, type GlobalObj } from './types'
 import * as React from 'react'
