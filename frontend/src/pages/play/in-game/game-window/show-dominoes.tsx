@@ -13,6 +13,8 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
   const [dealingDominoes, setDealingDominoes] = React.useState(false)
   const [dominoes, setDominoes] = React.useState([] as DominoObj[])
   const [hoveredDomino, setHoveredDomino] = React.useState(-1)
+  const [playerHand, setPlayerHand] = React.useState([] as DominoObj[])
+  const [stagedDomino, setStagedDomino] = React.useState<DominoObj | null>(null)
 
   const startNewRound = React.useCallback(() => {
     setTimeout(() => {
@@ -27,6 +29,8 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
         i += 1
       })
       setDominoes(newDominoes)
+      setPlayerHand(newDominoes.slice(0, 7))
+      setStagedDomino(null)
 
       setTimeout(() => {
         // speed up animations after half a second
@@ -39,11 +43,43 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
     }, 1500)
   }, [setDominoes])
 
-  const changeDomino = React.useCallback((newDomino: DominoObj) => {
-    const newDominoes = [...dominoes]
-    newDominoes[newDomino.index] = newDomino
-    setDominoes(newDominoes)
-  }, [dominoes, setDominoes])
+  // const changeDomino = React.useCallback((newDomino: DominoObj) => {
+  //   const newDominoes = [...dominoes]
+  //   newDominoes[newDomino.index] = newDomino
+  //   setDominoes(newDominoes)
+  // }, [dominoes, setDominoes])
+
+  const changeStagedDomino = React.useCallback((domino: DominoObj) => {
+    if (domino.isInPlayerHand && domino.isPlayable) {
+      const newPlayerHand = playerHand.map(a => ({ ...a }))
+      let newStagedDomino = stagedDomino
+
+      let playerHandIndex = -1
+      for (let i = 0; i < newPlayerHand.length; i++) {
+        if (domino.type === newPlayerHand[i].type) {
+          playerHandIndex = i
+          break
+        }
+      }
+
+      if (stagedDomino !== null) {
+        if (stagedDomino.type === domino.type) {
+          newStagedDomino = null
+          newPlayerHand.push(domino)
+        } else {
+          newPlayerHand.push(stagedDomino)
+          newStagedDomino = domino
+          newPlayerHand.splice(playerHandIndex, 1)
+        }
+      } else {
+        newStagedDomino = domino
+        newPlayerHand.splice(playerHandIndex, 1)
+      }
+
+      setPlayerHand(newPlayerHand)
+      setStagedDomino(newStagedDomino)
+    }
+  }, [playerHand, stagedDomino, setPlayerHand, setStagedDomino])
 
   const onHoverDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isPlayable) {
@@ -89,6 +125,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
         disabled={domino.isDisabled}
         key={dominoKey}
         onBlur={onBlurDomino}
+        onClick={() => { changeStagedDomino(domino) }}
         onHover={() => { onHoverDomino(domino) }}
         placement={dominoPlacement}
         type={domino.type}

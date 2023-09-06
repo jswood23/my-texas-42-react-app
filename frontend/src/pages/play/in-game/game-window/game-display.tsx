@@ -22,7 +22,11 @@ const GameDisplay = ({ globals }: Props) => {
   const gameWindowWidth = +(THEME.spacing(77.5).slice(0, -2))
   const gameWindowHeight = +(THEME.spacing(67).slice(0, -2))
 
-  const [showGrid, setShowGrid] = React.useState(true)
+  const [showGrid, setShowGrid] = React.useState(false)
+
+  React.useEffect(() => {
+    setShowGrid(false)
+  }, [])
 
   const displayGrid = () => {
     const horizontalLines = () => {
