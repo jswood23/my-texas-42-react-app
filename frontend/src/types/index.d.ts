@@ -30,6 +30,7 @@ export interface DominoObj {
   isPlayable: boolean
   placement: DominoPlacement
   trickWinningTeam: number
+  type: string
 }
 
 export interface GameState {

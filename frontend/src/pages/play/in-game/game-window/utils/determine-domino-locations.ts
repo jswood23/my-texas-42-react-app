@@ -5,7 +5,6 @@ const defaultDominoObj: DominoObj = {
   isInPlayerHand: false,
   isDisabled: false,
   isPlayable: false,
-  trickWinningTeam: 0,
   placement: {
     startingX: 0,
     startingY: 0,
@@ -14,66 +13,19 @@ const defaultDominoObj: DominoObj = {
     size: 50,
     rotation: 0,
     duration: 0
-  }
+  },
+  trickWinningTeam: 0,
+  type: ''
 }
 
-export const getStartingDominoes = (windowWidth: number, windowHeight: number) => {
-  const allDominoes: DominoObj[] = []
+const shuffleList = (oldList: any[]) => {
+  const newList = [...oldList]
+  for (let i = newList.length - 1; i > 0; i -= 1) {
+    const randomIndex: number = Math.floor(Math.random() * (i + 1));
 
-  for (let i = 0; i < 28; i += 1) {
-    const thisPlayerPosition = (i - i % 7) / 7
-    let size = 8
-    const j = i % 7
-
-    let x = 0
-    let y = 0
-    let r = 0
-
-    switch (thisPlayerPosition) {
-      case 0:
-        x = 15
-        y = 40 + (size / 3 * 2) * j
-        r = 90
-        break
-      case 1:
-        x = 50 + (size / 3 * 2) * j - (size / 3 * 2) * 3
-        y = 25
-        r = 0
-        break
-      case 2:
-        x = 85
-        y = 40 + (size / 3 * 2) * j
-        r = 90
-        break
-      case 3:
-        size = 10
-        if (j < 4) {
-          x = 50 + (size / 5 * 6) * j - (size / 5 * 6) * 1.5
-          y = 75
-        } else {
-          x = 50 + (size / 5 * 6) * j - (size / 5 * 6) * 5
-          y = 75 + size
-        }
-        r = 90
-        break
-    }
-
-    const newDomino: DominoObj = {
-      ...defaultDominoObj,
-      placement: {
-        startingX: x / 100 * windowWidth,
-        startingY: y / 100 * windowHeight,
-        currentX: 0,
-        currentY: 0,
-        size: size / 100 * windowWidth,
-        rotation: r,
-        duration: 0.75
-      }
-    }
-    allDominoes.push(newDomino)
+    [newList[i], newList[randomIndex]] = [newList[randomIndex], newList[i]]
   }
-
-  return allDominoes
+  return newList
 }
 
 export const getShuffledDominoes = (windowWidth: number, windowHeight: number) => {
@@ -97,6 +49,65 @@ export const getShuffledDominoes = (windowWidth: number, windowHeight: number) =
         currentY: 0,
         size: size / 100 * windowWidth,
         rotation: 0,
+        duration: 0.75
+      }
+    }
+    allDominoes.push(newDomino)
+  }
+
+  return shuffleList(allDominoes)
+}
+
+export const getStartingDominoes = (windowWidth: number, windowHeight: number) => {
+  const allDominoes: DominoObj[] = []
+
+  for (let i = 0; i < 28; i += 1) {
+    const thisPlayerPosition = (i - i % 7) / 7
+    let size = 8
+    const j = i % 7
+
+    let x = 0
+    let y = 0
+    let r = 0
+
+    switch (thisPlayerPosition) {
+      case 0:
+        size = 10
+        if (j < 4) {
+          x = 50 + (size / 5 * 6) * j - (size / 5 * 6) * 1.5
+          y = 75
+        } else {
+          x = 50 + (size / 5 * 6) * j - (size / 5 * 6) * 5
+          y = 75 + size
+        }
+        r = 90
+        break
+      case 1:
+        x = 15
+        y = 40 + (size / 3 * 2) * j
+        r = 90
+        break
+      case 2:
+        x = 50 + (size / 3 * 2) * j - (size / 3 * 2) * 3
+        y = 25
+        r = 0
+        break
+      case 3:
+        x = 85
+        y = 40 + (size / 3 * 2) * j
+        r = 90
+        break
+    }
+
+    const newDomino: DominoObj = {
+      ...defaultDominoObj,
+      placement: {
+        startingX: x / 100 * windowWidth,
+        startingY: y / 100 * windowHeight,
+        currentX: 0,
+        currentY: 0,
+        size: size / 100 * windowWidth,
+        rotation: r,
         duration: 0.75
       }
     }

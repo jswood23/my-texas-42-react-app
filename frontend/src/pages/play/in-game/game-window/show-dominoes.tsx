@@ -13,6 +13,19 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
   const [dealDominoes, setDealDominoes] = React.useState(false)
   const [dominoes, setDominoes] = React.useState([] as DominoObj[])
 
+  const startNewRound = () => {
+    setTimeout(() => { setDominoes(getStartingDominoes(windowWidth, windowHeight)) }, 1000)
+
+    // show the player's dominoes
+    let i = 0
+    const newDominoes = [...dominoes]
+    globals.gameState.player_dominoes.forEach(dominoType => {
+      newDominoes[i].type = dominoType
+      i += 1
+    })
+    setDominoes(newDominoes)
+  }
+
   React.useEffect(() => {
     if (globals.gameState.current_round_history.length === 0) {
       setDominoes(getShuffledDominoes(windowWidth, windowHeight))
@@ -22,7 +35,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
 
   React.useEffect(() => {
     if (dealDominoes) {
-      setDominoes(getStartingDominoes(windowWidth, windowHeight))
+      startNewRound()
       setDealDominoes(false)
     }
   }, [dealDominoes, setDealDominoes])
@@ -35,7 +48,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
       <Domino
         key={`domino-${i}`}
         placement={domino.placement}
-        type=''
+        type={domino.type}
       />
       )
     })

@@ -1,7 +1,5 @@
-import { Box, Button, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { type GlobalObj } from '../../../../types'
 import * as React from 'react'
-import Domino from '../../../../shared/domino'
 import styled from 'styled-components'
 import { THEME } from '../../../../constants/theme'
 import ShowDominoes from './show-dominoes'
@@ -24,7 +22,7 @@ const GameDisplay = ({ globals }: Props) => {
   const gameWindowWidth = +(THEME.spacing(77.5).slice(0, -2))
   const gameWindowHeight = +(THEME.spacing(67).slice(0, -2))
 
-  const [showGrid, setShowGrid] = React.useState(false)
+  const [showGrid, setShowGrid] = React.useState(true)
 
   const displayGrid = () => {
     const horizontalLines = () => {
