@@ -3,6 +3,7 @@ import * as React from 'react'
 import styled from 'styled-components'
 import { THEME } from '../../../../constants/theme'
 import ShowDominoes from './show-dominoes'
+import ShowPlayerInfo from './show-player-info'
 
 const StyledRoot = styled.div(({ theme }) => ({
   position: 'relative',
@@ -48,6 +49,7 @@ const GameDisplay = ({ globals }: Props) => {
   return (
     <StyledRoot>
       {showGrid && displayGrid()}
+      <ShowPlayerInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
     </StyledRoot>
   )
