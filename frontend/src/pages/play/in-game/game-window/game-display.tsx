@@ -1,8 +1,11 @@
 import { type GlobalObj } from '../../../../types'
+import { THEME } from '../../../../constants/theme'
 import * as React from 'react'
 import styled from 'styled-components'
-import { THEME } from '../../../../constants/theme'
 import ShowDominoes from './show-dominoes'
+import ShowGameMessages from './show-game-messages'
+import ShowPlayerInfo from './show-player-info'
+import ShowTeamInfo from './show-team-info'
 
 const StyledRoot = styled.div(({ theme }) => ({
   position: 'relative',
@@ -48,6 +51,9 @@ const GameDisplay = ({ globals }: Props) => {
   return (
     <StyledRoot>
       {showGrid && displayGrid()}
+      <ShowPlayerInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
+      <ShowTeamInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
+      <ShowGameMessages globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
     </StyledRoot>
   )

@@ -54,9 +54,10 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
 
   const changeStagedDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isInPlayerHand && domino.isPlayable) {
+      const isPlayerTurn = false
+
       const newPlayerHand = playerHand.map(a => ({ ...a }))
       let newStagedDomino = stagedDomino
-
       let playerHandIndex = -1
       for (let i = 0; i < newPlayerHand.length; i++) {
         if (domino.type === newPlayerHand[i].type) {
@@ -65,18 +66,30 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
         }
       }
 
-      if (stagedDomino) {
-        if (stagedDomino.type === domino.type) {
-          newStagedDomino = null
-          newPlayerHand.push(domino)
+      if (isPlayerTurn) {
+        if (stagedDomino) {
+          if (stagedDomino.type === domino.type) {
+            newStagedDomino = null
+            newPlayerHand.push(domino)
+          } else {
+            newPlayerHand.push(stagedDomino)
+            newStagedDomino = domino
+            newPlayerHand.splice(playerHandIndex, 1)
+          }
         } else {
-          newPlayerHand.push(stagedDomino)
           newStagedDomino = domino
           newPlayerHand.splice(playerHandIndex, 1)
         }
       } else {
-        newStagedDomino = domino
-        newPlayerHand.splice(playerHandIndex, 1)
+        newStagedDomino = null
+        if (stagedDomino) {
+          newPlayerHand.push(stagedDomino)
+        }
+
+        if (playerHandIndex) {
+          newPlayerHand.splice(playerHandIndex, 1)
+          newPlayerHand.unshift(domino)
+        }
       }
 
       setPlayerHand(newPlayerHand)
@@ -110,7 +123,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
 
   React.useEffect(() => {
     if (stagedDomino !== undefined) { placePlayerHand(windowWidth, windowHeight, playerDominoSize, otherDominoSize, playerHand, stagedDomino, dominoes, setDominoes) }
-  }, [stagedDomino])
+  }, [stagedDomino, playerHand])
 
   const displayDominoes = () => {
     const hoverSizeMultiplier = 1.2

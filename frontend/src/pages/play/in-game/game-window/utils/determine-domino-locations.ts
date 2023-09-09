@@ -1,4 +1,5 @@
 import { type DominoObj } from '../../../../../types'
+import { pos } from './helpers'
 
 export const defaultDominoObj: DominoObj = {
   belongsToTrick: -1,
@@ -28,8 +29,6 @@ const shuffleList = (oldList: any[]) => {
   }
   return newList
 }
-
-const pos = (x: number, windowWidth: number) => x / 100 * windowWidth
 
 export const getShuffledDominoes = (windowWidth: number, windowHeight: number, dominoSize: number) => {
   const allDominoes: DominoObj[] = []
