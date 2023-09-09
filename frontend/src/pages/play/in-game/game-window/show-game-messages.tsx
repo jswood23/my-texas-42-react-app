@@ -42,28 +42,31 @@ const MessageBar = styled(Box)<StyledProps>(({ theme, xpos, ypos, width, height 
 const ShowGameMessages = ({ globals, windowHeight, windowWidth }: Props) => {
   const [latestMessage, setLatestMessage] = React.useState('')
   const [buildingMessage, setBuildingMessage] = React.useState('')
+  const lastMessage = globals.gameState.current_round_history.at(-1) ?? '\\'
 
-  const addToBuildingMessage = () => {
-    // console.log(buildingMessage, '/', latestMessage)
+  const addToBuildingMessage = (onClear: () => void) => {
     if (buildingMessage.length < latestMessage.length) {
-      // console.log('adding to building message')
       const nextChar = latestMessage.at(buildingMessage.length) ?? ''
       setBuildingMessage(buildingMessage + nextChar)
+    } else {
+      onClear()
     }
   }
 
   React.useEffect(() => {
     if (globals.gameState.current_round_history.length > 0) {
-      const lastMessage = globals.gameState.current_round_history.at(-1) ?? '\\'
       if (lastMessage.includes('\\')) {
         return () => {}
       }
       setLatestMessage(lastMessage)
       setBuildingMessage('')
-      // const interval = setInterval(addToBuildingMessage, 1000)
-      // return () => { clearInterval(interval) }
     }
-  }, globals.gameState.current_round_history)
+  }, [lastMessage])
+
+  React.useEffect(() => {
+    const interval = setInterval(addToBuildingMessage, 40, () => { clearInterval(interval) })
+    return () => { clearInterval(interval) }
+  }, [latestMessage, buildingMessage])
 
   return (
     <MessageBar
@@ -73,7 +76,7 @@ const ShowGameMessages = ({ globals, windowHeight, windowWidth }: Props) => {
       height={pos(15, windowHeight)}
     >
       <Typography className='message'>
-        {latestMessage}
+        {buildingMessage}
       </Typography>
     </MessageBar>
   )
