@@ -45,7 +45,7 @@ const defaultOtherPlayerList: string[] = []
 
 const ShowPlayerInfo = ({ globals, windowHeight, windowWidth }: Props) => {
   const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
-  const [otherPlayerList, setOtherPlayerList] = React.useState(defaultOtherPlayerList)
+  const [playerList, setPlayerList] = React.useState(defaultOtherPlayerList)
   React.useEffect(() => {
     if (globals.gameState.team_1 && userPosition !== -1) {
       const players = [gameState.team_1[0], gameState.team_2[0], gameState.team_1[1], gameState.team_2[1]]
@@ -56,18 +56,18 @@ const ShowPlayerInfo = ({ globals, windowHeight, windowWidth }: Props) => {
         i = (i + 1) % 4
       } while (i !== userPosition)
 
-      setOtherPlayerList(usernameList)
+      setPlayerList(usernameList)
     }
   }, [globals.gameState.team_1, globals.userData.username])
   const gameState = globals.gameState
 
-  const displayOtherPlayerUsernames = () => {
+  const displayPlayerUsernames = () => {
     if (userPosition === -1) return <></>
 
     const positions = [[35, 86], [0, 30], [35, 13], [70, 30]]
 
     let i = -1
-    return otherPlayerList.map(username => {
+    return playerList.map(username => {
       i += 1
       const isThisPlayerTurn = i === (globals.gameState.current_player_turn - userPosition + 4) % 4
       return (
@@ -91,7 +91,7 @@ const ShowPlayerInfo = ({ globals, windowHeight, windowWidth }: Props) => {
 
   return (
     <>
-      {displayOtherPlayerUsernames()}
+      {displayPlayerUsernames()}
     </>
   )
 }
