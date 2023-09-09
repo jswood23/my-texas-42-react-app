@@ -15,6 +15,7 @@ const StyledRoot = styled.div(({ theme }) => ({
   height: theme.isMobile ? theme.spacing(50) : theme.spacing(67),
   minHeight: theme.spacing(60),
   marginBottom: theme.spacing(2),
+  overflow: 'hidden',
 
   '.circular-progress-container': {
     width: '100%',

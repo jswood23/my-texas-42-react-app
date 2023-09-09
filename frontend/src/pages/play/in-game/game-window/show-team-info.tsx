@@ -1,5 +1,6 @@
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { type GlobalObj } from '../../../../types'
+import { limitString } from '../../../../utils/string-utils'
 import { pos } from './utils/helpers'
 import styled from 'styled-components'
 
@@ -27,9 +28,30 @@ const StyledBox = styled(Box)<StyledProps>(({ theme, xpos, ypos, width, height, 
     width: `${width}px`,
     height: `${height}px`,
 
+    boxShadow: '0 2px 5px 3px #E0E0E0',
+    borderRadius: '5px',
     borderBottom: borderStyle,
     borderRight: isLeftAligned ? borderStyle : 'none',
-    borderLeft: isLeftAligned ? 'none' : borderStyle
+    borderLeft: isLeftAligned ? 'none' : borderStyle,
+    padding: theme.spacing(0.5),
+
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    userSelect: 'none',
+
+    '.team-marks': {
+      fontSize: theme.spacing(2)
+    },
+    '.team-usernames': {
+      color: theme.palette.light.main,
+      fontSize: theme.spacing(1.5),
+      fontStyle: 'italic'
+    },
+    '.team-points': {
+      color: 'black',
+      fontSize: theme.spacing(2)
+    }
   })
 })
 
@@ -44,15 +66,23 @@ const ShowTeamInfo = ({ globals, windowHeight, windowWidth }: Props) => {
         height={pos(30, windowHeight)}
         isleftaligned={(x === 0).toString()}
       >
-
+        <Typography className='team-marks'>
+          Team {teamNumber}: <strong>{marks}</strong>
+        </Typography>
+        <Typography className='team-usernames'>
+          {usernames.map(username => limitString(username, 14)).join(', ')}
+        </Typography>
+        <Typography className='team-points'>
+          {points} point{points !== 1 && 's'}
+        </Typography>
       </StyledBox>
     )
   }
 
   return (
     <>
-      {showTeam(1, globals.gameState.team_1, 0, 0)}
-      {showTeam(2, globals.gameState.team_2, 0, 0)}
+      {showTeam(1, globals.gameState.team_1, globals.gameState.current_team_1_total_score, globals.gameState.current_team_1_round_score)}
+      {showTeam(2, globals.gameState.team_2, globals.gameState.current_team_2_total_score, globals.gameState.current_team_2_round_score)}
     </>
   )
 }
