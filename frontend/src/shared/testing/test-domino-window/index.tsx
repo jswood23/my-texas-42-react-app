@@ -1,5 +1,5 @@
-import { type DominoPlacement } from '../../types'
-import Domino from '../domino'
+import { type DominoPlacement } from '../../../types'
+import Domino from '../../domino'
 import React from 'react'
 import styled from 'styled-components'
 
