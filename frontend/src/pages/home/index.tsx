@@ -6,6 +6,7 @@ import styled from 'styled-components'
 // import DominoWindow from '../../shared/test-domino-window'
 import GameWindow from '../play/in-game/game-window'
 import { Box } from '@mui/material'
+import TestMovesButton from '../../shared/testing/test-moves-button'
 
 interface Props {
   globals: GlobalObj
@@ -19,7 +20,7 @@ const StyledRoot = styled.div({
 
 const Homepage = ({ globals }: Props) => (
   <StyledRoot>
-    <PageContainer globals={globals} title="Home">
+    <PageContainer globals={globals} title="Home" action={<TestMovesButton globals={globals} />}>
       {/* <Box
         className='under-construction-img'
         component='img'
