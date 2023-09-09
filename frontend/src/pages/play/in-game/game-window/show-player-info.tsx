@@ -17,10 +17,11 @@ interface StyledProps {
   ypos: number
   width: number
   height: number
-  isEmphasized: boolean
+  isemphasized: string
 }
 
-const StyledBox = styled(Box)<StyledProps>(({ theme, xpos, ypos, width, height, isEmphasized }) => {
+const StyledBox = styled(Box)<StyledProps>(({ theme, xpos, ypos, width, height, isemphasized }) => {
+  const isEmphasized = isemphasized === 'true'
   return ({
     position: 'absolute',
     display: 'flex',
@@ -49,11 +50,11 @@ const ShowPlayerInfo = ({ globals, windowHeight, windowWidth }: Props) => {
     if (globals.gameState.team_1 && userPosition !== -1) {
       const players = [gameState.team_1[0], gameState.team_2[0], gameState.team_1[1], gameState.team_2[1]]
       const usernameList = []
-      let i = (userPosition + 1) % 4
-      while (i !== userPosition) {
+      let i = userPosition
+      do {
         usernameList.push(players[i])
         i = (i + 1) % 4
-      }
+      } while (i !== userPosition)
 
       setOtherPlayerList(usernameList)
     }
@@ -63,12 +64,12 @@ const ShowPlayerInfo = ({ globals, windowHeight, windowWidth }: Props) => {
   const displayOtherPlayerUsernames = () => {
     if (userPosition === -1) return <></>
 
-    const positions = [[0, 30], [35, 13], [70, 30]]
+    const positions = [[35, 86], [0, 30], [35, 13], [70, 30]]
 
     let i = -1
     return otherPlayerList.map(username => {
       i += 1
-      const isThisPlayerTurn = false
+      const isThisPlayerTurn = i === (globals.gameState.current_player_turn - userPosition + 4) % 4
       return (
         <StyledBox
           key={`username-${username}`}
@@ -76,11 +77,12 @@ const ShowPlayerInfo = ({ globals, windowHeight, windowWidth }: Props) => {
           ypos={pos(positions[i][1], windowHeight)}
           width={pos(30, windowWidth)}
           height={pos(10, windowHeight)}
-          isEmphasized={isThisPlayerTurn}
+          isemphasized={isThisPlayerTurn.toString()}
         >
           <Typography className='other-player-username'>
-            {isThisPlayerTurn && '🡆'}
-            {limitString(username, 26)}
+            {isThisPlayerTurn && '🡆 '}
+            {limitString(username, 24)}
+            {isThisPlayerTurn && ' 🡄'}
           </Typography>
         </StyledBox>
       )

@@ -6,6 +6,5 @@ export const getUserPosition = (gameState: GameState, username: string) => {
   } else if (gameState.team_2.includes(username)) {
     return gameState.team_2.indexOf(username) * 2 + 1
   }
-  console.log(`Error getting user position: ${username} not found in game.`)
   return -1
 }
