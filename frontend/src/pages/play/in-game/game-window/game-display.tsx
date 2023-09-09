@@ -3,6 +3,7 @@ import { THEME } from '../../../../constants/theme'
 import * as React from 'react'
 import styled from 'styled-components'
 import ShowDominoes from './show-dominoes'
+import ShowGameMessages from './show-game-messages'
 import ShowPlayerInfo from './show-player-info'
 import ShowTeamInfo from './show-team-info'
 
@@ -52,6 +53,7 @@ const GameDisplay = ({ globals }: Props) => {
       {showGrid && displayGrid()}
       <ShowPlayerInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowTeamInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
+      <ShowGameMessages globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
     </StyledRoot>
   )
