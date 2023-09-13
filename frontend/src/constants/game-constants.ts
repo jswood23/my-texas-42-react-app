@@ -1,11 +1,5 @@
 import type { GameState } from '../types'
 
-export const MOVE_TYPES = {
-  bid: 'bid',
-  call: 'call',
-  play: 'play'
-}
-
 export const defaultGameState: GameState = {
   match_name: '',
   match_invite_code: '',
@@ -25,4 +19,31 @@ export const defaultGameState: GameState = {
   current_team_2_total_score: 0,
   current_round_history: [],
   total_round_history: []
+}
+
+export const MOVE_TYPES = {
+  bid: 'bid',
+  call: 'call',
+  play: 'play'
+}
+
+export const RULES = {
+  NO_FORCED_BID: 'No forced bid',
+  FORCED_31_BID: 'Forced 31 bid',
+  FORCED_NIL: 'Forced Nil',
+  NIL_2_MARK: '2-mark Nil',
+  SPLASH_2_MARK: '2-mark Splash',
+  PLUNGE_2_MARK: '2-mark Plunge',
+  SEVENS_2_MARK: '2-mark Sevens',
+  DELVE: 'Delve',
+  NIL: 'Nil',
+  SPLASH: 'Splash',
+  PLUNGE: 'Plunge',
+  SEVENS: 'Sevens',
+  DOUBLES_HIGH: 'Doubles-high',
+  DOUBLES_LOW: 'Doubles-low',
+  DOUBLES_OWN_SUIT: 'Doubles-own-suit',
+  DOUBLES_TRUMP: 'Doubles-trump',
+  FOLLOW_ME: 'Follow-me',
+  UNDECIDED: 'Undecided'
 }
