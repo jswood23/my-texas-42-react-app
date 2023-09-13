@@ -1,4 +1,5 @@
-import { type DominoObj } from '../../../../../types'
+import type { GameState, DominoObj } from '../../../../../types'
+import { getUserPosition } from './get-game-information'
 import { pos } from './helpers'
 
 export const defaultDominoObj: DominoObj = {
@@ -153,4 +154,27 @@ export const placePlayerHand = (windowWidth: number, windowHeight: number, playe
   }
 
   setDominoes(newDominoes)
+}
+
+export const showPlayerMove = (windowWidth: number, windowHeight: number, otherDominoSize: number, dominoes: DominoObj[], gameState: GameState, moveDomino: (newDomino: DominoObj) => void, lastMessage: string, userPosition: number) => {
+  const splitMessage = lastMessage.split('\\')
+  const playerPosition = getUserPosition(gameState, splitMessage[0])
+  // TODO: figure out why we have to add 5 here instead of 4
+  const positionOnScreen = (playerPosition - userPosition + gameState.current_starting_player + 5) % 4
+  const stagedPositions = [[0, 1], [-1, 0], [0, -1], [1, 0]]
+
+  if (positionOnScreen > 0) {
+    const playerFirstDomino = positionOnScreen * 7
+    for (let i = playerFirstDomino + 6; i >= playerFirstDomino; i -= 1) {
+      const hasNotBeenPlayed = dominoes[i].trickWinningTeam === 0
+      if (hasNotBeenPlayed) {
+        const newDomino: DominoObj = { ...dominoes[i] }
+        newDomino.type = splitMessage[2]
+        newDomino.placement.startingX = pos(50 + stagedPositions[positionOnScreen][0] * otherDominoSize, windowWidth)
+        newDomino.placement.startingY = pos(50 + stagedPositions[positionOnScreen][1] * otherDominoSize, windowHeight)
+        moveDomino(newDomino)
+        break
+      }
+    }
+  }
 }

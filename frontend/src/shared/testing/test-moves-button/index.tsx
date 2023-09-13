@@ -18,7 +18,8 @@ const plays = [
   'Player 2\\play\\5-5',
   'Player 1\\play\\5-4',
   'jswood23\\play\\6-5',
-  'Player 3\\play\\5-3'
+  'Player 3\\play\\5-3',
+  'Team 2(Player 2) wins trick worth 11 points.'
 ]
 
 const TestMovesButton = ({ globals }: Props) => {

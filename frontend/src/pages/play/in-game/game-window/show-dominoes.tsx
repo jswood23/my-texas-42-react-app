@@ -1,20 +1,25 @@
+import { defaultDominoObj, getShuffledDominoes, getStartingDominoes, placePlayerHand, showPlayerMove } from './utils/determine-domino-locations'
 import { type DominoPlacement, type DominoObj, type GlobalObj } from '../../../../types'
+import { getUserPosition } from './utils/get-game-information'
+import { MOVE_TYPES } from '../../../../constants/game-constants'
 import * as React from 'react'
 import Domino from '../../../../shared/domino'
-import { defaultDominoObj, getShuffledDominoes, getStartingDominoes, placePlayerHand } from './utils/determine-domino-locations'
 
 interface Props {
   globals: GlobalObj
   windowHeight: number
   windowWidth: number
+  lastMessage: string
 }
 
-const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
+const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props) => {
+  const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
   const [dealingDominoes, setDealingDominoes] = React.useState(false)
   const [dominoes, setDominoes] = React.useState([] as DominoObj[])
   const [hoveredDomino, setHoveredDomino] = React.useState(-1)
   const [playerHand, setPlayerHand] = React.useState([] as DominoObj[])
   const [stagedDomino, setStagedDomino] = React.useState<DominoObj | null | undefined>()
+  const [allStagedDominoes, setAllStagedDominoes] = React.useState([] as DominoObj[])
 
   const playerDominoSize = 10
   const otherDominoSize = 8
@@ -46,11 +51,11 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
     }, 1500)
   }, [setDominoes])
 
-  // const changeDomino = React.useCallback((newDomino: DominoObj) => {
-  //   const newDominoes = [...dominoes]
-  //   newDominoes[newDomino.index] = newDomino
-  //   setDominoes(newDominoes)
-  // }, [dominoes, setDominoes])
+  const moveDomino = React.useCallback((newDomino: DominoObj) => {
+    const newDominoes = [...dominoes]
+    newDominoes[newDomino.index] = newDomino
+    setDominoes(newDominoes)
+  }, [dominoes, setDominoes])
 
   const changeStagedDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isInPlayerHand && domino.isPlayable) {
@@ -111,8 +116,23 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
     if (globals.gameState.current_round_history.length === 0) {
       setDominoes(getShuffledDominoes(windowWidth, windowHeight, otherDominoSize))
       setDealingDominoes(true)
+    } else {
+      let shouldShowPlayerMove = false
+      let messageToShow = lastMessage
+      if (lastMessage.includes('\\')) {
+        if (lastMessage.split('\\')[1] === MOVE_TYPES.play) {
+          shouldShowPlayerMove = true
+        }
+      } else if (lastMessage.includes('wins trick')) {
+        shouldShowPlayerMove = true
+        messageToShow = globals.gameState.current_round_history.at(-2) ?? lastMessage
+      }
+
+      if (shouldShowPlayerMove) {
+        showPlayerMove(windowWidth, windowHeight, otherDominoSize, dominoes, globals.gameState, moveDomino, messageToShow, userPosition)
+      }
     }
-  }, [globals.gameState.current_round_history.length])
+  }, [globals.gameState.current_round_history, lastMessage])
 
   React.useEffect(() => {
     if (dealingDominoes) {

@@ -56,7 +56,7 @@ const GameDisplay = ({ globals }: Props) => {
       <ShowPlayerInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowTeamInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowGameMessages globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} />
-      <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
+      <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} />
       <ShowBids globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
     </StyledRoot>
   )
