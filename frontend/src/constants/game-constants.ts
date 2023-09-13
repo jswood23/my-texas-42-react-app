@@ -1,11 +1,11 @@
 import type { GameState } from '../types'
 
-// const roundRules = {
-//   bid: 31,
-//   biddingTeam: 1,
-//   trump: 'Follow-me',
-//   variant: ''
-// }
+const roundRules = {
+  bid: 31,
+  biddingTeam: 1,
+  trump: 'Follow-me',
+  variant: ''
+}
 
 export const defaultGameState: GameState = {
   match_name: '',
@@ -14,11 +14,11 @@ export const defaultGameState: GameState = {
   team_1: ['Player 1', 'Player 3'],
   team_2: ['jswood23', 'Player 2'],
   current_round: 0,
-  current_starting_bidder: 0,
-  current_starting_player: 0,
-  current_is_bidding: true,
-  current_player_turn: 0,
-  current_round_rules: '', // roundRules or empty string
+  current_starting_bidder: 3,
+  current_starting_player: 3,
+  current_player_turn: 3,
+  current_is_bidding: false,
+  current_round_rules: roundRules, // roundRules or empty string
   player_dominoes: ['6-1', '6-2', '6-3', '6-4', '6-5', '6-0', '6-6'],
   current_team_1_round_score: 0,
   current_team_2_round_score: 0,
