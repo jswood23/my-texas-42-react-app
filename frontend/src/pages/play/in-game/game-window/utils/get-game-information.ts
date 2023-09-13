@@ -10,6 +10,15 @@ export const getBidString = (bid: number) => {
   return bid.toString()
 }
 
+export const getIsCalling = (lobby: GameState) => {
+  if (typeof lobby.current_round_rules === 'string') {
+    return false
+  }
+
+  return !lobby.current_is_bidding &&
+    lobby.current_round_rules.trump === RULES.UNDECIDED
+}
+
 export const getUserPosition = (gameState: GameState, username: string) => {
   if (gameState.team_1.includes(username)) {
     return gameState.team_1.indexOf(username) * 2
