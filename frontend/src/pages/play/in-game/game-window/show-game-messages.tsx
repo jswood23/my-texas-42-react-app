@@ -65,9 +65,9 @@ const ShowGameMessages = ({ globals, windowHeight, windowWidth, lastMessage }: P
 
   React.useEffect(() => {
     if (globals.gameState.current_round_history.length > 0) {
-      // if (lastMessage.includes('\\')) {
-      //   return () => {}
-      // }
+      if (lastMessage.includes('\\')) {
+        return () => {}
+      }
       setLatestMessage(lastMessage)
       setBuildingMessage('')
     }
