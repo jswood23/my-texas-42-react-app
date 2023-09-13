@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import { getBidString, getUserPosition } from './utils/get-game-information'
+import { getBidString, getIsCalling, getUserPosition } from './utils/get-game-information'
 import { type GlobalObj } from '../../../../types'
 import { pos } from './utils/helpers'
 import * as React from 'react'
@@ -38,6 +38,7 @@ const StyledBox = styled(Box)<StyledProps>(({ theme, xpos, ypos, width, height }
 })
 
 const ShowBids = ({ globals, windowHeight, windowWidth }: Props) => {
+  const shouldShowBids = React.useMemo(() => globals.gameState.current_is_bidding || getIsCalling(globals.gameState), [globals.gameState])
   const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
 
   const displayBids = React.useCallback(() => {
@@ -73,7 +74,7 @@ const ShowBids = ({ globals, windowHeight, windowWidth }: Props) => {
 
   return (
     <>
-      {globals.gameState.current_is_bidding && displayBids()}
+      {shouldShowBids && displayBids()}
     </>
   )
 }
