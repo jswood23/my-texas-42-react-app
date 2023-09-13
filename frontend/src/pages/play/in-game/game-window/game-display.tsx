@@ -24,6 +24,7 @@ interface Props {
 const GameDisplay = ({ globals }: Props) => {
   const gameWindowWidth = +(THEME.spacing(77.5).slice(0, -2))
   const gameWindowHeight = +(THEME.spacing(67).slice(0, -2))
+  const lastMessage = globals.gameState.current_round_history.at(-1) ?? '\\'
 
   const [showGrid, setShowGrid] = React.useState(false)
 
@@ -53,7 +54,7 @@ const GameDisplay = ({ globals }: Props) => {
       {showGrid && displayGrid()}
       <ShowPlayerInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowTeamInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
-      <ShowGameMessages globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
+      <ShowGameMessages globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} />
       <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
     </StyledRoot>
   )

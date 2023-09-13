@@ -8,6 +8,7 @@ interface Props {
   globals: GlobalObj
   windowHeight: number
   windowWidth: number
+  lastMessage: string
 }
 
 interface StyledProps {
@@ -39,10 +40,9 @@ const MessageBar = styled(Box)<StyledProps>(({ theme, xpos, ypos, width, height 
   })
 })
 
-const ShowGameMessages = ({ globals, windowHeight, windowWidth }: Props) => {
+const ShowGameMessages = ({ globals, windowHeight, windowWidth, lastMessage }: Props) => {
   const [latestMessage, setLatestMessage] = React.useState('')
   const [buildingMessage, setBuildingMessage] = React.useState('')
-  const lastMessage = globals.gameState.current_round_history.at(-1) ?? '\\'
 
   const addToBuildingMessage = (onClear: () => void) => {
     if (buildingMessage.length < latestMessage.length) {
