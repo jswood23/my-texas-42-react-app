@@ -1,9 +1,9 @@
 import { Box, Typography } from '@mui/material'
+import { getBidString, getUserPosition } from './utils/get-game-information'
 import { type GlobalObj } from '../../../../types'
 import { pos } from './utils/helpers'
 import * as React from 'react'
 import styled from 'styled-components'
-import { getUserPosition } from './utils/get-game-information'
 
 interface Props {
   globals: GlobalObj
@@ -48,13 +48,7 @@ const ShowBids = ({ globals, windowHeight, windowWidth }: Props) => {
 
     for (let i = 0; i < bidsSoFar; i += 1) {
       const bid = +(globals.gameState.current_round_history[i].split('\\')[2])
-      if (bid === 0) {
-        bids.push('pass')
-      } else if (bid % 42 === 0) {
-        bids.push(`${(bid / 42)}-mark`)
-      } else {
-        bids.push(bid.toString())
-      }
+      bids.push(getBidString(bid))
     }
 
     let i = -1
