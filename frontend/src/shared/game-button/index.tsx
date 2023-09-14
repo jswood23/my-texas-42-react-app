@@ -8,6 +8,7 @@ interface Props {
   width: number
   height: number
   text: string
+  fontSize: number
   disabled: boolean
   onClick: () => void
 }
@@ -34,14 +35,16 @@ const StyledButton = styled(Button)<StyledProps>(({ theme, xpos, ypos, width, he
   })
 })
 
-const GameButton = ({ xpos, ypos, width, height, text, disabled, onClick }: Props) => {
+const GameButton = ({ xpos, ypos, width, height, text, fontSize, disabled, onClick }: Props) => {
   return (
     <StyledButton
+      variant='contained'
       xpos={xpos}
       ypos={ypos}
       width={width}
       height={height}
       onClick={onClick}
+      disabled={disabled}
     >
       {text}
     </StyledButton>
