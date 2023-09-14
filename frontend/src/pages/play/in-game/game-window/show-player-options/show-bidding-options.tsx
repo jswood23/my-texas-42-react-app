@@ -12,17 +12,23 @@ interface Props {
 
 const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
   const currentHighestBid = React.useMemo(() => getCurrentHighestBid(globals.gameState.current_round_history), [globals.gameState.current_round_history])
+  const [currentBid, setCurrentBid] = React.useState(-1)
 
   return (
-    <GameButton
-      xpos={pos(50, windowWidth)}
-      ypos={pos(50, windowHeight)}
-      width={pos(10, windowWidth)}
-      height={pos(5, windowHeight)}
-      fontSize={pos(2, windowWidth)}
-      text='howdy there'
-      onClick={() => { console.log('click me') }}
-    />
+    <>
+      <GameButton
+        xpos={pos(45, windowWidth)}
+        ypos={pos(55, windowHeight)}
+        width={pos(10, windowWidth)}
+        height={pos(5, windowHeight)}
+        fontSize={pos(20, windowWidth)}
+        disabled={(currentBid >= 0)}
+        text="Bid"
+        onClick={() => {
+          console.log('click me')
+        }}
+      />
+    </>
   )
 }
 
