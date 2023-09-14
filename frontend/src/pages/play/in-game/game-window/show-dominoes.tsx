@@ -14,6 +14,7 @@ interface Props {
 
 const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props) => {
   const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
+  const isUserTurn = React.useMemo(() => userPosition === globals.gameState.current_player_turn, [userPosition, globals.gameState.current_player_turn])
   const [dealingDominoes, setDealingDominoes] = React.useState(false)
   const [dominoes, setDominoes] = React.useState([] as DominoObj[])
   const [hoveredDomino, setHoveredDomino] = React.useState(-1)
@@ -70,8 +71,6 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
 
   const changeStagedDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isInPlayerHand && domino.isPlayable) {
-      const isPlayerTurn = true
-
       const newPlayerHand = playerHand.map(a => ({ ...a }))
       let newStagedDomino = stagedDomino
       let playerHandIndex = -1
@@ -82,7 +81,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
         }
       }
 
-      if (isPlayerTurn) {
+      if (isUserTurn) {
         if (stagedDomino) {
           if (stagedDomino.type === domino.type) {
             newStagedDomino = null
@@ -97,11 +96,6 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
           newPlayerHand.splice(playerHandIndex, 1)
         }
       } else {
-        newStagedDomino = null
-        if (stagedDomino) {
-          newPlayerHand.push(stagedDomino)
-        }
-
         if (playerHandIndex) {
           newPlayerHand.splice(playerHandIndex, 1)
           newPlayerHand.unshift(domino)
@@ -111,7 +105,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
       setPlayerHand(newPlayerHand)
       setStagedDomino(newStagedDomino)
     }
-  }, [playerHand, stagedDomino, setPlayerHand, setStagedDomino])
+  }, [isUserTurn, playerHand, stagedDomino, setPlayerHand, setStagedDomino])
 
   const onHoverDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isPlayable) {
