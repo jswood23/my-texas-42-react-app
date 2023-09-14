@@ -32,16 +32,20 @@ const TestMovesButton = ({ globals }: Props) => {
 
   const nextMove = () => {
     const newGameState = { ...globals.gameState }
-    if (newGameState.current_round_history.length < moves.length) {
-      const newMove = moves[newGameState.current_round_history.length]
+    const skip = newGameState.current_round_history.length % 5 === 3
+    const iterations = skip ? 2 : 1
+    for (let i = 0; i < iterations; i += 1) {
+      if (newGameState.current_round_history.length < moves.length) {
+        const newMove = moves[newGameState.current_round_history.length]
 
-      if (newMove.includes('\\')) {
-        newGameState.current_player_turn = (newGameState.current_player_turn + 1) % 4
-      } else if (newMove.includes(' has won')) {
-        newGameState.current_player_turn = getUserPosition(globals.gameState, newMove.split(' has won')[0])
+        if (newMove.includes('\\')) {
+          newGameState.current_player_turn = (newGameState.current_player_turn + 1) % 4
+        } else if (newMove.includes(' has won')) {
+          newGameState.current_player_turn = getUserPosition(globals.gameState, newMove.split(' has won')[0])
+        }
+
+        newGameState.current_round_history.push(newMove)
       }
-
-      newGameState.current_round_history.push(newMove)
     }
     globals.setGameState(newGameState)
   }

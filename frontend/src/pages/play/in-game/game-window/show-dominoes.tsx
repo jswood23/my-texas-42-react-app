@@ -23,6 +23,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
   const [otherStagedDominoes, setOtherStagedDominoes] = React.useState([] as DominoObj[])
   const [team1Tricks, setTeam1Tricks] = React.useState(0)
   const [team2Tricks, setTeam2Tricks] = React.useState(0)
+  const [isEndOfTrick, setIsEndOfTrick] = React.useState(false)
 
   const playerDominoSize = 10
   const otherDominoSize = 8
@@ -129,15 +130,9 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
           shouldShowPlayerMove = true
         }
       } else if (lastMessage.includes('wins trick')) {
-        const winningTeam = +lastMessage[5]
-        const teamTricks = winningTeam === 1 ? team1Tricks : team2Tricks
-        const setTeamTricks = winningTeam === 1 ? setTeam1Tricks : setTeam2Tricks
         shouldShowPlayerMove = true
         messageToShow = globals.gameState.current_round_history.at(-2) ?? lastMessage
-        setTimeout(
-          () => { showEndOfTrick(windowWidth, windowHeight, trickDominoSize, stagedDomino as DominoObj, setStagedDomino, otherStagedDominoes, setOtherStagedDominoes, winningTeam, teamTricks, setTeamTricks, moveDominoes) },
-          1000
-        )
+        setIsEndOfTrick(true)
       }
 
       if (shouldShowPlayerMove) {
@@ -145,6 +140,19 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
       }
     }
   }, [globals.gameState.current_round_history, lastMessage])
+
+  React.useEffect(() => {
+    if (isEndOfTrick) {
+      const winningTeam = +lastMessage[5]
+      const teamTricks = winningTeam === 1 ? team1Tricks : team2Tricks
+      const setTeamTricks = winningTeam === 1 ? setTeam1Tricks : setTeam2Tricks
+      setTimeout(
+        () => { showEndOfTrick(windowWidth, windowHeight, trickDominoSize, stagedDomino as DominoObj, setStagedDomino, otherStagedDominoes, setOtherStagedDominoes, winningTeam, teamTricks, setTeamTricks, moveDominoes) },
+        1000
+      )
+      setIsEndOfTrick(false)
+    }
+  }, [globals.gameState.current_round_history, lastMessage, isEndOfTrick])
 
   React.useEffect(() => {
     if (dealingDominoes) {
