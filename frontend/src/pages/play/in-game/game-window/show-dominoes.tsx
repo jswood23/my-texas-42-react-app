@@ -72,6 +72,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
 
   const changeStagedDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isInPlayerHand && domino.isPlayable) {
+      const canStageDomino = isUserTurn && !globals.gameState.current_is_bidding
       const newPlayerHand = playerHand.map(a => ({ ...a }))
       let newStagedDomino = stagedDomino
       let playerHandIndex = -1
@@ -82,7 +83,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
         }
       }
 
-      if (isUserTurn) {
+      if (canStageDomino) {
         if (stagedDomino) {
           if (stagedDomino.type === domino.type) {
             newStagedDomino = null
@@ -106,7 +107,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
       setPlayerHand(newPlayerHand)
       setStagedDomino(newStagedDomino)
     }
-  }, [isUserTurn, playerHand, stagedDomino, setPlayerHand, setStagedDomino])
+  }, [isUserTurn, playerHand, stagedDomino, setPlayerHand, setStagedDomino, globals.gameState.current_is_bidding])
 
   const onHoverDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isPlayable) {
