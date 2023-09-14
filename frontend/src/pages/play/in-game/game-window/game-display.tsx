@@ -7,6 +7,7 @@ import ShowGameMessages from './show-game-messages'
 import ShowPlayerInfo from './show-player-info'
 import ShowTeamInfo from './show-team-info'
 import styled from 'styled-components'
+import ShowPlayerOptions from './show-player-options'
 
 const StyledRoot = styled.div(({ theme }) => ({
   position: 'relative',
@@ -56,6 +57,7 @@ const GameDisplay = ({ globals }: Props) => {
       <ShowPlayerInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowTeamInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowGameMessages globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} />
+      <ShowPlayerOptions globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} />
       <ShowBids globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
     </StyledRoot>
