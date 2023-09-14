@@ -1,6 +1,7 @@
 import { getIsCalling, getUserPosition } from '../utils/get-game-information'
 import type { GlobalObj } from '../../../../../types'
 import * as React from 'react'
+import ShowBiddingOptions from './show-bidding-options'
 
 interface Props {
   globals: GlobalObj
@@ -18,7 +19,7 @@ const ShowPlayerOptions = ({ globals, windowHeight, windowWidth }: Props) => {
 
     if (globals.gameState.current_is_bidding) {
       // return bidding options
-      return <></>
+      return <ShowBiddingOptions globals={globals} windowHeight={windowHeight} windowWidth={windowWidth} />
     }
 
     if (getIsCalling(globals.gameState)) {

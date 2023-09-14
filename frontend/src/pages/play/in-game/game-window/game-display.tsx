@@ -5,9 +5,9 @@ import ShowBids from './show-bids'
 import ShowDominoes from './show-dominoes'
 import ShowGameMessages from './show-game-messages'
 import ShowPlayerInfo from './show-player-info'
+import ShowPlayerOptions from './show-player-options'
 import ShowTeamInfo from './show-team-info'
 import styled from 'styled-components'
-import ShowPlayerOptions from './show-player-options'
 
 const StyledRoot = styled.div(({ theme }) => ({
   position: 'relative',

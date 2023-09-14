@@ -28,11 +28,12 @@ const plays = [
 ]
 
 const TestMovesButton = ({ globals }: Props) => {
-  const moves = plays
+  const moves = bids
 
   const nextMove = () => {
     const newGameState = { ...globals.gameState }
-    const skip = newGameState.current_round_history.length % 5 === 3
+    const isPlaying = false
+    const skip = isPlaying && newGameState.current_round_history.length % 5 === 3
     const iterations = skip ? 2 : 1
     for (let i = 0; i < iterations; i += 1) {
       if (newGameState.current_round_history.length < moves.length) {
