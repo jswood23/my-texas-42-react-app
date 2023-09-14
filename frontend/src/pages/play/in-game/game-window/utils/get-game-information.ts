@@ -10,6 +10,18 @@ export const getBidString = (bid: number) => {
   return bid.toString()
 }
 
+export const getCurrentHighestBid = (currentRoundHistory: string[]) => {
+  let highestBid = 0
+
+  currentRoundHistory.forEach(move => {
+    if (move.includes('\\')) {
+      highestBid = Math.max(highestBid, +move.split('\\')[2])
+    }
+  })
+
+  return highestBid
+}
+
 export const getIsCalling = (lobby: GameState) => {
   if (typeof lobby.current_round_rules === 'string') {
     return false
