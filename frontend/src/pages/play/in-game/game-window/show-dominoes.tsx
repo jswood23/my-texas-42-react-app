@@ -1,4 +1,4 @@
-import { defaultDominoObj, getShuffledDominoes, getStartingDominoes, placePlayerHand, showPlayerMove } from './utils/determine-domino-locations'
+import { defaultDominoObj, getShuffledDominoes, getStartingDominoes, placePlayerHand, showEndOfTrick, showPlayerMove } from './utils/determine-domino-locations'
 import { type DominoPlacement, type DominoObj, type GlobalObj } from '../../../../types'
 import { getUserPosition } from './utils/get-game-information'
 import { MOVE_TYPES } from '../../../../constants/game-constants'
@@ -19,10 +19,13 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
   const [hoveredDomino, setHoveredDomino] = React.useState(-1)
   const [playerHand, setPlayerHand] = React.useState([] as DominoObj[])
   const [stagedDomino, setStagedDomino] = React.useState<DominoObj | null | undefined>()
-  const [allStagedDominoes, setAllStagedDominoes] = React.useState([] as DominoObj[])
+  const [otherStagedDominoes, setOtherStagedDominoes] = React.useState([] as DominoObj[])
+  const [team1Tricks, setTeam1Tricks] = React.useState(0)
+  const [team2Tricks, setTeam2Tricks] = React.useState(0)
 
   const playerDominoSize = 10
   const otherDominoSize = 8
+  const trickDominoSize = 3.5
 
   const startNewRound = React.useCallback(() => {
     setTimeout(() => {
@@ -59,7 +62,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
 
   const changeStagedDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isInPlayerHand && domino.isPlayable) {
-      const isPlayerTurn = false
+      const isPlayerTurn = true
 
       const newPlayerHand = playerHand.map(a => ({ ...a }))
       let newStagedDomino = stagedDomino
@@ -124,12 +127,19 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
           shouldShowPlayerMove = true
         }
       } else if (lastMessage.includes('wins trick')) {
+        const winningTeam = +lastMessage[5]
+        const teamTricks = winningTeam === 1 ? team1Tricks : team2Tricks
+        const setTeamTricks = winningTeam === 1 ? setTeam1Tricks : setTeam2Tricks
         shouldShowPlayerMove = true
         messageToShow = globals.gameState.current_round_history.at(-2) ?? lastMessage
+        setTimeout(
+          () => { showEndOfTrick(windowWidth, windowHeight, trickDominoSize, stagedDomino as DominoObj, setStagedDomino, otherStagedDominoes, setOtherStagedDominoes, winningTeam, teamTricks, setTeamTricks, moveDomino) },
+          1000
+        )
       }
 
       if (shouldShowPlayerMove) {
-        showPlayerMove(windowWidth, windowHeight, otherDominoSize, dominoes, globals.gameState, moveDomino, messageToShow, userPosition)
+        showPlayerMove(windowWidth, windowHeight, otherDominoSize, dominoes, globals.gameState, moveDomino, messageToShow, userPosition, otherStagedDominoes, setOtherStagedDominoes)
       }
     }
   }, [globals.gameState.current_round_history, lastMessage])

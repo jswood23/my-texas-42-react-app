@@ -156,7 +156,18 @@ export const placePlayerHand = (windowWidth: number, windowHeight: number, playe
   setDominoes(newDominoes)
 }
 
-export const showPlayerMove = (windowWidth: number, windowHeight: number, otherDominoSize: number, dominoes: DominoObj[], gameState: GameState, moveDomino: (newDomino: DominoObj) => void, lastMessage: string, userPosition: number) => {
+export const showPlayerMove = (
+  windowWidth: number,
+  windowHeight: number,
+  otherDominoSize: number,
+  dominoes: DominoObj[],
+  gameState: GameState,
+  moveDomino: (newDomino: DominoObj) => void,
+  lastMessage: string,
+  userPosition: number,
+  otherStagedDominoes: DominoObj[],
+  setOtherStagedDominoes: (newStagedDominoes: DominoObj[]) => void
+) => {
   const splitMessage = lastMessage.split('\\')
   const playerPosition = getUserPosition(gameState, splitMessage[0])
   // TODO: figure out why we have to add 5 here instead of 4
@@ -173,8 +184,69 @@ export const showPlayerMove = (windowWidth: number, windowHeight: number, otherD
         newDomino.placement.startingX = pos(50 + stagedPositions[positionOnScreen][0] * otherDominoSize, windowWidth)
         newDomino.placement.startingY = pos(50 + stagedPositions[positionOnScreen][1] * otherDominoSize, windowHeight)
         moveDomino(newDomino)
+        setOtherStagedDominoes([...otherStagedDominoes, newDomino])
         break
       }
     }
   }
+}
+
+export const showEndOfTrick = (
+  windowWidth: number,
+  windowHeight: number,
+  trickDominoSize: number,
+  stagedDomino: DominoObj,
+  setStagedDomino: (newStagedDomino: DominoObj | null) => void,
+  otherStagedDominoes: DominoObj[],
+  setOtherStagedDominoes: (newStagedDominoes: DominoObj[]) => void,
+  winningTeam: number,
+  teamTricks: number,
+  setTeamTricks: (newTeamTricks: number) => void,
+  moveDomino: (newDomino: DominoObj) => void
+) => {
+  const trickXPos = (winningTeam - 1) * 70 + trickDominoSize * teamTricks
+  const trickYPos = 20
+
+  const trickDominoes = [stagedDomino, ...otherStagedDominoes]
+
+  const allCount: DominoObj[] = []
+  const allNonCount: DominoObj[] = []
+
+  for (let i = 0; i < 4; i += 1) {
+    const sides = trickDominoes[i].type.split('-')
+    const sideSum = (+sides[0]) + (+sides[1])
+    if (sideSum % 5 === 0) {
+      allCount.push(trickDominoes[i])
+    } else {
+      allNonCount.push(trickDominoes[i])
+    }
+  }
+
+  for (let i = 0; i < allNonCount.length; i += 1) {
+    const distance = trickDominoSize * 0.6
+    const thisDomino = allNonCount[i]
+    const offset = distance * -i
+    thisDomino.placement.startingX = pos(trickXPos + distance, windowWidth)
+    thisDomino.placement.startingY = pos(trickYPos + offset, windowHeight)
+    thisDomino.placement.size = pos(trickDominoSize, windowWidth)
+    thisDomino.placement.rotation = 90
+    thisDomino.placement.duration = 1
+    moveDomino(thisDomino)
+  }
+
+  for (let i = 0; i < allCount.length; i += 1) {
+    const distance = trickDominoSize * 0.5
+    const thisDomino = allCount[i]
+    const offset = distance * (allCount.length / 2 - i + 0.7)
+    thisDomino.placement.startingX = pos(trickXPos + offset, windowWidth)
+    thisDomino.placement.startingY = pos(trickYPos + distance * 1.9, windowHeight)
+    thisDomino.placement.size = pos(trickDominoSize, windowWidth)
+    thisDomino.placement.rotation = 0
+    thisDomino.placement.duration = 1
+    moveDomino(thisDomino)
+  }
+
+  setStagedDomino(null)
+  setOtherStagedDominoes([])
+  setTeamTricks(teamTricks + 1)
 }
