@@ -60,6 +60,14 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
     setDominoes(newDominoes)
   }, [dominoes, setDominoes])
 
+  const moveDominoes = React.useCallback((...movedDominoes: DominoObj[]) => {
+    const newDominoes = [...dominoes]
+    movedDominoes.forEach(newDomino => {
+      newDominoes[newDomino.index] = newDomino
+    })
+    setDominoes(newDominoes)
+  }, [dominoes, setDominoes])
+
   const changeStagedDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isInPlayerHand && domino.isPlayable) {
       const isPlayerTurn = true
@@ -133,7 +141,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
         shouldShowPlayerMove = true
         messageToShow = globals.gameState.current_round_history.at(-2) ?? lastMessage
         setTimeout(
-          () => { showEndOfTrick(windowWidth, windowHeight, trickDominoSize, stagedDomino as DominoObj, setStagedDomino, otherStagedDominoes, setOtherStagedDominoes, winningTeam, teamTricks, setTeamTricks, moveDomino) },
+          () => { showEndOfTrick(windowWidth, windowHeight, trickDominoSize, stagedDomino as DominoObj, setStagedDomino, otherStagedDominoes, setOtherStagedDominoes, winningTeam, teamTricks, setTeamTricks, moveDominoes) },
           1000
         )
       }

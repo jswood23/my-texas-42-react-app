@@ -202,7 +202,7 @@ export const showEndOfTrick = (
   winningTeam: number,
   teamTricks: number,
   setTeamTricks: (newTeamTricks: number) => void,
-  moveDomino: (newDomino: DominoObj) => void
+  moveDominoes: (...newDomino: DominoObj[]) => void
 ) => {
   const trickXPos = (winningTeam - 1) * 70 + trickDominoSize * teamTricks
   const trickYPos = 20
@@ -231,7 +231,10 @@ export const showEndOfTrick = (
     thisDomino.placement.size = pos(trickDominoSize, windowWidth)
     thisDomino.placement.rotation = 90
     thisDomino.placement.duration = 1
-    moveDomino(thisDomino)
+    thisDomino.belongsToTrick = teamTricks + 1
+    thisDomino.trickWinningTeam = winningTeam
+    thisDomino.isInPlayerHand = false
+    thisDomino.isPlayable = false
   }
 
   for (let i = 0; i < allCount.length; i += 1) {
@@ -243,9 +246,13 @@ export const showEndOfTrick = (
     thisDomino.placement.size = pos(trickDominoSize, windowWidth)
     thisDomino.placement.rotation = 0
     thisDomino.placement.duration = 1
-    moveDomino(thisDomino)
+    thisDomino.belongsToTrick = teamTricks + 1
+    thisDomino.trickWinningTeam = winningTeam
+    thisDomino.isInPlayerHand = false
+    thisDomino.isPlayable = false
   }
 
+  moveDominoes(...allCount, ...allNonCount)
   setStagedDomino(null)
   setOtherStagedDominoes([])
   setTeamTricks(teamTricks + 1)
