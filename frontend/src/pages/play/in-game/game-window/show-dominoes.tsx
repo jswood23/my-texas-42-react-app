@@ -27,7 +27,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
 
   const playerDominoSize = 10
   const otherDominoSize = 8
-  const trickDominoSize = 3.5
+  const trickDominoSize = 4.2
 
   const startNewRound = React.useCallback(() => {
     setTimeout(() => {
