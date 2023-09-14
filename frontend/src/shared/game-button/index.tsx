@@ -34,9 +34,16 @@ const StyledRoot = styled.div<StyledProps>(({ theme, xpos, ypos, width, height, 
   '.game-button': {
     backgroundColor: theme.palette.primary.alt,
     color: theme.palette.secondary.main,
+    padding: 0,
     width: '100%',
     height: '100%',
-    fontSize: `${fs}px`
+    fontSize: `${fs}px`,
+    fontWeight: 'bold',
+    letterSpacing: '2px',
+    '&:hover': {
+      color: theme.palette.secondary.alt,
+      backgroundColor: theme.palette.primary.main
+    }
   }
 }))
 
@@ -49,7 +56,12 @@ const GameButton = ({ xpos, ypos, width, height, text, fontSize, disabled, onCli
       height={height}
       fs={fontSize}
     >
-      <Button variant="contained" onClick={onClick} disabled={disabled}>
+      <Button
+        className="game-button"
+        variant="contained"
+        disabled={disabled}
+        onClick={onClick}
+      >
         {text}
       </Button>
     </StyledRoot>
