@@ -22,12 +22,14 @@ const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
   const lowestAllowedBid = Math.max(30, currentHighestBid + 1)
   const movesSoFar = globals.gameState.current_round_history.length
   const showBiddingOptions = hasWaited && !hasBid
+  const showSpinner = hasBid
 
   React.useEffect(() => {
     if (movesSoFar === 0) {
       setHasWaited(false)
     } else {
       setHasWaited(true)
+      setHasBid(false)
     }
   }, [movesSoFar, setHasWaited])
 
@@ -105,7 +107,7 @@ const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
   return (
     <>
       {showBiddingOptions && showButtons()}
-      {hasBid && showGameSpinner()}
+      {showSpinner && showGameSpinner()}
     </>
   )
 }
