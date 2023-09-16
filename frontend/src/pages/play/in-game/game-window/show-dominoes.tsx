@@ -1,6 +1,6 @@
 import { defaultDominoObj, getShuffledDominoes, getStartingDominoes, placePlayerHand, showEndOfTrick, showPlayerMove } from './utils/determine-domino-locations'
 import { type DominoPlacement, type DominoObj, type GlobalObj } from '../../../../types'
-import { getUserPosition } from './utils/get-game-information'
+import { getIsCalling, getUserPosition } from './utils/get-game-information'
 import { MOVE_TYPES } from '../../../../constants/game-constants'
 import * as React from 'react'
 import Domino from '../../../../shared/domino'
@@ -15,6 +15,7 @@ interface Props {
 const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props) => {
   const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
   const isUserTurn = React.useMemo(() => userPosition === globals.gameState.current_player_turn, [userPosition, globals.gameState.current_player_turn])
+  const isCalling = React.useMemo(() => getIsCalling(globals.gameState), [globals.gameState.current_round_rules])
   const [dealingDominoes, setDealingDominoes] = React.useState(false)
   const [dominoes, setDominoes] = React.useState([] as DominoObj[])
   const [hoveredDomino, setHoveredDomino] = React.useState(-1)
@@ -72,7 +73,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
 
   const changeStagedDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isInPlayerHand && domino.isPlayable) {
-      const canStageDomino = isUserTurn && !globals.gameState.current_is_bidding
+      const canStageDomino = isUserTurn && !globals.gameState.current_is_bidding && !isCalling
       const newPlayerHand = playerHand.map(a => ({ ...a }))
       let newStagedDomino = stagedDomino
       let playerHandIndex = -1
