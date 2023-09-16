@@ -31,12 +31,9 @@ interface Props {
 }
 
 const GameWindow = ({ globals }: Props) => {
-  // TODO: change these back
-  const [isLoading, setIsLoading] = React.useState(false) // should be true
-  // const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
-  // const isLobbyFull = globals.gameState.team_1.length === 2 && globals.gameState.team_2.length === 2
-  const isConnected = true
-  const isLobbyFull = true
+  const [isLoading, setIsLoading] = React.useState(true)
+  const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
+  const isLobbyFull = globals.gameState.team_1.length === 2 && globals.gameState.team_2.length === 2
 
   React.useEffect(() => {
     if (globals.connection.connectionStatus === CONNECTION_STATES.open) {

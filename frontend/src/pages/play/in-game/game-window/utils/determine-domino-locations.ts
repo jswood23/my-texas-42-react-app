@@ -170,8 +170,8 @@ export const showPlayerMove = (
 ) => {
   const splitMessage = lastMessage.split('\\')
   const playerPosition = getUserPosition(gameState, splitMessage[0])
-  // TODO: figure out why we have to add 5 here instead of 4
-  const positionOnScreen = (playerPosition - userPosition + gameState.current_starting_player + 5) % 4
+  // TODO: figure out why we have to add 6 here instead of 4
+  const positionOnScreen = (playerPosition - userPosition + gameState.current_starting_player + 6) % 4
   const stagedPositions = [[0, 1], [-1, 0], [0, -1], [1, 0]]
 
   if (positionOnScreen > 0) {
