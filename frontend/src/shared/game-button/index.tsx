@@ -40,6 +40,7 @@ const StyledRoot = styled.div<StyledProps>(({ theme, xpos, ypos, width, height, 
     fontSize: `${fs}px`,
     fontWeight: 'bold',
     letterSpacing: '2px',
+    lineHeight: `${fs * 1.2}px`,
     '&:hover': {
       color: theme.palette.secondary.alt,
       backgroundColor: theme.palette.primary.main

@@ -42,7 +42,7 @@ export const getUserPosition = (gameState: GameState, username: string) => {
 
 export const replaceGameString = (gameString: string) => {
   const gameStrings: string[] = [RULES.DOUBLES_TRUMP, RULES.FOLLOW_ME, RULES.DOUBLES_LOW, RULES.DOUBLES_HIGH, RULES.DOUBLES_OWN_SUIT]
-  const replaced: string[] = ['doubles', 'follow me', 'doubles are low', 'doubles are high', 'doubles are a suit of their own']
+  const replaced: string[] = ['doubles are trump', 'follow me', 'doubles are low', 'doubles are high', 'doubles are a suit of their own']
   const index = gameStrings.indexOf(gameString)
   if (index > -1) return replaced[index]
   return gameString
