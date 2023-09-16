@@ -1,5 +1,4 @@
-import { Box, IconButton } from '@mui/material'
-import { ArrowLeft, ArrowRight } from '@mui/icons-material'
+import { Box } from '@mui/material'
 import * as React from 'react'
 import styled from 'styled-components'
 import GameButton from '../game-button'
@@ -22,11 +21,19 @@ interface StyledProps {
   rotation: number
 }
 
-const Triangle = styled(Box)<StyledProps>`
+const TriangleRoot = styled(Box)<StyledProps>(({ xpos, ypos, size, rotation }) => ({
+  position: 'absolute',
+  left: `${xpos}px`,
+  top: `${ypos}px`,
+  scale: `${size / 100}`,
+  rotate: `${rotation}deg`
+}))
+
+const Triangle = styled.div`
 .triangle {
   position: absolute;
-  left: ${props => props.xpos}px;
-  top: ${props => props.ypos}px;
+  left: -50px;
+  top: -80px;
   background-color: ${props => props.theme.palette.primary.alt};
   text-align: left;
 }
@@ -39,8 +46,8 @@ const Triangle = styled(Box)<StyledProps>`
 .triangle,
 .triangle:before,
 .triangle:after {
-  width:  ${props => props.size}px;
-  height: ${props => props.size}px;
+  width:  100px;
+  height: 100px;
   border-top-right-radius: 30%;
 }
 
@@ -53,6 +60,11 @@ const Triangle = styled(Box)<StyledProps>`
 .triangle:after {
   transform: rotate(135deg) skewY(-45deg) scale(.707,1.414) translate(50%);
 }
+
+.triangle:hover {
+  background-color: ${props => props.theme.palette.primary.main};
+  cursor: pointer;
+}
 `
 
 const GameNumberPicker = ({ xpos, ypos, width, height, fontSize, onChoose, min, max }: Props) => {
@@ -60,27 +72,30 @@ const GameNumberPicker = ({ xpos, ypos, width, height, fontSize, onChoose, min, 
   const showDownArrow = currentNumber > min
   const showUpArrow = currentNumber < max
   const buttonWidth = Math.round(width / 4)
+  const yOffset = buttonWidth * 0.56
 
   const onClickUpButton = () => {
-    console.log('clicking up')
+    setCurrentNumber(currentNumber + 1)
   }
 
   const onClickDownButton = () => {
-    console.log('clicking down')
+    setCurrentNumber(currentNumber - 1)
   }
 
   return (
     <>
       {showDownArrow &&
-        <Triangle
-          xpos={xpos}
-          ypos={ypos}
+        <TriangleRoot
+          xpos={xpos + buttonWidth / 2}
+          ypos={ypos + yOffset}
           size={height * 0.5}
-          rotation={90}
+          rotation={-90}
           onClick={onClickDownButton}
         >
-          <div className='triangle'></div>
-        </Triangle>
+          <Triangle>
+            <div className='triangle'></div>
+          </Triangle>
+        </TriangleRoot>
       }
       <GameButton
         xpos={xpos + buttonWidth}
@@ -91,6 +106,19 @@ const GameNumberPicker = ({ xpos, ypos, width, height, fontSize, onChoose, min, 
         fontSize={fontSize}
         onClick={() => { onChoose(currentNumber) }}
       />
+      {showUpArrow &&
+        <TriangleRoot
+          xpos={xpos + width - buttonWidth / 2}
+          ypos={ypos + yOffset}
+          size={height * 0.5}
+          rotation={90}
+          onClick={onClickUpButton}
+        >
+          <Triangle>
+            <div className='triangle'></div>
+          </Triangle>
+        </TriangleRoot>
+      }
     </>
   )
 }

@@ -49,7 +49,7 @@ const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
           ypos={pos(60, windowHeight)}
           width={pos(18, windowWidth)}
           height={pos(6, windowHeight)}
-          fontSize={pos(1, windowWidth)}
+          fontSize={pos(3, windowWidth)}
           onChoose={makeBid}
           min={lowestAllowedBid}
           max={42}
