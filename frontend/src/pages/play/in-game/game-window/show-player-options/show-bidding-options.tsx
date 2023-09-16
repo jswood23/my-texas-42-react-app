@@ -15,10 +15,28 @@ interface Props {
 
 const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
   const [hasBid, setHasBid] = React.useState(false)
+  const [hasWaited, setHasWaited] = React.useState(false)
   const currentHighestBid = React.useMemo(() => getCurrentHighestBid(globals.gameState.current_round_history), [globals.gameState.current_round_history])
   const showNumericBid = currentHighestBid < 42
   const markBid = showNumericBid ? 84 : currentHighestBid + 42
   const lowestAllowedBid = Math.max(30, currentHighestBid + 1)
+  const movesSoFar = globals.gameState.current_round_history.length
+  const showBiddingOptions = hasWaited && !hasBid
+
+  React.useEffect(() => {
+    if (movesSoFar === 0) {
+      setHasWaited(false)
+    } else {
+      setHasWaited(true)
+    }
+  }, [movesSoFar, setHasWaited])
+
+  React.useEffect(() => {
+    if (!hasWaited) {
+      setTimeout(() => { setHasWaited(true) }, 1900)
+    }
+  }, [hasWaited, setHasWaited])
+
   const xPositions = React.useMemo(() => {
     if (!showNumericBid) {
       return [44 - 8, 0, 44 + 8]
@@ -86,7 +104,7 @@ const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
 
   return (
     <>
-      {!hasBid && showButtons()}
+      {showBiddingOptions && showButtons()}
       {hasBid && showGameSpinner()}
     </>
   )
