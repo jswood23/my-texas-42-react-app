@@ -22,6 +22,17 @@ export const getCurrentHighestBid = (currentRoundHistory: string[]) => {
   return highestBid
 }
 
+export const getDoublesInHand = (playerHand: string[]) => {
+  let doublesInHand = 0
+  playerHand.forEach(domino => {
+    const sides = domino.split('-')
+    if (sides[0] === sides[1]) {
+      doublesInHand += 1
+    }
+  })
+  return doublesInHand
+}
+
 export const getIsCalling = (lobby: GameState) => {
   if (typeof lobby.current_round_rules === 'string') {
     return false

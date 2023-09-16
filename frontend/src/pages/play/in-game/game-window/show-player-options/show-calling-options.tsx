@@ -1,4 +1,4 @@
-import { getMostCommonSuit, replaceGameString } from '../utils/get-game-information'
+import { getDoublesInHand, getMostCommonSuit, replaceGameString } from '../utils/get-game-information'
 import { MOVE_TYPES, RULES } from '../../../../../constants/game-constants'
 import { pos } from '../utils/helpers'
 import type { RoundRules, GlobalObj } from '../../../../../types'
@@ -104,8 +104,9 @@ const ShowCallingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
     options.push(1) // doubles are trump
 
     if (roundRules.bid > 42) {
-      if (gameRules.includes(RULES.SPLASH) && roundRules.variant === '') { options.push(2) } // splash
-      if (gameRules.includes(RULES.PLUNGE) && roundRules.variant === '') { options.push(3) } // plunge
+      const doublesInHand = getDoublesInHand(globals.gameState.player_dominoes)
+      if (gameRules.includes(RULES.SPLASH) && roundRules.variant === '' && doublesInHand >= 3) { options.push(2) } // splash
+      if (gameRules.includes(RULES.PLUNGE) && roundRules.variant === '' && doublesInHand >= 4) { options.push(3) } // plunge
       if (gameRules.includes(RULES.SEVENS)) { options.push(4) } // sevens
     }
 
