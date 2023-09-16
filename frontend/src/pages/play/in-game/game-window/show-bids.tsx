@@ -38,8 +38,9 @@ const StyledBox = styled(Box)<StyledProps>(({ theme, xpos, ypos, width, height }
 })
 
 const ShowBids = ({ globals, windowHeight, windowWidth }: Props) => {
-  const shouldShowBids = React.useMemo(() => globals.gameState.current_is_bidding || getIsCalling(globals.gameState), [globals.gameState])
   const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
+  const isCalling = React.useMemo(() => getIsCalling(globals.gameState) && globals.gameState.current_player_turn !== userPosition, [globals.gameState, userPosition])
+  const shouldShowBids = React.useMemo(() => globals.gameState.current_is_bidding || isCalling, [globals.gameState, isCalling])
 
   const displayBids = React.useCallback(() => {
     const bids: string[] = []
