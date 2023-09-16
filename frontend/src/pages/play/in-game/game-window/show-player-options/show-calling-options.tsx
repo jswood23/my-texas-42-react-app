@@ -1,7 +1,7 @@
-import type { RoundRules, GlobalObj } from '../../../../../types'
+import { getMostCommonSuit, replaceGameString } from '../utils/get-game-information'
 import { MOVE_TYPES, RULES } from '../../../../../constants/game-constants'
 import { pos } from '../utils/helpers'
-import { replaceGameString } from '../utils/get-game-information'
+import type { RoundRules, GlobalObj } from '../../../../../types'
 import * as React from 'react'
 import GameButton from '../../../../../shared/game-button'
 import GameNumberPicker from '../../../../../shared/game-number-picker'
@@ -16,7 +16,7 @@ interface Props {
 const ShowCallingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
   const [hasCalled, setHasCalled] = React.useState(false)
   const [isNilSelected, setIsNilSelected] = React.useState(false)
-  const suggestedTrump = React.useMemo(() => { return 1 }, [globals.gameState.player_dominoes])
+  const suggestedTrump = React.useMemo(() => getMostCommonSuit(globals.gameState.player_dominoes), [globals.gameState.player_dominoes])
 
   const makeCall = (call: string | number) => {
     if (call === RULES.NIL) {

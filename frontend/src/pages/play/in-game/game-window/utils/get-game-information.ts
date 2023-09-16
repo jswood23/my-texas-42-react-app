@@ -31,6 +31,30 @@ export const getIsCalling = (lobby: GameState) => {
     lobby.current_round_rules.trump === RULES.UNDECIDED
 }
 
+export const getMostCommonSuit = (playerHand: string[]) => {
+  const suitCounts: number[] = Array(7).fill(0)
+
+  // note: we are counting each double as 2 of its suit instead of 1
+  playerHand.forEach(domino => {
+    domino.split('-').forEach(side => {
+      suitCounts[(+side)] += 1
+    })
+  })
+
+  // get side with the highest count
+  // get the higher side when there is a tie
+  let index = -1
+  let count = -1
+  for (let i = 0; i < suitCounts.length; i += 1) {
+    if (suitCounts[i] >= count) {
+      index = i
+      count = suitCounts[i]
+    }
+  }
+
+  return index
+}
+
 export const getUserPosition = (gameState: GameState, username: string) => {
   if (gameState.team_1.includes(username)) {
     return gameState.team_1.indexOf(username) * 2
