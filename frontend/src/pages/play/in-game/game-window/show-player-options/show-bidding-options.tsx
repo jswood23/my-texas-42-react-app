@@ -16,17 +16,15 @@ const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
   const currentHighestBid = React.useMemo(() => getCurrentHighestBid(globals.gameState.current_round_history), [globals.gameState.current_round_history])
   const showNumericBid = currentHighestBid < 42
   const markBid = showNumericBid ? 84 : currentHighestBid + 42
-  const lowestAllowedBid = Math.min(30, currentHighestBid + 1)
+  const lowestAllowedBid = Math.max(30, currentHighestBid + 1)
   const xPositions = React.useMemo(() => {
-    // const xSpacing = showNumericBid ? 18 : 8
     if (!showNumericBid) {
       return [44 - 8, 0, 44 + 8]
     }
     return [44 - 18, 41, 44 + 18]
-  }, [])
+  }, [showNumericBid])
 
   const makeBid = (bid: number) => {
-    console.log(`bidding ${bid}`)
     globals.connection.sendJsonMessage({ action: 'play_turn', data: JSON.stringify({ move: bid, moveType: MOVE_TYPES.bid }) })
   }
 

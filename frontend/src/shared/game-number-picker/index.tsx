@@ -68,7 +68,7 @@ const Triangle = styled.div`
 `
 
 const GameNumberPicker = ({ xpos, ypos, width, height, fontSize, onChoose, min, max }: Props) => {
-  const [currentNumber, setCurrentNumber] = React.useState(min + 1)
+  const [currentNumber, setCurrentNumber] = React.useState(min)
   const showDownArrow = currentNumber > min
   const showUpArrow = currentNumber < max
   const buttonWidth = Math.round(width / 4)
