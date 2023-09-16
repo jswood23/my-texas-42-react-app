@@ -49,7 +49,7 @@ const ShowCallingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
             ypos={ypos - pos(3, windowHeight)}
             width={pos(14, windowWidth)}
             height={pos(6, windowHeight)}
-            fontSize={pos(2 - showText.length / 40, windowWidth)}
+            fontSize={pos(2 - showText.length / 35, windowWidth)}
             text={showText}
             onClick={() => { makeCall(callText) }}
           />
