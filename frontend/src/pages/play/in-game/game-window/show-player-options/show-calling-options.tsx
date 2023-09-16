@@ -16,6 +16,7 @@ interface Props {
 const ShowCallingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
   const [hasCalled, setHasCalled] = React.useState(false)
   const [isNilSelected, setIsNilSelected] = React.useState(false)
+  const suggestedTrump = React.useMemo(() => { return 1 }, [globals.gameState.player_dominoes])
 
   const makeCall = (call: string | number) => {
     if (call === RULES.NIL) {
@@ -51,6 +52,8 @@ const ShowCallingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
             width={pos(18, windowWidth)}
             height={pos(6, windowHeight)}
             fontSize={pos(3, windowWidth)}
+            disabled={disableIfNilSelected}
+            defaultValue={suggestedTrump}
             onChoose={makeCall}
             min={0}
             max={6}

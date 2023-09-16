@@ -9,9 +9,15 @@ interface Props {
   width: number
   height: number
   fontSize: number
+  disabled: boolean
+  defaultValue?: number
   onChoose: (num: number) => void
   min: number
   max: number
+}
+
+const defaultProps = {
+  disabled: false
 }
 
 interface StyledProps {
@@ -67,10 +73,10 @@ const Triangle = styled.div`
 }
 `
 
-const GameNumberPicker = ({ xpos, ypos, width, height, fontSize, onChoose, min, max }: Props) => {
-  const [currentNumber, setCurrentNumber] = React.useState(min)
-  const showDownArrow = currentNumber > min
-  const showUpArrow = currentNumber < max
+const GameNumberPicker = ({ xpos, ypos, width, height, fontSize, disabled, defaultValue, onChoose, min, max }: Props) => {
+  const [currentNumber, setCurrentNumber] = React.useState(defaultValue ?? min)
+  const showDownArrow = currentNumber > min && !disabled
+  const showUpArrow = currentNumber < max && !disabled
   const buttonWidth = Math.round(width / 4)
   const yOffset = buttonWidth * 0.56
 
@@ -103,6 +109,7 @@ const GameNumberPicker = ({ xpos, ypos, width, height, fontSize, onChoose, min, 
         width={buttonWidth * 2}
         height={height}
         text={currentNumber.toString()}
+        disabled={disabled}
         fontSize={fontSize}
         onClick={() => { onChoose(currentNumber) }}
       />
@@ -122,5 +129,7 @@ const GameNumberPicker = ({ xpos, ypos, width, height, fontSize, onChoose, min, 
     </>
   )
 }
+
+GameNumberPicker.defaultProps = defaultProps
 
 export default GameNumberPicker
