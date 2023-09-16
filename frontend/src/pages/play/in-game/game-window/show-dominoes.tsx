@@ -11,7 +11,7 @@ interface Props {
   windowWidth: number
   lastMessage: string
   stagedDomino: DominoObj | null | undefined
-  setStagedDomino: (d: DominoObj | null | undefined) => void
+  setStagedDomino: React.Dispatch<React.SetStateAction<DominoObj | null | undefined>>
 }
 
 const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage, stagedDomino, setStagedDomino }: Props) => {
