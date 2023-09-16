@@ -10,9 +10,11 @@ interface Props {
   windowHeight: number
   windowWidth: number
   lastMessage: string
+  stagedDomino: DominoObj | null | undefined
+  setStagedDomino: (d: DominoObj | null | undefined) => void
 }
 
-const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props) => {
+const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage, stagedDomino, setStagedDomino }: Props) => {
   const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
   const isUserTurn = React.useMemo(() => userPosition === globals.gameState.current_player_turn, [userPosition, globals.gameState.current_player_turn])
   const isCalling = React.useMemo(() => getIsCalling(globals.gameState), [globals.gameState.current_round_rules])
@@ -20,7 +22,6 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage }: Props
   const [dominoes, setDominoes] = React.useState([] as DominoObj[])
   const [hoveredDomino, setHoveredDomino] = React.useState(-1)
   const [playerHand, setPlayerHand] = React.useState([] as DominoObj[])
-  const [stagedDomino, setStagedDomino] = React.useState<DominoObj | null | undefined>()
   const [otherStagedDominoes, setOtherStagedDominoes] = React.useState([] as DominoObj[])
   const [team1Tricks, setTeam1Tricks] = React.useState(0)
   const [team2Tricks, setTeam2Tricks] = React.useState(0)

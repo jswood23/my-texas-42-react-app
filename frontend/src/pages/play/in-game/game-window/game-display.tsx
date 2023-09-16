@@ -1,4 +1,4 @@
-import { type GlobalObj } from '../../../../types'
+import type { DominoObj, GlobalObj } from '../../../../types'
 import { THEME } from '../../../../constants/theme'
 import * as React from 'react'
 import ShowBids from './show-bids'
@@ -28,6 +28,7 @@ const GameDisplay = ({ globals }: Props) => {
   const gameWindowHeight = +(THEME.spacing(67).slice(0, -2))
   const lastMessage = globals.gameState.current_round_history.at(-1) ?? '\\'
 
+  const [stagedDomino, setStagedDomino] = React.useState<DominoObj | null | undefined>()
   const [showGrid, setShowGrid] = React.useState(false)
 
   React.useEffect(() => {
@@ -57,8 +58,8 @@ const GameDisplay = ({ globals }: Props) => {
       <ShowPlayerInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowTeamInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowGameMessages globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} />
-      <ShowPlayerOptions globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
-      <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} />
+      <ShowPlayerOptions globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} stagedDomino={stagedDomino} setStagedDomino={setStagedDomino} />
+      <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} stagedDomino={stagedDomino} setStagedDomino={setStagedDomino} />
       <ShowBids globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
     </StyledRoot>
   )

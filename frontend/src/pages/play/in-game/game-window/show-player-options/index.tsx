@@ -1,5 +1,5 @@
+import type { DominoObj, GlobalObj } from '../../../../../types'
 import { getIsCalling, getUserPosition } from '../utils/get-game-information'
-import type { GlobalObj } from '../../../../../types'
 import * as React from 'react'
 import ShowBiddingOptions from './show-bidding-options'
 import ShowCallingOptions from './show-calling-options'
@@ -8,9 +8,11 @@ interface Props {
   globals: GlobalObj
   windowHeight: number
   windowWidth: number
+  stagedDomino: DominoObj | null | undefined
+  setStagedDomino: (d: DominoObj | null | undefined) => void
 }
 
-const ShowPlayerOptions = ({ globals, windowHeight, windowWidth }: Props) => {
+const ShowPlayerOptions = ({ globals, windowHeight, windowWidth, stagedDomino, setStagedDomino }: Props) => {
   const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
 
   const showOptions = React.useCallback(() => {
