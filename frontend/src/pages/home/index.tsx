@@ -2,7 +2,6 @@ import { Box } from '@mui/material'
 import type { GlobalObj } from '../../types'
 import PageContainer from '../../shared/page-container'
 import styled from 'styled-components'
-import TestMovesButton from '../../shared/testing/test-moves-button'
 import WebsiteUnderConstructionImg from '../../images/website-construction-graphic-4.jpg'
 
 interface Props {
@@ -17,7 +16,7 @@ const StyledRoot = styled.div({
 
 const Homepage = ({ globals }: Props) => (
   <StyledRoot>
-    <PageContainer globals={globals} title="Home" action={<TestMovesButton globals={globals} />}>
+    <PageContainer globals={globals} title="Home" >
       <Box
         className='under-construction-img'
         component='img'
