@@ -109,7 +109,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage, stagedD
       setPlayerHand(newPlayerHand)
       setStagedDomino(newStagedDomino)
     }
-  }, [isUserTurn, playerHand, stagedDomino, setPlayerHand, setStagedDomino, globals.gameState.current_is_bidding])
+  }, [isUserTurn, playerHand, stagedDomino, setPlayerHand, setStagedDomino, globals.gameState.current_is_bidding, isCalling])
 
   const onHoverDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isPlayable) {
@@ -142,7 +142,11 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage, stagedD
         showPlayerMove(windowWidth, windowHeight, otherDominoSize, dominoes, globals.gameState, moveDomino, messageToShow, userPosition, otherStagedDominoes, setOtherStagedDominoes)
       }
     }
-  }, [globals.gameState.current_round_history, lastMessage])
+  }, [globals.gameState, lastMessage, userPosition])
+
+  React.useEffect(() => {
+    console.log(otherStagedDominoes)
+  }, [otherStagedDominoes])
 
   React.useEffect(() => {
     if (isEndOfTrick) {

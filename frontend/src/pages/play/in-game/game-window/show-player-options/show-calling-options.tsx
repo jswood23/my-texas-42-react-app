@@ -27,6 +27,8 @@ const ShowCallingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
         if (nilBids.includes(call)) {
           call = RULES.NIL + ' ' + call
         }
+      } else {
+        call = call.toString()
       }
 
       globals.connection.sendJsonMessage({ action: 'play_turn', data: JSON.stringify({ move: call, moveType: MOVE_TYPES.call }) })
