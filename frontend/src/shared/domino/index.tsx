@@ -5,12 +5,12 @@ import * as React from 'react'
 import styled from 'styled-components'
 
 interface Props {
-  clickable: boolean
-  disabled: boolean
-  onClick: () => void
-  onHover: () => void
-  onDrag: () => void
-  onBlur: () => void
+  clickable?: boolean
+  disabled?: boolean
+  onClick?: () => void
+  onHover?: () => void
+  onDrag?: () => void
+  onBlur?: () => void
   placement: DominoPlacement
   type: string
 }
