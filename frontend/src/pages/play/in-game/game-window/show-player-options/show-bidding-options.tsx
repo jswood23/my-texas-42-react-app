@@ -1,35 +1,33 @@
 import { getBidString, getCurrentHighestBid } from '../utils/get-game-information'
 import type { GlobalObj } from '../../../../../types'
-import * as React from 'react'
-import GameButton from '../../../../../shared/game-button'
-import { pos } from '../utils/helpers'
 import { MOVE_TYPES } from '../../../../../constants/game-constants'
+import { pos } from '../utils/helpers'
+import GameButton from '../../../../../shared/game-button'
 import GameNumberPicker from '../../../../../shared/game-number-picker'
-import GameSpinner from '../../../../../shared/game-spinner'
+import * as React from 'react'
 
 interface Props {
   globals: GlobalObj
   windowHeight: number
   windowWidth: number
+  setHasPlayed: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
-  const [hasBid, setHasBid] = React.useState(false)
+const ShowBiddingOptions = ({ globals, windowHeight, windowWidth, setHasPlayed }: Props) => {
   const [hasWaited, setHasWaited] = React.useState(false)
   const currentHighestBid = React.useMemo(() => getCurrentHighestBid(globals.gameState.current_round_history), [globals.gameState.current_round_history])
   const showNumericBid = currentHighestBid < 42
   const markBid = showNumericBid ? 84 : currentHighestBid + 42
   const lowestAllowedBid = Math.max(30, currentHighestBid + 1)
   const movesSoFar = globals.gameState.current_round_history.length
-  const showBiddingOptions = hasWaited && !hasBid
-  const showSpinner = hasBid
+  const showBiddingOptions = hasWaited
 
   React.useEffect(() => {
     if (movesSoFar === 0) {
       setHasWaited(false)
     } else {
       setHasWaited(true)
-      setHasBid(false)
+      setHasPlayed(false)
     }
   }, [movesSoFar, setHasWaited])
 
@@ -46,10 +44,10 @@ const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
     return [44 - 18, 41, 44 + 18]
   }, [showNumericBid])
 
-  const makeBid = (bid: number) => {
+  const makeBid = React.useCallback((bid: number) => {
     globals.connection.sendJsonMessage({ action: 'play_turn', data: JSON.stringify({ move: bid, moveType: MOVE_TYPES.bid }) })
-    setHasBid(true)
-  }
+    setHasPlayed(true)
+  }, [globals.connection, setHasPlayed])
 
   const showButtons = () => {
     return (
@@ -92,22 +90,9 @@ const ShowBiddingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
     )
   }
 
-  const showGameSpinner = () => {
-    return (
-      <>
-        <GameSpinner
-          xpos={pos(50, windowWidth)}
-          ypos={pos(50, windowHeight)}
-          size={pos(5, windowWidth)}
-        />
-      </>
-    )
-  }
-
   return (
     <>
       {showBiddingOptions && showButtons()}
-      {showSpinner && showGameSpinner()}
     </>
   )
 }

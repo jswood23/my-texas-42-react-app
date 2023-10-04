@@ -5,6 +5,7 @@ import GameDisplay from './game-display'
 import LobbyWaitingScreen from './lobby-waiting-screen'
 import * as React from 'react'
 import styled from 'styled-components'
+import { defaultGameState } from '../../../../constants/game-constants'
 
 const StyledRoot = styled.div(({ theme }) => ({
   border: '1px solid #A0A0A0',
@@ -30,8 +31,16 @@ interface Props {
   globals: GlobalObj
 }
 
+const defaultServerMessage: ServerMessage = {
+  gameData: defaultGameState,
+  messageType: SERVER_MESSAGE_TYPES.gameUpdate,
+  message: '',
+  username: '(none)'
+}
+
 const GameWindow = ({ globals }: Props) => {
   const [isLoading, setIsLoading] = React.useState(true)
+  const [lastServerMessage, setLastServerMessage] = React.useState(defaultServerMessage)
   const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
   const isLobbyFull = globals.gameState.team_1.length === 2 && globals.gameState.team_2.length === 2
 
@@ -59,6 +68,7 @@ const GameWindow = ({ globals }: Props) => {
           break
         case SERVER_MESSAGE_TYPES.gameError:
           globals.openAlert(gameError, 'error')
+          setLastServerMessage(messageData)
           break
       }
     }
@@ -75,7 +85,7 @@ const GameWindow = ({ globals }: Props) => {
         <LobbyWaitingScreen globals={globals} />
       )}
       {isConnected && !isLoading && isLobbyFull && (
-        <GameDisplay globals={globals} />
+        <GameDisplay globals={globals} lastServerMessage={lastServerMessage} />
       )}
     </StyledRoot>
   )

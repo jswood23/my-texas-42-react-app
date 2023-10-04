@@ -1,39 +1,69 @@
-import type { DominoObj, GlobalObj } from '../../../../../types'
-import { getIsCalling, getUserPosition } from '../utils/get-game-information'
+import type { DominoObj, GlobalObj, ServerMessage } from '../../../../../types'
+import { getIsCalling } from '../utils/get-game-information'
+import { pos } from '../utils/helpers'
+import GameSpinner from '../../../../../shared/game-spinner'
 import * as React from 'react'
 import ShowBiddingOptions from './show-bidding-options'
 import ShowCallingOptions from './show-calling-options'
 import ShowPlayButton from './show-play-button'
+import { SERVER_MESSAGE_TYPES } from '../../../../../constants'
 
 interface Props {
   globals: GlobalObj
   windowHeight: number
   windowWidth: number
   stagedDomino: DominoObj | null | undefined
-  setStagedDomino: React.Dispatch<React.SetStateAction<DominoObj | null | undefined>>
+  lastServerMessage: ServerMessage
 }
 
-const ShowPlayerOptions = ({ globals, windowHeight, windowWidth, stagedDomino, setStagedDomino }: Props) => {
-  const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
+const ShowPlayerOptions = ({ globals, windowHeight, windowWidth, stagedDomino, lastServerMessage }: Props) => {
+  const [hasPlayed, setHasPlayed] = React.useState(false)
+  const [stage, setStage] = React.useState(1)
+
+  React.useEffect(() => {
+    if (globals.gameState.current_is_bidding) {
+      setStage(1)
+    } else if (getIsCalling(globals.gameState)) {
+      setStage(2)
+    } else {
+      setStage(3)
+    }
+
+    setHasPlayed(false)
+  }, [globals.gameState.current_is_bidding, globals.gameState.current_round_rules])
+
+  React.useEffect(() => {
+    if (lastServerMessage?.messageType === SERVER_MESSAGE_TYPES.gameError) {
+      setHasPlayed(false)
+    }
+  }, [lastServerMessage])
+
+  const showGameSpinner = () => {
+    return (
+      <>
+        <GameSpinner
+          xpos={pos(50, windowWidth)}
+          ypos={pos(50, windowHeight)}
+          size={pos(5, windowWidth)}
+        />
+      </>
+    )
+  }
 
   const showOptions = React.useCallback(() => {
-    if (globals.gameState.current_player_turn !== userPosition) {
-      return <></>
+    if (hasPlayed) {
+      return showGameSpinner()
     }
 
-    if (globals.gameState.current_is_bidding) {
-      // return bidding options
-      return <ShowBiddingOptions globals={globals} windowHeight={windowHeight} windowWidth={windowWidth} />
+    switch (stage) {
+      case 1:
+        return <ShowBiddingOptions globals={globals} windowHeight={windowHeight} windowWidth={windowWidth} setHasPlayed={setHasPlayed} />
+      case 2:
+        return <ShowCallingOptions globals={globals} windowHeight={windowHeight} windowWidth={windowWidth} setHasPlayed={setHasPlayed} />
+      default:
+        return <ShowPlayButton globals={globals} windowHeight={windowHeight} windowWidth={windowWidth} stagedDomino={stagedDomino} setHasPlayed={setHasPlayed} />
     }
-
-    if (getIsCalling(globals.gameState)) {
-      // return calling options
-      return <ShowCallingOptions globals={globals} windowHeight={windowHeight} windowWidth={windowWidth} />
-    }
-
-    // return play button
-    return <ShowPlayButton globals={globals} windowHeight={windowHeight} windowWidth={windowWidth} stagedDomino={stagedDomino} setStagedDomino={setStagedDomino} />
-  }, [globals.gameState, userPosition, stagedDomino, setStagedDomino])
+  }, [hasPlayed, globals.gameState, stage, stagedDomino])
 
   return (
     <>

@@ -5,16 +5,15 @@ import type { RoundRules, GlobalObj } from '../../../../../types'
 import * as React from 'react'
 import GameButton from '../../../../../shared/game-button'
 import GameNumberPicker from '../../../../../shared/game-number-picker'
-import GameSpinner from '../../../../../shared/game-spinner'
 
 interface Props {
   globals: GlobalObj
   windowHeight: number
   windowWidth: number
+  setHasPlayed: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ShowCallingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
-  const [hasCalled, setHasCalled] = React.useState(false)
+const ShowCallingOptions = ({ globals, windowHeight, windowWidth, setHasPlayed }: Props) => {
   const [isNilSelected, setIsNilSelected] = React.useState(false)
   const suggestedTrump = React.useMemo(() => getMostCommonSuit(globals.gameState.player_dominoes), [globals.gameState.player_dominoes])
 
@@ -32,7 +31,7 @@ const ShowCallingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
       }
 
       globals.connection.sendJsonMessage({ action: 'play_turn', data: JSON.stringify({ move: call, moveType: MOVE_TYPES.call }) })
-      setHasCalled(true)
+      setHasPlayed(true)
     }
   }
 
@@ -127,27 +126,10 @@ const ShowCallingOptions = ({ globals, windowHeight, windowWidth }: Props) => {
     })
   }
 
-  const showGameSpinner = () => {
-    return (
-      <>
-        <GameSpinner
-          xpos={pos(50, windowWidth)}
-          ypos={pos(50, windowHeight)}
-          size={pos(5, windowWidth)}
-        />
-      </>
-    )
-  }
-
   return (
     <>
-      {hasCalled
-        ? showGameSpinner()
-        : <>
-          {getOptions()}
-          {getNilOptions()}
-        </>
-      }
+      {getOptions()}
+      {getNilOptions()}
     </>
   )
 }

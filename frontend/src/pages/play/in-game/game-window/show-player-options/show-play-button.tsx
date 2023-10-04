@@ -10,11 +10,10 @@ interface Props {
   windowHeight: number
   windowWidth: number
   stagedDomino: DominoObj | null | undefined
-  setStagedDomino: React.Dispatch<React.SetStateAction<DominoObj | null | undefined>>
+  setHasPlayed: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ShowPlayButton = ({ globals, windowHeight, windowWidth, stagedDomino, setStagedDomino }: Props) => {
-  const [hasPlayed, setHasPlayed] = React.useState(false)
+const ShowPlayButton = ({ globals, windowHeight, windowWidth, stagedDomino, setHasPlayed }: Props) => {
   const disablePlayButton = React.useMemo(() => { return !stagedDomino }, [stagedDomino])
 
   const onClickPlay = () => {
@@ -22,33 +21,18 @@ const ShowPlayButton = ({ globals, windowHeight, windowWidth, stagedDomino, setS
     setHasPlayed(true)
   }
 
-  const showGameSpinner = () => {
-    return (
-      <>
-        <GameSpinner
-          xpos={pos(50, windowWidth)}
-          ypos={pos(50, windowHeight)}
-          size={pos(5, windowWidth)}
-        />
-      </>
-    )
-  }
-
   return (
     <>
-      {hasPlayed
-        ? showGameSpinner()
-        : <GameButton
-          xpos={pos(44, windowWidth)}
-          ypos={pos(64.5, windowHeight)}
-          width={pos(12, windowWidth)}
-          height={pos(6, windowHeight)}
-          text='Play'
-          fontSize={pos(2, windowWidth)}
-          disabled={disablePlayButton}
-          onClick={onClickPlay}
-        />
-      }
+      <GameButton
+        xpos={pos(44, windowWidth)}
+        ypos={pos(64.5, windowHeight)}
+        width={pos(12, windowWidth)}
+        height={pos(6, windowHeight)}
+        text='Play'
+        fontSize={pos(2, windowWidth)}
+        disabled={disablePlayButton}
+        onClick={onClickPlay}
+      />
     </>
   )
 }
