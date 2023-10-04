@@ -28,7 +28,7 @@ const plays = [
 ]
 
 const TestMovesButton = ({ globals }: Props) => {
-  const moves = bids
+  const moves = bids ?? plays
 
   const nextMove = () => {
     const newGameState = { ...globals.gameState }

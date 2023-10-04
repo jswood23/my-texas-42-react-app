@@ -145,10 +145,6 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage, stagedD
   }, [globals.gameState, lastMessage, userPosition])
 
   React.useEffect(() => {
-    console.log(otherStagedDominoes)
-  }, [otherStagedDominoes])
-
-  React.useEffect(() => {
     if (isEndOfTrick) {
       const winningTeam = +lastMessage[5]
       const teamTricks = winningTeam === 1 ? team1Tricks : team2Tricks
