@@ -1,4 +1,4 @@
-import type { DominoObj, GlobalObj } from '../../../../types'
+import type { DominoObj, GlobalObj, ServerMessage } from '../../../../types'
 import { THEME } from '../../../../constants/theme'
 import * as React from 'react'
 import ShowBids from './show-bids'
@@ -8,6 +8,7 @@ import ShowPlayerInfo from './show-player-info'
 import ShowPlayerOptions from './show-player-options'
 import ShowTeamInfo from './show-team-info'
 import styled from 'styled-components'
+import { getUserPosition } from './utils/get-game-information'
 
 const StyledRoot = styled.div(({ theme }) => ({
   position: 'relative',
@@ -21,9 +22,12 @@ const StyledRoot = styled.div(({ theme }) => ({
 
 interface Props {
   globals: GlobalObj
+  lastServerMessage: ServerMessage
 }
 
-const GameDisplay = ({ globals }: Props) => {
+const GameDisplay = ({ globals, lastServerMessage }: Props) => {
+  const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
+  const isPlayerTurn = userPosition === globals.gameState.current_player_turn
   const gameWindowWidth = +(THEME.spacing(77.5).slice(0, -2))
   const gameWindowHeight = +(THEME.spacing(67).slice(0, -2))
   const lastMessage = globals.gameState.current_round_history.at(-1) ?? '\\'
@@ -58,7 +62,7 @@ const GameDisplay = ({ globals }: Props) => {
       <ShowPlayerInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowTeamInfo globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
       <ShowGameMessages globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} />
-      <ShowPlayerOptions globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} stagedDomino={stagedDomino} setStagedDomino={setStagedDomino} />
+      {isPlayerTurn && <ShowPlayerOptions globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} stagedDomino={stagedDomino} lastServerMessage={lastServerMessage} />}
       <ShowDominoes globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} lastMessage={lastMessage} stagedDomino={stagedDomino} setStagedDomino={setStagedDomino} />
       <ShowBids globals={globals} windowHeight={gameWindowHeight} windowWidth={gameWindowWidth} />
     </StyledRoot>
