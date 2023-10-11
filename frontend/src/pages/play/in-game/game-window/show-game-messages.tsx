@@ -1,13 +1,15 @@
 import { Box, Typography } from '@mui/material'
+import { getBidString, replaceGameString } from './utils/get-game-information'
 import { type GlobalObj } from '../../../../types'
+import { pos } from './utils/helpers'
 import * as React from 'react'
 import styled from 'styled-components'
-import { pos } from './utils/helpers'
 
 interface Props {
   globals: GlobalObj
   windowHeight: number
   windowWidth: number
+  lastMessage: string
 }
 
 interface StyledProps {
@@ -22,7 +24,7 @@ const MessageBar = styled(Box)<StyledProps>(({ theme, xpos, ypos, width, height 
     position: 'absolute',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     left: `${xpos}px`,
     top: `${ypos}px`,
     width: `${width}px`,
@@ -35,14 +37,22 @@ const MessageBar = styled(Box)<StyledProps>(({ theme, xpos, ypos, width, height 
       fontWeight: 'bold',
       userSelect: 'none',
       textAlign: 'center'
+    },
+    '.rules-header': {
+      color: theme.palette.light.main,
+      fontSize: theme.spacing(1.5),
+      fontStyle: 'italic',
+      fontWeight: 'bold',
+      userSelect: 'none',
+      textAlign: 'center'
     }
   })
 })
 
-const ShowGameMessages = ({ globals, windowHeight, windowWidth }: Props) => {
+const ShowGameMessages = ({ globals, windowHeight, windowWidth, lastMessage }: Props) => {
   const [latestMessage, setLatestMessage] = React.useState('')
   const [buildingMessage, setBuildingMessage] = React.useState('')
-  const lastMessage = globals.gameState.current_round_history.at(-1) ?? '\\'
+  const [rulesHeader, setRulesHeader] = React.useState('')
 
   const addToBuildingMessage = (onClear: () => void) => {
     if (buildingMessage.length < latestMessage.length) {
@@ -68,17 +78,47 @@ const ShowGameMessages = ({ globals, windowHeight, windowWidth }: Props) => {
     return () => { clearInterval(interval) }
   }, [latestMessage, buildingMessage])
 
+  React.useEffect(() => {
+    const rules = globals.gameState.current_round_rules
+    if (typeof rules === 'string') {
+      setRulesHeader('')
+    } else {
+      let header = `Team ${rules.biddingTeam}'s bid: ${getBidString(rules.bid)}.`
+      if (rules.variant === '') {
+        header += ` Trump: ${replaceGameString(rules.trump)}`
+      } else {
+        header += ` Variant: ${replaceGameString(rules.variant)}`
+        if (rules.trump !== '') {
+          header += `, ${replaceGameString(rules.trump)}`
+        }
+      }
+      setRulesHeader(header)
+    }
+  }, [globals.gameState.current_round_rules])
+
   return (
-    <MessageBar
-      xpos={pos(30, windowWidth)}
-      ypos={0}
-      width={pos(40, windowWidth)}
-      height={pos(15, windowHeight)}
-    >
-      <Typography className='message'>
-        {buildingMessage}
-      </Typography>
-    </MessageBar>
+    <>
+      <MessageBar
+        xpos={pos(31, windowWidth)}
+        ypos={0}
+        width={pos(38, windowWidth)}
+        height={pos(5, windowHeight)}
+      >
+        <Typography className='rules-header'>
+          {rulesHeader}
+        </Typography>
+      </MessageBar>
+      <MessageBar
+        xpos={pos(31, windowWidth)}
+        ypos={pos(7, windowHeight)}
+        width={pos(38, windowWidth)}
+        height={pos(20, windowHeight)}
+      >
+        <Typography className='message'>
+          {buildingMessage}
+        </Typography>
+      </MessageBar>
+    </>
   )
 }
 

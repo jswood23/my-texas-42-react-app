@@ -1,23 +1,35 @@
+import { defaultDominoObj, getShuffledDominoes, getStartingDominoes, placePlayerHand, showEndOfTrick, showPlayerMove } from './utils/determine-domino-locations'
 import { type DominoPlacement, type DominoObj, type GlobalObj } from '../../../../types'
+import { getIsCalling, getUserPosition } from './utils/get-game-information'
+import { MOVE_TYPES } from '../../../../constants/game-constants'
 import * as React from 'react'
 import Domino from '../../../../shared/domino'
-import { defaultDominoObj, getShuffledDominoes, getStartingDominoes, placePlayerHand } from './utils/determine-domino-locations'
 
 interface Props {
   globals: GlobalObj
   windowHeight: number
   windowWidth: number
+  lastMessage: string
+  stagedDomino: DominoObj | null | undefined
+  setStagedDomino: React.Dispatch<React.SetStateAction<DominoObj | null | undefined>>
 }
 
-const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
+const ShowDominoes = ({ globals, windowHeight, windowWidth, lastMessage, stagedDomino, setStagedDomino }: Props) => {
+  const userPosition = React.useMemo(() => getUserPosition(globals.gameState, globals.userData.username), [globals.gameState.team_1, globals.gameState.team_2, globals.userData.username])
+  const isUserTurn = React.useMemo(() => userPosition === globals.gameState.current_player_turn, [userPosition, globals.gameState.current_player_turn])
+  const isCalling = React.useMemo(() => getIsCalling(globals.gameState), [globals.gameState.current_round_rules])
   const [dealingDominoes, setDealingDominoes] = React.useState(false)
   const [dominoes, setDominoes] = React.useState([] as DominoObj[])
   const [hoveredDomino, setHoveredDomino] = React.useState(-1)
   const [playerHand, setPlayerHand] = React.useState([] as DominoObj[])
-  const [stagedDomino, setStagedDomino] = React.useState<DominoObj | null | undefined>()
+  const [otherStagedDominoes, setOtherStagedDominoes] = React.useState([] as DominoObj[])
+  const [team1Tricks, setTeam1Tricks] = React.useState(0)
+  const [team2Tricks, setTeam2Tricks] = React.useState(0)
+  const [isEndOfTrick, setIsEndOfTrick] = React.useState(false)
 
   const playerDominoSize = 10
   const otherDominoSize = 8
+  const trickDominoSize = 4.2
 
   const startNewRound = React.useCallback(() => {
     setTimeout(() => {
@@ -46,16 +58,23 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
     }, 1500)
   }, [setDominoes])
 
-  // const changeDomino = React.useCallback((newDomino: DominoObj) => {
-  //   const newDominoes = [...dominoes]
-  //   newDominoes[newDomino.index] = newDomino
-  //   setDominoes(newDominoes)
-  // }, [dominoes, setDominoes])
+  const moveDomino = React.useCallback((newDomino: DominoObj) => {
+    const newDominoes = [...dominoes]
+    newDominoes[newDomino.index] = newDomino
+    setDominoes(newDominoes)
+  }, [dominoes, setDominoes])
+
+  const moveDominoes = React.useCallback((...movedDominoes: DominoObj[]) => {
+    const newDominoes = [...dominoes]
+    movedDominoes.forEach(newDomino => {
+      newDominoes[newDomino.index] = newDomino
+    })
+    setDominoes(newDominoes)
+  }, [dominoes, setDominoes])
 
   const changeStagedDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isInPlayerHand && domino.isPlayable) {
-      const isPlayerTurn = false
-
+      const canStageDomino = isUserTurn && !globals.gameState.current_is_bidding && !isCalling
       const newPlayerHand = playerHand.map(a => ({ ...a }))
       let newStagedDomino = stagedDomino
       let playerHandIndex = -1
@@ -66,7 +85,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
         }
       }
 
-      if (isPlayerTurn) {
+      if (canStageDomino) {
         if (stagedDomino) {
           if (stagedDomino.type === domino.type) {
             newStagedDomino = null
@@ -81,11 +100,6 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
           newPlayerHand.splice(playerHandIndex, 1)
         }
       } else {
-        newStagedDomino = null
-        if (stagedDomino) {
-          newPlayerHand.push(stagedDomino)
-        }
-
         if (playerHandIndex) {
           newPlayerHand.splice(playerHandIndex, 1)
           newPlayerHand.unshift(domino)
@@ -95,7 +109,7 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
       setPlayerHand(newPlayerHand)
       setStagedDomino(newStagedDomino)
     }
-  }, [playerHand, stagedDomino, setPlayerHand, setStagedDomino])
+  }, [isUserTurn, playerHand, stagedDomino, setPlayerHand, setStagedDomino, globals.gameState.current_is_bidding, isCalling])
 
   const onHoverDomino = React.useCallback((domino: DominoObj) => {
     if (domino.isPlayable) {
@@ -111,8 +125,37 @@ const ShowDominoes = ({ globals, windowHeight, windowWidth }: Props) => {
     if (globals.gameState.current_round_history.length === 0) {
       setDominoes(getShuffledDominoes(windowWidth, windowHeight, otherDominoSize))
       setDealingDominoes(true)
+    } else {
+      let shouldShowPlayerMove = false
+      let messageToShow = lastMessage
+      if (lastMessage.includes('\\')) {
+        if (lastMessage.split('\\')[1] === MOVE_TYPES.play) {
+          shouldShowPlayerMove = true
+        }
+      } else if (lastMessage.includes('wins trick')) {
+        shouldShowPlayerMove = true
+        messageToShow = globals.gameState.current_round_history.at(-2) ?? lastMessage
+        setIsEndOfTrick(true)
+      }
+
+      if (shouldShowPlayerMove) {
+        showPlayerMove(windowWidth, windowHeight, otherDominoSize, dominoes, globals.gameState, moveDomino, messageToShow, userPosition, otherStagedDominoes, setOtherStagedDominoes)
+      }
     }
-  }, [globals.gameState.current_round_history.length])
+  }, [globals.gameState, lastMessage, userPosition])
+
+  React.useEffect(() => {
+    if (isEndOfTrick) {
+      const winningTeam = +lastMessage[5]
+      const teamTricks = winningTeam === 1 ? team1Tricks : team2Tricks
+      const setTeamTricks = winningTeam === 1 ? setTeam1Tricks : setTeam2Tricks
+      setTimeout(
+        () => { showEndOfTrick(windowWidth, windowHeight, trickDominoSize, stagedDomino as DominoObj, setStagedDomino, otherStagedDominoes, setOtherStagedDominoes, winningTeam, teamTricks, setTeamTricks, moveDominoes) },
+        1000
+      )
+      setIsEndOfTrick(false)
+    }
+  }, [globals.gameState.current_round_history, lastMessage, isEndOfTrick])
 
   React.useEffect(() => {
     if (dealingDominoes) {

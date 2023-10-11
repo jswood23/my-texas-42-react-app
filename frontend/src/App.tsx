@@ -1,6 +1,7 @@
 import { Amplify } from 'aws-amplify'
 import { apiContext } from './constants'
 import { BrowserRouter } from 'react-router-dom'
+import { StyleSheetManager } from 'styled-components'
 import config from './constants/config'
 import RouterElements from './router'
 
@@ -29,7 +30,9 @@ Amplify.configure({
 function App () {
   return (
     <BrowserRouter>
-      <RouterElements />
+      <StyleSheetManager shouldForwardProp={() => true}>
+        <RouterElements />
+      </StyleSheetManager>
     </BrowserRouter>
   )
 }

@@ -1,4 +1,5 @@
-import { type DominoObj } from '../../../../../types'
+import type { GameState, DominoObj } from '../../../../../types'
+import { getUserPosition } from './get-game-information'
 import { pos } from './helpers'
 
 export const defaultDominoObj: DominoObj = {
@@ -153,4 +154,105 @@ export const placePlayerHand = (windowWidth: number, windowHeight: number, playe
   }
 
   setDominoes(newDominoes)
+}
+
+export const showPlayerMove = (
+  windowWidth: number,
+  windowHeight: number,
+  otherDominoSize: number,
+  dominoes: DominoObj[],
+  gameState: GameState,
+  moveDomino: (newDomino: DominoObj) => void,
+  lastMessage: string,
+  userPosition: number,
+  otherStagedDominoes: DominoObj[],
+  setOtherStagedDominoes: (newStagedDominoes: DominoObj[]) => void
+) => {
+  const splitMessage = lastMessage.split('\\')
+  const playerPosition = getUserPosition(gameState, splitMessage[0])
+  const positionOnScreen = (playerPosition - userPosition + 4) % 4
+  const stagedPositions = [[0, 1], [-1, 0], [0, -1], [1, 0]]
+
+  if (positionOnScreen > 0) {
+    const playerFirstDomino = positionOnScreen * 7
+    for (let i = playerFirstDomino + 6; i >= playerFirstDomino; i -= 1) {
+      const hasNotBeenPlayed = dominoes[i].trickWinningTeam === 0
+      if (hasNotBeenPlayed) {
+        const newDomino: DominoObj = { ...dominoes[i] }
+        newDomino.type = splitMessage[2]
+        newDomino.placement.startingX = pos(50 + stagedPositions[positionOnScreen][0] * otherDominoSize, windowWidth)
+        newDomino.placement.startingY = pos(50 + stagedPositions[positionOnScreen][1] * otherDominoSize, windowHeight)
+        moveDomino(newDomino)
+        setOtherStagedDominoes([...otherStagedDominoes, newDomino])
+        break
+      }
+    }
+  }
+}
+
+export const showEndOfTrick = (
+  windowWidth: number,
+  windowHeight: number,
+  trickDominoSize: number,
+  stagedDomino: DominoObj,
+  setStagedDomino: (newStagedDomino: DominoObj | null) => void,
+  otherStagedDominoes: DominoObj[],
+  setOtherStagedDominoes: (newStagedDominoes: DominoObj[]) => void,
+  winningTeam: number,
+  teamTricks: number,
+  setTeamTricks: (newTeamTricks: number) => void,
+  moveDominoes: (...newDomino: DominoObj[]) => void
+) => {
+  const trickXPos = (winningTeam - 1) * 70 + trickDominoSize * teamTricks
+  const trickYPos = 20
+
+  const trickDominoes = [stagedDomino, ...otherStagedDominoes]
+
+  const allCount: DominoObj[] = []
+  const allNonCount: DominoObj[] = []
+
+  for (let i = 0; i < 4; i += 1) {
+    const sides = trickDominoes[i].type.split('-')
+    const sideSum = (+sides[0]) + (+sides[1])
+    if (sideSum % 5 === 0) {
+      allCount.push(trickDominoes[i])
+    } else {
+      allNonCount.push(trickDominoes[i])
+    }
+  }
+
+  for (let i = 0; i < allNonCount.length; i += 1) {
+    const distance = trickDominoSize * 0.6
+    const thisDomino = allNonCount[i]
+    const offset = distance * -i
+    thisDomino.placement.startingX = pos(trickXPos + distance, windowWidth)
+    thisDomino.placement.startingY = pos(trickYPos + offset, windowHeight)
+    thisDomino.placement.size = pos(trickDominoSize, windowWidth)
+    thisDomino.placement.rotation = 90
+    thisDomino.placement.duration = 1
+    thisDomino.belongsToTrick = teamTricks + 1
+    thisDomino.trickWinningTeam = winningTeam
+    thisDomino.isInPlayerHand = false
+    thisDomino.isPlayable = false
+  }
+
+  for (let i = 0; i < allCount.length; i += 1) {
+    const distance = trickDominoSize * 0.5
+    const thisDomino = allCount[i]
+    const offset = distance * (allCount.length / 2 - i + 0.7)
+    thisDomino.placement.startingX = pos(trickXPos + offset, windowWidth)
+    thisDomino.placement.startingY = pos(trickYPos + distance * 1.9, windowHeight)
+    thisDomino.placement.size = pos(trickDominoSize, windowWidth)
+    thisDomino.placement.rotation = 0
+    thisDomino.placement.duration = 1
+    thisDomino.belongsToTrick = teamTricks + 1
+    thisDomino.trickWinningTeam = winningTeam
+    thisDomino.isInPlayerHand = false
+    thisDomino.isPlayable = false
+  }
+
+  moveDominoes(...allCount, ...allNonCount)
+  setStagedDomino(null)
+  setOtherStagedDominoes([])
+  setTeamTricks(teamTricks + 1)
 }

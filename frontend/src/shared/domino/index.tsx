@@ -1,15 +1,16 @@
-import { type DominoPlacement } from '../../types'
-import styled from 'styled-components'
-import { THEME } from '../../constants/theme'
 import { Box } from '@mui/material'
+import { type DominoPlacement } from '../../types'
+import { THEME } from '../../constants/theme'
+import * as React from 'react'
+import styled from 'styled-components'
 
 interface Props {
-  clickable: boolean
-  disabled: boolean
-  onClick: () => void
-  onHover: () => void
-  onDrag: () => void
-  onBlur: () => void
+  clickable?: boolean
+  disabled?: boolean
+  onClick?: () => void
+  onHover?: () => void
+  onDrag?: () => void
+  onBlur?: () => void
   placement: DominoPlacement
   type: string
 }
@@ -95,49 +96,49 @@ const Domino = ({
   const centerX = placement.startingX - 75 + placement.currentX
   const centerY = placement.startingY - 150 + placement.currentY
 
-  const clickableClassName = (clickable && !disabled) ? 'clickable' : ''
+  const clickableClassName = React.useMemo(() => (clickable && !disabled) ? 'clickable' : '', [clickable, disabled])
 
-  const SeparatorLine = (
+  const SeparatorLine = React.useMemo(() => (
     <div className="separator-line">
       <svg width={squareSize} height={squareSize * 2} stroke="black">
         <line x1="0" y1={squareSize} x2={squareSize - strokeWidth} y2={squareSize} strokeWidth={strokeWidth} />
       </svg>
     </div>
-  )
+  ), [])
 
-  const returnDots = (type: string) => {
-    const zeroDot = (
-      <svg width={squareSize} height={squareSize}>
+  const returnDots = React.useCallback((type: string) => {
+    const zeroDot = (key: number) => (
+      <svg key={key} width={squareSize} height={squareSize}>
       </svg>
     )
-    const oneDot = (
-      <svg width={squareSize} height={squareSize} fill={THEME.palette.domino.color1}>
+    const oneDot = (key: number) => (
+      <svg key={key} width={squareSize} height={squareSize} fill={THEME.palette.domino.color1}>
         <circle cx={space * 3} cy={space * 3} r={dotSize} />
       </svg>
     )
-    const twoDot = (
-      <svg width={squareSize} height={squareSize} fill={THEME.palette.domino.color2}>
+    const twoDot = (key: number) => (
+      <svg key={key} width={squareSize} height={squareSize} fill={THEME.palette.domino.color2}>
         <circle cx={space * 5} cy={space} r={dotSize} />
         <circle cx={space} cy={space * 5} r={dotSize} />
       </svg>
     )
-    const threeDot = (
-      <svg width={squareSize} height={squareSize} fill={THEME.palette.domino.color3}>
+    const threeDot = (key: number) => (
+      <svg key={key} width={squareSize} height={squareSize} fill={THEME.palette.domino.color3}>
         <circle cx={space * 5} cy={space} r={dotSize} />
         <circle cx={space * 3} cy={space * 3} r={dotSize} />
         <circle cx={space} cy={space * 5} r={dotSize} />
       </svg>
     )
-    const fourDot = (
-      <svg width={squareSize} height={squareSize} fill={THEME.palette.domino.color4}>
+    const fourDot = (key: number) => (
+      <svg key={key} width={squareSize} height={squareSize} fill={THEME.palette.domino.color4}>
         <circle cx={space} cy={space} r={dotSize} />
         <circle cx={space * 5} cy={space} r={dotSize} />
         <circle cx={space} cy={space * 5} r={dotSize} />
         <circle cx={space * 5} cy={space * 5} r={dotSize} />
       </svg>
     )
-    const fiveDot = (
-      <svg width={squareSize} height={squareSize} fill={THEME.palette.domino.color5}>
+    const fiveDot = (key: number) => (
+      <svg key={key} width={squareSize} height={squareSize} fill={THEME.palette.domino.color5}>
         <circle cx={space} cy={space} r={dotSize} />
         <circle cx={space * 5} cy={space} r={dotSize} />
         <circle cx={space} cy={space * 5} r={dotSize} />
@@ -145,8 +146,8 @@ const Domino = ({
         <circle cx={space * 3} cy={space * 3} r={dotSize} />
       </svg>
     )
-    const sixDot = (
-      <svg width={squareSize} height={squareSize} fill={THEME.palette.domino.color6}>
+    const sixDot = (key: number) => (
+      <svg key={key} width={squareSize} height={squareSize} fill={THEME.palette.domino.color6}>
         <circle cx={space} cy={space} r={dotSize} />
         <circle cx={space} cy={space * 3} r={dotSize} />
         <circle cx={space} cy={space * 5} r={dotSize} />
@@ -157,27 +158,29 @@ const Domino = ({
     )
 
     const sides = type.split('-')
+    let i = -1
     return sides.map((side: string) => {
+      i += 1
       switch (parseInt(side)) {
         case 0:
-          return zeroDot
+          return zeroDot(i)
         case 1:
-          return oneDot
+          return oneDot(i)
         case 2:
-          return twoDot
+          return twoDot(i)
         case 3:
-          return threeDot
+          return threeDot(i)
         case 4:
-          return fourDot
+          return fourDot(i)
         case 5:
-          return fiveDot
+          return fiveDot(i)
         case 6:
-          return sixDot
+          return sixDot(i)
         default:
-          return zeroDot
+          return zeroDot(1)
       }
     })
-  }
+  }, [type])
 
   return (
     <StyledRoot
