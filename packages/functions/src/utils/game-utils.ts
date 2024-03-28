@@ -829,6 +829,16 @@ export const processBids = (lobby: GlobalGameState) => {
     }
   }
 
+  if (highestBid === 0) {
+    if (lobby.rules.includes(RULES.NO_FORCED_BID)) {
+      return startNextRound(lobby);
+    } else {
+      // start next round and notify users that something went wrong
+      console.log('Error: All players passed, but forced bids are enabled.');
+      return startNextRound(lobby);
+    }
+  }
+
   const username = getPlayerUsernameByPosition(lobby, bidWinner);
 
   const endOfBidMessage = `${username} has won the bid.`;
