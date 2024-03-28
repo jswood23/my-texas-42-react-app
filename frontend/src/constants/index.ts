@@ -50,6 +50,8 @@ export const INVITE_CODE_LENGTH = 6
 
 export const ITEMS_PER_PAGE = 4
 
+export const MAX_CHAT_LENGTH = 50
+
 export const requireLoginPages = ['/profile']
 
 export const SERVER_MESSAGE_TYPES = {
