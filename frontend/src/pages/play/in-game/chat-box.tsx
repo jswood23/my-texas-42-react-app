@@ -1,6 +1,6 @@
 import { Button, TextField, Typography } from '@mui/material'
 import type { ChatMessage, GlobalObj, ServerMessage } from '../../../types'
-import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../constants'
+import { CONNECTION_STATES, MAX_CHAT_LENGTH, SERVER_MESSAGE_TYPES } from '../../../constants'
 import * as React from 'react'
 import styled from 'styled-components'
 
@@ -67,7 +67,12 @@ const ChatBox = ({
 
   const bottomEl = React.useRef(null)
 
-  const disableSendButton = !draftMessage || globals.connection.connectionStatus !== CONNECTION_STATES.open
+  const messageTooLong = draftMessage.length > MAX_CHAT_LENGTH
+
+  // don't allow sending a message if the message is empty or the connection is not open or the message is too long
+  const disableSendButton = !draftMessage ||
+      globals.connection.connectionStatus !== CONNECTION_STATES.open ||
+      messageTooLong
 
   const scrollToBottom = () => {
     (bottomEl?.current as any)?.scrollIntoView({ behavior: 'smooth' })
@@ -153,6 +158,8 @@ const ChatBox = ({
           onChange={onChangeDraftMessage}
           onFocus={() => { setTextFieldSelected(true) }}
           onBlur={() => { setTextFieldSelected(false) }}
+          error={messageTooLong}
+          helperText={messageTooLong ? `Message length must be ${MAX_CHAT_LENGTH} characters or less` : ''}
           value={draftMessage}
         />
         <Button
