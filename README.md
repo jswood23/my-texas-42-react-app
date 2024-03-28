@@ -56,6 +56,8 @@ The backend of our website uses DynamoDB, a NoSQL database provided by Amazon We
  
 ## SST Commands:
 
+Read more about SST here: https://anomaly.s3.amazonaws.com/ServerlessStack/ServerlessStack-v7.3.pdf
+
 Install packages:
 ```
 yarn update
@@ -68,5 +70,5 @@ yarn start
 
 Start the dev console:
 ```
-yarn sst dev
+yarn dev
 ```
