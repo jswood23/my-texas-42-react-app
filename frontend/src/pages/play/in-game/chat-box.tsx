@@ -118,7 +118,8 @@ const ChatBox = ({
   }
 
   const onChangeDraftMessage = (e: any) => {
-    setDraftMessage(e.target.value)
+    const messageLimitedLength = e.target.value.slice(0, MAX_CHAT_LENGTH * 2)
+    setDraftMessage(messageLimitedLength)
   }
 
   const onSendMessage = () => {
@@ -159,7 +160,7 @@ const ChatBox = ({
           onFocus={() => { setTextFieldSelected(true) }}
           onBlur={() => { setTextFieldSelected(false) }}
           error={messageTooLong}
-          helperText={messageTooLong ? `Message length must be ${MAX_CHAT_LENGTH} characters or less` : ''}
+          helperText={messageTooLong ? `Message length must be ${MAX_CHAT_LENGTH} characters or less. Length: ${draftMessage.length}` : ''}
           value={draftMessage}
         />
         <Button
