@@ -9,6 +9,7 @@ import Lobbies from './lobbies'
 import NewGame from './new-game'
 import PageContainer from '../../shared/page-container'
 import * as React from 'react'
+import { useEffect, useRef } from 'react'
 
 interface Props {
   globals: GlobalObj
@@ -54,11 +55,29 @@ const PlayPage = ({ globals }: Props) => {
 
   const location = useLocation()
 
+  const stageRef = useRef(stage)
+  const connStatusRef = useRef(globals.connection.connectionStatus)
+  React.useEffect(() => {
+    stageRef.current = stage
+    connStatusRef.current = globals.connection.connectionStatus
+  }, [stage, globals.connection.connectionStatus])
+
   const onChangeStage = (newStage: string, newInviteCode = '', newTeamNumber = 0) => {
     setStage(newStage)
     if (newInviteCode && newTeamNumber) {
       setInviteCode(newInviteCode.toUpperCase())
       setTeamNumber(newTeamNumber)
+    }
+
+    // hotfix: if lobby not found and frontend still trying after 2 seconds, return to lobby list
+    if (newStage === GAME_STAGES.IN_GAME_STAGE) {
+      setTimeout(() => {
+        console.log('2 seconds', connStatusRef.current, stageRef.current)
+        if (connStatusRef.current === CONNECTION_STATES.closed && stageRef.current === GAME_STAGES.IN_GAME_STAGE) {
+          globals.openAlert('Lobby not found.', 'error')
+          onChangeStage(GAME_STAGES.LOBBY_STAGE)
+        }
+      }, 2000)
     }
   }
 

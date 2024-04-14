@@ -97,6 +97,7 @@ const RouterElements = () => {
   }
   const connection: WebSocketConnection = {
     connectionStatus,
+    prevConnectionStatus: prevConnectionStatus.current,
     disconnect,
     lastMessage,
     queryParams,

@@ -1,4 +1,4 @@
-import { CONNECTION_STATES, SERVER_MESSAGE_TYPES } from '../../../../constants'
+import { CONNECTION_STATES, GAME_STAGES, SERVER_MESSAGE_TYPES } from '../../../../constants'
 import type { GameState, GlobalObj, RoundRules, ServerMessage } from '../../../../types'
 import { CircularProgress } from '@mui/material'
 import GameDisplay from './game-display'
@@ -29,6 +29,7 @@ const StyledRoot = styled.div(({ theme }) => ({
 
 interface Props {
   globals: GlobalObj
+  onChangeStage: (newStage: string, newInviteCode?: string, newTeamNumber?: number) => void
 }
 
 const defaultServerMessage: ServerMessage = {
@@ -38,15 +39,27 @@ const defaultServerMessage: ServerMessage = {
   username: '(none)'
 }
 
-const GameWindow = ({ globals }: Props) => {
+const GameWindow = ({ globals, onChangeStage }: Props) => {
   const [isLoading, setIsLoading] = React.useState(true)
   const [lastServerMessage, setLastServerMessage] = React.useState(defaultServerMessage)
   const isConnected = globals.connection.connectionStatus === CONNECTION_STATES.open
   const isLobbyFull = globals.gameState.team_1.length === 2 && globals.gameState.team_2.length === 2
 
   React.useEffect(() => {
-    if (globals.connection.connectionStatus === CONNECTION_STATES.open) {
-      globals.connection.sendJsonMessage({ action: 'refresh_player_game_state' })
+    switch (globals.connection.connectionStatus) {
+      case CONNECTION_STATES.closed:
+        console.log(globals.connection.connectionStatus, globals.connection.prevConnectionStatus)
+        if (globals.connection.prevConnectionStatus === CONNECTION_STATES.connecting) {
+          globals.openAlert('Lobby not found.', 'error')
+          onChangeStage(GAME_STAGES.LOBBY_STAGE)
+        }
+        break
+      case CONNECTION_STATES.open:
+        globals.connection.sendJsonMessage({ action: 'refresh_player_game_state' })
+        break
+      default:
+        // do nothing
+        break
     }
   }, [globals.connection.connectionStatus])
 

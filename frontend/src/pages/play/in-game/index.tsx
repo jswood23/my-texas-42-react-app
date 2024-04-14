@@ -1,3 +1,4 @@
+import { CONNECTION_STATES, GAME_STAGES } from '../../../constants'
 import type { GlobalObj } from '../../../types'
 import ChatBox from './chat-box'
 import config from '../../../constants/config'
@@ -36,6 +37,7 @@ const InGame = ({ globals, inviteCode, onChangeStage, teamNumber }: Props) => {
     <StyledRoot>
       <GameWindow
         globals={globals}
+        onChangeStage={onChangeStage}
       />
       <ChatBox
         globals={globals}

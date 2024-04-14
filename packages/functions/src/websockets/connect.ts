@@ -1,6 +1,6 @@
 import { addConnectionToTable, getConnectionsByMatchId, sendToConnections } from "src/utils/websocket-utils";
 import { APIGatewayProxyHandler } from "aws-lambda";
-import { getLobbyByInviteCode, isLobbyFull, updateLobby } from "src/utils/lobby-utils";
+import {getLobbyByInviteCode, GlobalGameState, isLobbyFull, updateLobby} from "src/utils/lobby-utils";
 import { startNextRound } from "src/utils/game-utils";
 
 export const main: APIGatewayProxyHandler = async (event) => {
@@ -23,7 +23,16 @@ export const main: APIGatewayProxyHandler = async (event) => {
     return { statusCode: 400, body: 'Missing connection information.' };
   }
 
-  let lobby = await getLobbyByInviteCode(match_invite_code);
+  let lobby: GlobalGameState;
+  try {
+    lobby = await getLobbyByInviteCode(match_invite_code);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return { statusCode: 400, body: error.message };
+    } else {
+      return { statusCode: 400, body: 'An unexpected error occurred on the server.' };
+    }
+  }
 
   if (isLobbyFull(lobby)) {
     return { statusCode: 400, body: 'Lobby is full.' };
